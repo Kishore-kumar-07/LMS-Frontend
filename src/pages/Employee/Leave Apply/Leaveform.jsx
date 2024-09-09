@@ -38,7 +38,7 @@ const Leaveform = ({ isPaternity }) => {
   const [fromHalf, setFromHalf] = useState("");
   const [toHalf, setToHalf] = useState("");
   const [leaveReason, setLeaveReason] = useState("Personal");
-  const [leaveDescription, setLeaveDescription] = useState("");
+  const [leaveDescription, setLeaveDescription] = useState("No Description");
   const [popupVisible, setPopupVisible] = useState(false);
   const [leaveDetails, setLeaveDetails] = useState({});
   const [leaveType, setLeaveType] = useState("Casual Leave");
@@ -153,6 +153,8 @@ const Leaveform = ({ isPaternity }) => {
   
   const handleConfirm = async () => {
     try {
+
+     console.log("LOP", fromFirstHalf,fromSecondHalf,toFirstHalf,toSecondHalf)
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
@@ -170,7 +172,11 @@ const Leaveform = ({ isPaternity }) => {
             firstHalf: toFirstHalf,
             secondHalf: toSecondHalf,
           },
-          numberOfDays: calculateLeaveDays(),
+          numberOfDays:  leaveType === "Casual Leave"
+          ? summary.CL
+          : leaveType === "privilege Leave"
+          ? summary.PL
+          : summary.Paternity,
           reasonType: leaveReason,
           reason: leaveDescription,
           LOP: summary.LOP,
