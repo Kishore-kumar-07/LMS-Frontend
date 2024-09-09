@@ -27,6 +27,8 @@ function EmployeeUserDetails({setIsPaternity}) {
           }
         );
 
+        console.log("details",res.data[0])
+
         if (res.status === 401) {
           console.log("yes");
           navigate("/thank-you");
@@ -61,7 +63,7 @@ function EmployeeUserDetails({setIsPaternity}) {
             </tr>
             <tr className="">
               <td className="font-bold text-lg py-2 pr-6">Reporting Manager:</td>
-              <td className="text-lg py-2">{userDetails.reportionManager}</td>
+              <td className="text-lg py-2">{userDetails.manager}</td>
             </tr>
             <tr className="">
               <td className="font-bold text-lg py-2 pr-6">DOJ:</td>

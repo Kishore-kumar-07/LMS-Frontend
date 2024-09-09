@@ -5,7 +5,7 @@ import GVR from '../../images/GVRLogo.png';
 import userImg from '../../images/profile.png';
 import { useNavigate } from 'react-router-dom';
 
-function Nav() {
+function Nav({setOption}) {
 
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -55,7 +55,7 @@ function Nav() {
     <>
       <div className='w-full flex justify-center items-center  rounded-lg p-5'>
         <div  style={{ boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)" }} className='w-[100%]  flex justify-between items-center px-5 py-2 rounded-lg '>
-          <div className='text-xl font-semibold'>
+          <div onClick={()=>setOption("Home")} className='text-xl font-semibold cursor-pointer'>
             <img src={GVR} alt="GVR Logo" className='h-10' />
           </div>
           <div className=''>
