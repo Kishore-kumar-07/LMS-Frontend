@@ -224,6 +224,18 @@ const Leaveform = ({ isPaternity }) => {
   };
 
   const sendLeaveEmail = async (objId, LOP) => {
+    const fromDay =
+      (fromFirstHalf && fromSecondHalf) || (!fromFirstHalf && !fromSecondHalf)
+        ? "FullDay"
+        : fromFirstHalf && !fromSecondHalf
+        ? "First Half of the day"
+        : "Second Half of the day";
+    const toDay =
+      (toFirstHalf && toSecondHalf) || (!toFirstHalf && !toSecondHalf)
+        ? "FullDay"
+        : toFirstHalf && !toSecondHalf
+        ? "First Half of the day"
+        : "Second Half of the day";
     const emailContent = await render(
       <EmailTemplate
         empId={decodedToken.empId}
@@ -231,8 +243,8 @@ const Leaveform = ({ isPaternity }) => {
         fromDate={formatDate(fromDate)}
         toDate={formatDate(toDate)}
         leaveReason={leaveReason}
-        fromDay="Full Day"
-        toDay="Full Day"
+        fromDay={fromDay}
+        toDay={toDay}
         userName={decodedToken.empName}
         imageUrl="https://www.gilbarco.com/us/sites/gilbarco.com.us/files/2022-07/gilbarco_logo.png"
         leaveId={objId}
