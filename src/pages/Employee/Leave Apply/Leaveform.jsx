@@ -222,20 +222,14 @@ const Leaveform = ({ isPaternity }) => {
       // setIsLOP(!isLOP);
     }
   };
-
+  var fromDay =
+  !isHalfDayFrom? "FullDay"
+    : "Half Day"
+var toDay =
+  !isHalfDayTo
+    ? "FullDay"
+    : "Half day"
   const sendLeaveEmail = async (objId, LOP) => {
-    const fromDay =
-      (fromFirstHalf && fromSecondHalf) || (!fromFirstHalf && !fromSecondHalf)
-        ? "FullDay"
-        : fromFirstHalf && !fromSecondHalf
-        ? "First Half of the day"
-        : "Second Half of the day";
-    const toDay =
-      (toFirstHalf && toSecondHalf) || (!toFirstHalf && !toSecondHalf)
-        ? "FullDay"
-        : toFirstHalf && !toSecondHalf
-        ? "First Half of the day"
-        : "Second Half of the day";
     const emailContent = await render(
       <EmailTemplate
         empId={decodedToken.empId}
@@ -586,7 +580,8 @@ const Leaveform = ({ isPaternity }) => {
             ></textarea>
           </div>
         )}
-
+        {fromDay}
+        {toDay}
         <button
           type="submit"
           className="w-52 bg-blue-500 text-white p-3 rounded-md text-lg font-bold shadow-lg"
