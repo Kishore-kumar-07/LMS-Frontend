@@ -41,21 +41,16 @@ const PermissionTable = () => {
   const rowsPerPage = 6; // Adjust as needed
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
-  const statusOptions = ["All", "Approved", "Pending", "Denied"];
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleStatusChange = async (id, status) => {
+  const handleApprove = async (id) => {
     try {
-      console.log(status);
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/permission/updatePermission`,
+        `${process.env.REACT_APP_BASE_URL}/permission/accept`,
         {
-          empId: empId,
           permissionId: id,
-          status: status,
         },
         {
           headers: {
@@ -66,13 +61,39 @@ const PermissionTable = () => {
       );
 
       if (response.status === 200) {
-        toast.success(`Leave request ${status.toLowerCase()} successfully!`);
+        toast.success(`Permission request Approved successfully!`);
         getData();
       } else {
-        toast.error(`Failed to ${status.toLowerCase()} leave request.`);
+        toast.error(`Failed to Approve Permission request.`);
       }
     } catch (error) {
-      console.error(`Error updating leave status:`, error);
+      console.error(`Error in approving permission`, error);
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/permission/deny`,
+        {
+          permissionId: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.error(`Permission request Rejected successfully!`);
+        getData();
+      } else {
+        toast.error(`Failed to Approve Rejected request.`);
+      }
+    } catch (error) {
+      console.error(`Error in rejecting permission `, error);
     }
   };
 
@@ -192,10 +213,16 @@ const PermissionTable = () => {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900  gap-4">
                   <button
-                    className="text-black-500 hover:text-black-700 text-2xl"
-                    onClick={() => handleEditClick(row)}
+                    className="text-black-500 hover:text-black-700 text-xl"
+                    onClick={() => handleApprove(row._id)}
                   >
-                    <MdEdit />
+                    ✅
+                  </button>
+                  <button
+                    className="text-black-500 hover:text-black-700 text-xl"
+                    onClick={() => handleReject(row._id)}
+                  >
+                    ❌
                   </button>
                 </td>
               </tr>
@@ -217,7 +244,6 @@ const PermissionTable = () => {
         isOpen={editPopupOpen}
         onClose={() => setEditPopupOpen(false)}
         row={selectedRow}
-        onStatusChange={handleStatusChange}
       />
     </div>
   );

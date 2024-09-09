@@ -137,10 +137,7 @@ const PermissionForm = () => {
 
   const checkPermission = async () => {
     if (fromTime && toTime && permissionDate) {
- 
       setclassfalse(() => "");
-
-
       try {
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/permission/checkPermission`,
@@ -160,9 +157,9 @@ const PermissionForm = () => {
             },
           }
         );
-  
+
         console.log(res);
-  
+
         if (res.status === 202) {
           toast.error("The Permission Time is Already Applied");
         } else if (res.status === 203) {
@@ -174,13 +171,11 @@ const PermissionForm = () => {
       } catch (e) {
         toast.error("Somthing went wrong");
       }
-
     } else {
       console.log("classfalse", classfalse);
       setclassfalse(() => "false");
       setIsPermission(false);
     }
- 
   };
   console.log("checiittt", decodedToken.managerMail);
   const sendPermissionEmail = async (objId) => {
@@ -240,7 +235,7 @@ const PermissionForm = () => {
           Permission Form
         </h1>
         <div className="w-[50%]">
-        <label
+          <label
             className={`${
               classfalse !== "" ? "text-red-500" : "text-black"
             } block text-gray-700 mb-1 font-bold text-lg`}
@@ -251,25 +246,32 @@ const PermissionForm = () => {
               <div>Enter the date field *</div>
             )}
 
-          {/* <label className="block text-gray-700 mb-1 font-bold text-lg"> */}
+            {/* <label className="block text-gray-700 mb-1 font-bold text-lg"> */}
             {/* Permission Date */}
-
           </label>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              value={permissionDate}
-              onChange={(newValue) => setPermissionDate(newValue)}
-              shouldDisableDate={shouldDisableDate}
-              renderInput={(params) => (
-                <input
-                  {...params.inputProps}
-                  className={`w-[150%] border rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500 -z-2`}
-                  placeholder="Select Permission Date"
-                />
-              )}
-              format="DD/MM/YYYY"
-            />
-          </LocalizationProvider>
+  <DatePicker
+    value={permissionDate}
+    onChange={(newValue) => setPermissionDate(newValue)}
+    shouldDisableDate={(date) => {
+      // Get today's date and current month
+      const today = dayjs();
+      const currentMonth = today.month();
+
+      // Disable if the date is before today, not in the current month, or if it's a weekend (Saturday or Sunday)
+      const day = date.day();
+      return day === 0 || day === 6 || date.isBefore(today, 'day') || date.month() !== currentMonth;
+    }}
+    renderInput={(params) => (
+      <input
+        {...params.inputProps}
+        className="w-[150%] border rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500 -z-2"
+        placeholder="Select Permission Date"
+      />
+    )}
+    format="DD/MM/YYYY"
+  />
+</LocalizationProvider>
         </div>
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>

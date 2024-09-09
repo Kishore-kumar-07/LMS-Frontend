@@ -13,18 +13,16 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 
-
-
 const getMinDate = () => {
   const today = dayjs();
   const dayOfWeek = today.day(); // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
 
   if (dayOfWeek === 1) {
     // If today is Monday, set minDate to last Friday
-    return today.subtract(3, 'day');
+    return today.subtract(3, "day");
   } else {
     // Otherwise, set minDate to yesterday
-    return today.subtract(1, 'day');
+    return today.subtract(1, "day");
   }
 };
 
@@ -38,7 +36,7 @@ const Leaveform = ({ isPaternity }) => {
   const [fromHalf, setFromHalf] = useState("");
   const [toHalf, setToHalf] = useState("");
   const [leaveReason, setLeaveReason] = useState("Personal");
-  const [leaveDescription, setLeaveDescription] = useState("No Description");
+  const [leaveDescription, setLeaveDescription] = useState("");
   const [popupVisible, setPopupVisible] = useState(false);
   const [leaveDetails, setLeaveDetails] = useState({});
   const [leaveType, setLeaveType] = useState("Casual Leave");
@@ -48,7 +46,7 @@ const Leaveform = ({ isPaternity }) => {
   const [toFirstHalf, setToFirstHalf] = useState(false);
   const [fromSecondHalf, setFromSecondHalf] = useState(false);
   const [toSecondHalf, setToSecondHalf] = useState(false);
-  const [today,setToday] = useState(dayjs().subtract(1, 'day'))
+  const [today, setToday] = useState(dayjs().subtract(1, "day"));
   // const [isAppliedLeave, setIsAppliedLeave] = useState(false);
 
   const token = document.cookie.split("=")[1];
@@ -59,7 +57,7 @@ const Leaveform = ({ isPaternity }) => {
   const formatDate = (date) => {
     return date ? dayjs(date).format("DD/MM/YYYY") : "";
   };
-  
+
   const maxDate = today.add(1, "month").endOf("month");
 
   const shouldDisableDate = (date) => {
@@ -86,6 +84,7 @@ const Leaveform = ({ isPaternity }) => {
   };
 
   const checkLeave = async () => {
+    console.log("Check Leave")
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
@@ -98,7 +97,7 @@ const Leaveform = ({ isPaternity }) => {
             firstHalf: fromFirstHalf,
             secondHalf: fromSecondHalf,
           },
-          numberOfDays: calculateLeaveDays(),
+          numberOfDays: totalDays,
         },
         {
           headers: {
@@ -121,40 +120,49 @@ const Leaveform = ({ isPaternity }) => {
 
   const calculateLeaveDays = () => {
     if (!fromDate || !toDate) return 0;
-  
+
     // Convert Day.js objects to native JavaScript Date objects
     const fromDateObj = dayjs(fromDate).toDate();
     const toDateObj = dayjs(toDate).toDate();
-  
+
     // Initialize total days to 0
     let adjustedDays = 0;
-  
+
     // Loop through each day between fromDate and toDate
     let currentDate = new Date(fromDateObj);
-    
+
     while (currentDate <= toDateObj) {
       const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
-      
+
       // Check if the current day is a weekday (Monday to Friday)
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Exclude Sundays (0) and Saturdays (6)
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        // Exclude Sundays (0) and Saturdays (6)
         adjustedDays++;
       }
-  
+
       // Move to the next day
       currentDate.setDate(currentDate.getDate() + 1);
     }
-  
+
     // Adjust for half days
     if (isHalfDayFrom) adjustedDays -= 0.5;
     if (isHalfDayTo) adjustedDays -= 0.5;
-  
+
     return adjustedDays;
   };
-  
+
+
+  var totalDays = calculateLeaveDays();
+
   const handleConfirm = async () => {
     try {
-
-     console.log("LOP", fromFirstHalf,fromSecondHalf,toFirstHalf,toSecondHalf)
+      console.log(
+        "LOP",
+        fromFirstHalf,
+        fromSecondHalf,
+        toFirstHalf,
+        toSecondHalf
+      );
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
@@ -172,13 +180,14 @@ const Leaveform = ({ isPaternity }) => {
             firstHalf: toFirstHalf,
             secondHalf: toSecondHalf,
           },
-          numberOfDays:  leaveType === "Casual Leave"
-          ? summary.CL
-          : leaveType === "privilege Leave"
-          ? summary.PL
-          : summary.Paternity,
+          numberOfDays:
+            leaveType === "Casual Leave"
+              ? summary.CL
+              : leaveType === "privilege Leave"
+              ? summary.PL
+              : summary.Paternity,
           reasonType: leaveReason,
-          reason: leaveDescription,
+          reason:leaveReason === "Others"? leaveDescription : leaveReason,
           LOP: summary.LOP,
         },
         {
@@ -228,7 +237,7 @@ const Leaveform = ({ isPaternity }) => {
         imageUrl="https://www.gilbarco.com/us/sites/gilbarco.com.us/files/2022-07/gilbarco_logo.png"
         leaveId={objId}
         LOP={LOP}
-        leaveDescription={leaveDescription}
+        leaveDescription={leaveReason === "Others"? leaveDescription : leaveReason}
       />
     );
 
@@ -264,11 +273,15 @@ const Leaveform = ({ isPaternity }) => {
     }
   };
 
-  var totalDays = calculateLeaveDays();
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (fromDate && toDate) {
+
+    if(leaveType === "Privilege Leave" && totalDays<3){
+         toast.warn("Privilege Leave must be minimum of 3 days");
+    }
+    else if (fromDate && toDate) {
       setPopupVisible(true);
 
       // Use a function inside setState to ensure the latest state is used.
@@ -288,7 +301,7 @@ const Leaveform = ({ isPaternity }) => {
       fromDate: fromDate ? formatDate(fromDate) : "",
       toDate: toDate ? formatDate(toDate) : "",
       leaveReason,
-      leaveDescription,
+      leaveDescription:leaveReason === "Others"? leaveDescription : leaveReason,
       totalDays,
       halfDayInfo,
       leaveType,
@@ -531,7 +544,7 @@ const Leaveform = ({ isPaternity }) => {
             Leave Reason
           </label>
           <div className="flex gap-4 flex-wrap text-lg">
-            {["Personal", "Medical", "Vacation", "Other"].map((reason) => (
+            {['Personal', 'Medical', 'Peternity', 'Family Function',"Others"].map((reason) => (
               <label key={reason} className="flex items-center">
                 <input
                   type="radio"
@@ -547,7 +560,7 @@ const Leaveform = ({ isPaternity }) => {
           </div>
         </div>
         {/* Leave Description */}
-        {leaveReason === "Other" && (
+        {leaveReason === "Others" && (
           <div className="w-full flex items-center mb-3">
             <label className="block text-gray-700 mb-2 text-lg mr-5">
               Leave Description
@@ -588,14 +601,14 @@ const Leaveform = ({ isPaternity }) => {
             <div className="w-full flex justify-center items-center">
               <table className="w-[90%] border-collapse text-lg border border-gray-300">
                 <thead>
-                  <tr>
+                  {/* <tr>
                     <th className="border border-gray-300 p-2 text-left">
                       Field
                     </th>
                     <th className="border border-gray-300 p-2 text-left">
                       Value
                     </th>
-                  </tr>
+                  </tr> */}
                 </thead>
                 <tbody>
                   {/* Display Leave Details */}

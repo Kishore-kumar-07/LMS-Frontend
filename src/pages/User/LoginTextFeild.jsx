@@ -5,6 +5,12 @@ import { jwtDecode } from "jwt-decode";
 
 
 const LoginTextFeild = () => {
+
+  const disableClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  
   const navigate = useNavigate();
   const [RFID, setRFID] = useState("");
   const [error, setError] = useState("");

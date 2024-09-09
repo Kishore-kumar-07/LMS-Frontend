@@ -47,16 +47,14 @@ const Table = () => {
     setCurrentPage(page);
   };
 
-  const handleAccept = async () => {
+  const handleAccept = async (id) => {
     if (selectedLeaveId === null) return;
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/updateLeave`,
+        `${process.env.REACT_APP_BASE_URL}/leave/accept`,
         {
-          empId: empId,
-          leaveId: selectedLeaveId,
-          status: "Approved",
+          leaveId: id,
         },
         {
           headers: {
@@ -85,19 +83,17 @@ const Table = () => {
     setActionPopupOpen(false);
   };
 
-  const handleReject = async () => {
-    if (!rejectionReason.trim()) {
-      toast.error("Please provide a rejection reason.");
-      return;
-    }
+  const handleReject = async (id) => {
+    // if (!rejectionReason.trim()) {
+    //   toast.error("Please provide a rejection reason.");
+    //   return;
+    // }
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/updateLeave`,
+        `${process.env.REACT_APP_BASE_URL}/leave/deny`,
         {
-          empId: empId,
-          leaveId: selectedLeaveId,
-          status: "Denied",
+          leaveId: id,
         },
         {
           headers: {
@@ -236,16 +232,20 @@ const Table = () => {
                       : "bg-yellow-200"
                   }`}
                 >
-                  <span className="ml-2 text-lg font-bold text-gray-900">
-                    {row.status}
-                  </span>
+                  <span className="ml-2 text-lg font-semibold ">{row.status}</span>
                 </td>
-                <td className=" whitespace-nowrap text-sm font-medium text-gray-900 pl-5">
+                <td className=" text-sm font-medium pl-5 pr-4flex gap-3 ">
                   <button
-                    className="text-gray-500 hover:text-gray-700 text-2xl"
-                    onClick={() => handleEditClick(row._id)}
+                    className=" text-green-500 text-xl"
+                    onClick={() => handleAccept(row._id)}
                   >
-                    <MdEdit />
+                    ✅
+                  </button>
+                  <button
+                    className="text-red-500 hover:text-red-700 text-xl"
+                    onClick={() => handleReject(row._id)}
+                  >
+                    ❌
                   </button>
                 </td>
               </tr>
@@ -304,8 +304,7 @@ const ActionPopup = ({
       <div className="bg-white text-black p-6 rounded-lg shadow-lg z-10 max-w-lg w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">
-            Please review the leave request and select an option to confirm your
-            decision
+            Please review the leave request and select an option to confirm
           </h2>
           <button onClick={onClose} className="text-black hover:text-gray-500">
             <MdClose size={24} />
@@ -318,19 +317,13 @@ const ActionPopup = ({
               className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
               onClick={onAccept}
             >
-              Accept
+              Approve
             </button>
             <button
               className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
               onClick={onReject}
             >
-              Reject
-            </button>
-            <button
-              className="bg-gray-500 text-white px-4 py-2 rounded-md"
-              onClick={onClose}
-            >
-              Cancel
+              Deny
             </button>
           </>
         ) : (

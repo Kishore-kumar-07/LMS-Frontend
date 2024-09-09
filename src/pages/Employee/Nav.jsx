@@ -75,7 +75,7 @@ function Nav({setOption}) {
                       </tr>
                       <tr>
                         <td className='font-semibold w-32'>Reporting Manager:</td>
-                        <td className='break-words'>{userDetails.reportionManager}</td>
+                        <td className='break-words'>{userDetails.manager}</td>
                       </tr>
                       <tr>
                         <td className='font-semibold w-32'>DOJ:</td>

@@ -103,16 +103,53 @@ const AdminHome = () => {
                     <option value="">Select Department</option>
                     <option value="Casual Leave">Casual Leave</option>
                     {decodedToken.role !== "3P" && (
-                      <option value="privilege Leave">CSE</option>
+                      <option value="Stores">Stores</option>
                     )}
                     {decodedToken.role !== "3P" && (
-                      <option value="Paternity Leave">ECE</option>
+                      <option value="Quality">Quality</option>
                     )}
                     {decodedToken.role !== "3P" && (
-                      <option value="Paternity Leave">EEE</option>
+                      <option value="Manufacturing Engineering">
+                        Manufacturing Engineering
+                      </option>
                     )}
                     {decodedToken.role !== "3P" && (
-                      <option value="Paternity Leave">MECH</option>
+                      <option value="Facilities & Maintenance">
+                        Facilities & Maintenance
+                      </option>
+                    )}
+                    {decodedToken.role !== "3P" && (
+                      <option value="Sourcing">Sourcing</option>
+                    )}
+                    {decodedToken.role !== "3P" && (
+                      <option value="Planning">
+                        Planning
+                      </option>
+                    )}
+                    {decodedToken.role !== "3P" && (
+                      <option value="Customer Service">
+                       Customer Service
+                      </option>
+                    )}
+                     {decodedToken.role !== "3P" && (
+                      <option value="Finance">
+                        Finance
+                      </option>
+                    )}
+                     {decodedToken.role !== "3P" && (
+                      <option value="EHS">
+                        EHS
+                      </option>
+                    )}
+                    {decodedToken.role !== "3P" && (
+                      <option value="TACC Lab">
+                       TACC Lab
+                      </option>
+                    )}
+                    {decodedToken.role !== "3P" && (
+                      <option value="Engineering">
+                       Engineering
+                      </option>
                     )}
                   </select>
                   {/* {errors.leaveType && <p className="text-red-500 text-sm">{errors.leaveType}</p>} */}
@@ -134,13 +171,13 @@ const AdminHome = () => {
                     className={getButtonClass("Month")}
                     onClick={() => setSelected("Month")}
                   >
-                    Month
+                    Monthly
                   </div>
                   <div
                     className={getButtonClass("Year")}
                     onClick={() => setSelected("Year")}
                   >
-                    Year
+                    Yearly
                   </div>
                 </div>
               </div>
@@ -184,7 +221,7 @@ const AdminHome = () => {
       </main>
       <div className="fixed bottom-0 left-0 w-full text-black  text-center text-sm p-2">
         <a href="https://sece.ac.in/" target="_blank" rel="noopener noreferrer">
-          Copyright©2024 Sri Eshwar Technologies PVT LTD
+          Copyright©2024 Sri Eshwar College of Engineering
         </a>
       </div>
     </div>
