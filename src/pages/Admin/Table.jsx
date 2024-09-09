@@ -48,9 +48,8 @@ const Table = () => {
   };
 
   const handleAccept = async (id) => {
-    if (selectedLeaveId === null) return;
-
     try {
+      console.log("in try");
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/accept`,
         {
@@ -180,7 +179,7 @@ const Table = () => {
     <div className="w-full bg-slate-100 p-3 border-slate-950 rounded-lg">
       <ToastContainer />
       <div className="w-full overflow-x-auto">
-        <table className=" divide-y divide-gray-200 bg-white">
+        <table className=" divide-y divide-gray-200 bg-white w-full">
           <thead className="bg-gray-50">
             <tr>
               {headers.map((header, index) => (
@@ -232,20 +231,22 @@ const Table = () => {
                       : "bg-yellow-200"
                   }`}
                 >
-                  <span className="ml-2 text-lg font-semibold ">{row.status}</span>
+                  <span className="ml-2 text-lg font-semibold ">
+                    {row.status}
+                  </span>
                 </td>
-                <td className=" text-sm font-medium pl-5 pr-4flex gap-3 ">
+                <td className=" text-sm font-medium  pr-4flex gap-3 ">
                   <button
-                    className=" text-green-500 text-xl"
+                    className=" text-green-500 m-2 text-2xl"
                     onClick={() => handleAccept(row._id)}
                   >
-                    ✅
+                    ☑
                   </button>
                   <button
-                    className="text-red-500 hover:text-red-700 text-xl"
+                    className="text-red-500 hover:text-red-700 text-2xl"
                     onClick={() => handleReject(row._id)}
                   >
-                    ❌
+                    ☒
                   </button>
                 </td>
               </tr>

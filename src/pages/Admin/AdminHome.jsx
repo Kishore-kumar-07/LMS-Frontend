@@ -101,7 +101,6 @@ const AdminHome = () => {
                     // onChange={(e) => setLeaveType(e.target.value)}
                   >
                     <option value="">Select Department</option>
-                    <option value="Casual Leave">Casual Leave</option>
                     {decodedToken.role !== "3P" && (
                       <option value="Stores">Stores</option>
                     )}
