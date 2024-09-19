@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { CURRENT_STATUS } from "../../statusIndicator";
+import LoadingPage from "../LoadingPage";
 
-
-const LoginTextFeild = () => {
-
+const LoginTextFeild = ({ idRef }) => {
   const disableClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };
-  
+  const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
   const navigate = useNavigate();
   const [RFID, setRFID] = useState("");
   const [error, setError] = useState("");
@@ -19,6 +19,7 @@ const LoginTextFeild = () => {
     e.preventDefault(); // Prevent default form submission behavior
     if (RFID !== "") {
       try {
+        setStatus(CURRENT_STATUS.LOADING);
         console.log(RFID);
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/emp/login`,
@@ -32,6 +33,7 @@ const LoginTextFeild = () => {
           }
         );
 
+        setStatus(CURRENT_STATUS.SUCCESS);
         console.log(res.status);
         console.log(res.data.token);
         if (res.status === 200) {
@@ -58,46 +60,36 @@ const LoginTextFeild = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6 lg:px-8 ">
-      <div className="bg-white rounded-lg shadow-lg flex flex-col items-center p-6 w-full max-w-md">
-        <h2 className="text-black mb-6 text-2xl sm:text-3xl font-medium text-center">
-          Log In
-        </h2>
+  if (status === CURRENT_STATUS.LOADING) {
+    return <LoadingPage />;
+  }
+
+  return status === CURRENT_STATUS.LOADING ? (
+    <LoadingPage />
+  ) : (
+    <div className=" flex items-center justify-center  bg-gray-100 px-4 sm:px-6 lg:px-8 ">
+      <div className="bg-white rounded-lg shadow-lg flex    flex-col items-center p-6 w-full max-w-md">
         {error && <p className="error text-red-500 text-center">{error}</p>}
         <form className="w-full" onSubmit={handleLogin}>
           {" "}
           {/* Attach handleLogin to form submission */}
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm sm:text-base">
-              empId
-            </label>
             <input
               type="text"
               className="mt-1 p-2 w-full border border-gray-300 rounded-md "
               placeholder="empId"
               autoFocus
+              ref={idRef}
               value={RFID}
               onChange={(e) => setRFID(e.target.value)}
             />
           </div>
-          <div className="mt-4 text-center">
-            <p className="text-gray-700 text-sm">
-              Don't have an account?{" "}
-              <span
-                className="text-blue-500 cursor-pointer"
-                onClick={() => navigate("/Signup")}
-              >
-                Signup
-              </span>
-            </p>
-          </div>
-          <button
+          {/* <button
             type="submit"
             className="mt-4 p-2 bg-blue-500 text-white rounded-md"
           >
             Log In
-          </button>{" "}
+          </button>{" "} */}
           {/* Add a submit button */}
         </form>
       </div>

@@ -9,8 +9,6 @@ function LeaveApply({isPaternity}) {
       <Leaveform isPaternity={isPaternity}/>
       <LeaveDetailTable />
       </div>
-
- 
     </div>
   );
 }
