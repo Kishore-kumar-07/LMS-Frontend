@@ -96,6 +96,7 @@ function LeaveDetailTable() {
         }
       );
       const fetchedData = res.data;
+      console.log(fetchedData)
 
       const newData = [
         {

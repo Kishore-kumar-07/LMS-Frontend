@@ -12,6 +12,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import { CURRENT_STATUS } from "../../../statusIndicator";
+import { OrbitProgress } from "react-loading-indicators";
 
 const getMinDate = () => {
   const today = dayjs();
@@ -47,6 +49,8 @@ const Leaveform = ({ isPaternity }) => {
   const [fromSecondHalf, setFromSecondHalf] = useState(false);
   const [toSecondHalf, setToSecondHalf] = useState(false);
   const [today, setToday] = useState(dayjs().subtract(1, "day"));
+  const [lopStatus, setLopStatus] = useState(CURRENT_STATUS.IDEAL);
+
   // const [isAppliedLeave, setIsAppliedLeave] = useState(false);
 
   const token = document.cookie.split("=")[1];
@@ -79,13 +83,15 @@ const Leaveform = ({ isPaternity }) => {
     e.preventDefault();
     console.log("Cancelled!");
     setIsLOP(!isLOP);
+    setLopStatus(CURRENT_STATUS.IDEAL)
 
     setPopupVisible(!popupVisible);
   };
 
   const checkLeave = async () => {
-    console.log("Check Leave")
+    console.log("Check Leave");
     try {
+      setLopStatus(CURRENT_STATUS.LOADING)
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
         {
@@ -106,6 +112,8 @@ const Leaveform = ({ isPaternity }) => {
           },
         }
       );
+
+      setLopStatus(CURRENT_STATUS.SUCCESS)
 
       if (res.status === 202) {
         toast.error("Date is Already Applied");
@@ -151,7 +159,6 @@ const Leaveform = ({ isPaternity }) => {
     return adjustedDays;
   };
 
-
   var totalDays = calculateLeaveDays();
 
   const handleConfirm = async () => {
@@ -172,7 +179,7 @@ const Leaveform = ({ isPaternity }) => {
           leaveType: leaveType,
           from: {
             date: formatDate(fromDate),
-            firstHalf: fromFirstHalf,
+            firstHalf: fromDay,
             secondHalf: fromSecondHalf,
           },
           to: {
@@ -187,7 +194,7 @@ const Leaveform = ({ isPaternity }) => {
               ? summary.PL
               : summary.Paternity,
           reasonType: leaveReason,
-          reason:leaveReason === "Others"? leaveDescription : leaveReason,
+          reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: summary.LOP,
         },
         {
@@ -211,8 +218,6 @@ const Leaveform = ({ isPaternity }) => {
       var data = res.data;
       console.log(data.leave._id);
 
-      // sendLeaveEmail(data.leave._id, "True");
-
       console.log("data", res.data);
     } catch (error) {
       console.error("Error Leave Apply", error);
@@ -222,13 +227,8 @@ const Leaveform = ({ isPaternity }) => {
       // setIsLOP(!isLOP);
     }
   };
-  var fromDay =
-  !isHalfDayFrom? "FullDay"
-    : "Half Day"
-var toDay =
-  !isHalfDayTo
-    ? "FullDay"
-    : "Half day"
+  var fromDay = !isHalfDayFrom ? "FullDay" : "Half Day";
+  var toDay = !isHalfDayTo ? "FullDay" : "Half day";
   const sendLeaveEmail = async (objId, LOP) => {
     const emailContent = await render(
       <EmailTemplate
@@ -243,7 +243,9 @@ var toDay =
         imageUrl="https://www.gilbarco.com/us/sites/gilbarco.com.us/files/2022-07/gilbarco_logo.png"
         leaveId={objId}
         LOP={LOP}
-        leaveDescription={leaveReason === "Others"? leaveDescription : leaveReason}
+        leaveDescription={
+          leaveReason === "Others" ? leaveDescription : leaveReason
+        }
       />
     );
 
@@ -279,15 +281,12 @@ var toDay =
     }
   };
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if(leaveType === "Privilege Leave" && totalDays<3){
-         toast.warn("Privilege Leave must be minimum of 3 days");
-    }
-    else if (fromDate && toDate) {
+    if (leaveType === "Privilege Leave" && totalDays < 3) {
+      toast.warn("Privilege Leave must be minimum of 3 days");
+    } else if (fromDate && toDate) {
       setPopupVisible(true);
 
       // Use a function inside setState to ensure the latest state is used.
@@ -307,7 +306,8 @@ var toDay =
       fromDate: fromDate ? formatDate(fromDate) : "",
       toDate: toDate ? formatDate(toDate) : "",
       leaveReason,
-      leaveDescription:leaveReason === "Others"? leaveDescription : leaveReason,
+      leaveDescription:
+        leaveReason === "Others" ? leaveDescription : leaveReason,
       totalDays,
       halfDayInfo,
       leaveType,
@@ -550,7 +550,13 @@ var toDay =
             Leave Reason
           </label>
           <div className="flex gap-4 flex-wrap text-lg">
-            {['Personal', 'Medical', 'Peternity', 'Family Function',"Others"].map((reason) => (
+            {[
+              "Personal",
+              "Medical",
+              "Peternity",
+              "Family Function",
+              "Others",
+            ].map((reason) => (
               <label key={reason} className="flex items-center">
                 <input
                   type="radio"
@@ -580,8 +586,7 @@ var toDay =
             ></textarea>
           </div>
         )}
-        {fromDay}
-        {toDay}
+      
         <button
           type="submit"
           className="w-52 bg-blue-500 text-white p-3 rounded-md text-lg font-bold shadow-lg"
@@ -591,7 +596,7 @@ var toDay =
       </form>
 
       {/* Popup for Leave Details */}
-      {popupVisible && (
+      {popupVisible &&!(lopStatus === CURRENT_STATUS.SUCCESS) && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center overflow-x-auto">
             <div className="flex justify-between">
@@ -605,7 +610,12 @@ var toDay =
                 X
               </h3>
             </div>
-            <div className="w-full flex justify-center items-center">
+           {lopStatus === CURRENT_STATUS.LOADING ?
+           <div className="flex justify-center p-20">
+                        <OrbitProgress variant="track-disc" color="#078ebc" size="medium" text="Wait" textColor="" />
+           </div>
+ 
+             :<div className="w-full flex justify-center items-center">
               <table className="w-[90%] border-collapse text-lg border border-gray-300">
                 <thead>
                   {/* <tr>
@@ -663,15 +673,16 @@ var toDay =
                   )}
                 </tbody>
               </table>
-            </div>
+            </div>}
 
             <div className="pt-5 flex justify-center items-center">
-              <button
+           { lopStatus === CURRENT_STATUS.IDEAL &&<button
                 className="bg-green-500  w-[100px] rounded-md h-[40px]"
                 onClick={checkLeave}
               >
                 Confirm
               </button>
+}
             </div>
           </div>
         </div>
@@ -687,8 +698,11 @@ var toDay =
               : summary.Paternity
           }
           lopDays={summary.LOP}
+          setLopStatus = {setLopStatus}
           handleCancel={handleCancel}
           handleConfirm={handleConfirm}
+          status = {""}
+
         />
       )}
     </div>
