@@ -19,7 +19,7 @@ const LineChart = () => {
     datasets: [
       {
         label: "Home",
-        borderColor: "navy",
+        borderColor: "",
         pointRadius: 0,
         fill: true,
         backgroundColor: (context) => {
@@ -70,7 +70,7 @@ const LineChart = () => {
           display: false,
         },
         min: 0,
-        max: 80,
+        max: 90,
         ticks: {
           stepSize: 10,
           color: "green",

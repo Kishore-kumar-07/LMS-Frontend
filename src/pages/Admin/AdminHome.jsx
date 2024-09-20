@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import Sidenav from "./Sidenav";
-import Leaves from "./Leaves";
+import Employee from "./Employee";
 import Charts from "./Charts";
-import axios from "axios";
-import { MdMessage } from "react-icons/md";
-import { toast } from "react-toastify";
 import Card from "./Card";
 import PermissionTable from "./PermissionTable";
-import { jwtDecode } from "jwt-decode";
-import Circular from "./Circular";
-
+import {jwtDecode} from "jwt-decode";
 import Table from "./Table";
+import axios from "axios";
+import { FaSearch } from "react-icons/fa";
 
 const AdminHome = () => {
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
+  const [searchQuery, setSearchQuery] = useState('');
 
   const headers = [
     "Name",
@@ -29,7 +27,7 @@ const AdminHome = () => {
     "Action",
   ];
 
-  const [selected, setSelected] = useState("Today");
+  const [empAll, setEmpAll] = useState([]);
 
   const departments = [
     "Computer Science",
@@ -37,161 +35,70 @@ const AdminHome = () => {
     "Electrical Engineering",
     "Civil Engineering",
     "Biomedical Engineering",
-    // Add more departments as needed
   ];
-  const [inputValue, setInputValue] = useState(""); // Default value
-  const [filteredOptions, setFilteredOptions] = useState(departments);
-  const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
-
-    const filtered = departments.filter((dept) =>
-      dept.toLowerCase().includes(value.toLowerCase())
-    );
-
-    setFilteredOptions(filtered);
-    setShowDropdown(true); // Show dropdown on typing
-  };
-
-  const handleOptionClick = (option) => {
-    setInputValue(option);
-    setShowDropdown(false); // Hide dropdown after selection
-  };
-
-  const getButtonClass = (option) =>
-    `pl-2 pr-2 pt-1 pb-1 rounded-lg w-20px cursor-pointer transition-colors duration-300 ${
-      selected === option ? "bg-[#6d67e4] text-white" : "bg-transparent"
-    }`;
-
-  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReason, setSelectedReason] = useState(null);
   const rowsPerPage = 6; // Adjust as needed
-  const totalPages = Math.ceil(data.length / rowsPerPage);
 
   const [isRequest, setIsRequest] = useState(false);
   const [isPermission, setIsPermission] = useState(false);
 
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const dataToDisplay = data.slice(startIndex, endIndex);
+  useEffect(() => {
+    getAllEmployee();
+  }, []);
+
+  const getAllEmployee = async () => {
+    try {
+      const allEmp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/emp/getAll`,
+        { empId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("in admin home ", allEmp);
+      setEmpAll(allEmp.data);
+    } catch {
+      console.log("error");
+    }
+  };
+
+  // Function to handle search query change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Filter employees based on the search query
+  const filteredEmployees = empAll.filter((employee) =>
+    employee.empName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex w-screen h-screen">
       <Sidenav setIsRequest={setIsRequest} setIsPermission={setIsPermission} />
       <main className="flex flex-col pt-2 w-screen h-screen">
-        {/* <div className="w-full flex justify-between h-12 mb-5 items-center pl-5 pr-5 bg-slate-100 border-slate-950 rounded-lg">
-          <h2 className="font-semibold text-xl">Dashboard</h2>
-          <div>
-            <img src={profile} alt="profile" width={40} height={40} />
-          </div>
-        </div> */}
         <Nav />
-        <div className="w-full h-full ">
+        <div className="w-full h-full">
           <div className="w-full h-[98%] flex justify-between items-center">
-            <div className="w-[80%] h-full p-5 ">
+            <div className="w-[75%] h-full p-5 ">
               <div className="h-20px w-full flex justify-between gap-10 pb-5">
                 <div className="w-[48%]">
-                  {/* <label className="block text-gray-700 mb-1">Leave Type</label> */}
                   <select
                     className={`w-full border rounded-md p-2 focus:outline-none focus:ring `}
-                    // value={leaveType}
-                    // onChange={(e) => setLeaveType(e.target.value)}
                   >
                     <option value="">Select Department</option>
-                    {decodedToken.role !== "3P" && (
-                      <option value="Stores">Stores</option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Quality">Quality</option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Manufacturing Engineering">
-                        Manufacturing Engineering
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Facilities & Maintenance">
-                        Facilities & Maintenance
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Sourcing">Sourcing</option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Planning">
-                        Planning
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Customer Service">
-                       Customer Service
-                      </option>
-                    )}
-                     {decodedToken.role !== "3P" && (
-                      <option value="Finance">
-                        Finance
-                      </option>
-                    )}
-                     {decodedToken.role !== "3P" && (
-                      <option value="EHS">
-                        EHS
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="TACC Lab">
-                       TACC Lab
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Engineering">
-                       Engineering
-                      </option>
-                    )}
+                    {/* Add other department options based on the decoded token */}
                   </select>
-                  {/* {errors.leaveType && <p className="text-red-500 text-sm">{errors.leaveType}</p>} */}
-                </div>
-                <div className="h-[10%]  flex gap-5  border-2 solid p-1 radius-2px rounded-lg">
-                  <div
-                    className={getButtonClass("Today")}
-                    onClick={() => setSelected("Today")}
-                  >
-                    Today
-                  </div>
-                  <div
-                    className={getButtonClass("Weekly")}
-                    onClick={() => setSelected("Weekly")}
-                  >
-                    Weekly
-                  </div>
-                  <div
-                    className={getButtonClass("Month")}
-                    onClick={() => setSelected("Month")}
-                  >
-                    Monthly
-                  </div>
-                  <div
-                    className={getButtonClass("Year")}
-                    onClick={() => setSelected("Year")}
-                  >
-                    Yearly
-                  </div>
                 </div>
               </div>
-              <div className="w-full h-fit p-6 rounded-lg">
-                <div className="flex justify-between">
-                  <Card
-                    label="Total Leaves Requested"
-                    value="20"
-                    image="gmail"
-                  />
-                  <Card
-                    label="Total Leaves Granted"
-                    value="15"
-                    image="accept"
-                  />
+              <div className="w-full h-fit p-3 rounded-lg">
+                <div className="flex justify-between ">
+                  <Card label="Total Leaves Requested" value="20" image="gmail" />
+                  <Card label="Total Leaves Granted" value="15" image="accept" />
                   <Card label="Total Leaves Denied" value="5" image="cancel" />
                 </div>
               </div>
@@ -205,20 +112,37 @@ const AdminHome = () => {
                 </div>
               ) : (
                 <div>
-                  {" "}
                   <Charts />
                 </div>
               )}
             </div>
-            <div className="w-[20%] h-[100%] flex justify-center border-x-2 solid">
-              <Circular />
+            <div className="w-[25%] h-[100%] border-x-2 solid pt-3 p-3 flex flex-col gap-2">
+              <div className="flex gap-2 items-center">
+                <FaSearch />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search Employee"
+                  className="border-2 p-2 rounded-lg w-full"
+                />
+              </div>
+
+              {/* Render filtered employee list */}
+              {filteredEmployees.map((employee, index) => (
+                <Employee
+                  key={index}
+                  employeeName={employee.empName}
+                  employeeType={employee.role}
+                />
+              ))}
             </div>
           </div>
         </div>
 
         {/* Modal for displaying reason */}
       </main>
-      <div className="fixed bottom-0 left-0 w-full text-black  text-center text-sm p-2">
+      <div className="fixed bottom-0 left-0 w-full text-black text-center text-sm p-2">
         <a href="https://sece.ac.in/" target="_blank" rel="noopener noreferrer">
           Copyright©2024 Sri Eshwar College of Engineering
         </a>

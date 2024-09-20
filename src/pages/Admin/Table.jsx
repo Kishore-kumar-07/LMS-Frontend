@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 const Table = () => {
   const headers = [
     "S.No",
@@ -36,7 +37,7 @@ const Table = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReason, setSelectedReason] = useState(null);
 
-  const rowsPerPage = 6;
+  const rowsPerPage = 5;
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   useEffect(() => {
@@ -176,9 +177,9 @@ const Table = () => {
   const dataToDisplay = data.slice(startIndex, endIndex);
 
   return (
-    <div className="w-full bg-slate-100 p-3 border-slate-950 rounded-lg">
+    <div className="w-[100%] bg-slate-100 p-3 border-slate-950 rounded-lg">
       <ToastContainer />
-      <div className="w-full overflow-x-auto">
+      <div className="w-[100%] overflow-x-auto">
         <table className=" divide-y divide-gray-200 bg-white w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -192,35 +193,35 @@ const Table = () => {
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-200 ">
             {dataToDisplay.map((row, rowIndex) => (
-              <tr key={rowIndex + 1}>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
+              <tr key={rowIndex + 1} className="">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900 text-center">
                   {rowIndex + 1}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
                   {row.empName}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
                   {row.role}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
                   {row.leaveType}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
                   {row.from.date}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
                   {row.to.date}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
                   {row.numberOfDays}
                 </td>
                 <td
-                  className="px-4 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer"
-                  onClick={() => handleReasonClick(row.reason)}
+                  className="px-2 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer"
+                  
                 >
-                  <MdMessage />
+                  <MdMessage onClick={() => handleReasonClick(row.reason)}/>
                 </td>
                 <td
                   className={`px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 flex flex-row gap-4 ${
