@@ -50,7 +50,7 @@ const Leaveform = ({ isPaternity }) => {
   const [toSecondHalf, setToSecondHalf] = useState(false);
   const [today, setToday] = useState(dayjs().subtract(1, "day"));
   const [lopStatus, setLopStatus] = useState(CURRENT_STATUS.IDEAL);
-
+  const [confirmStatus, setConfirmStatus] = useState(CURRENT_STATUS.IDEAL);
   // const [isAppliedLeave, setIsAppliedLeave] = useState(false);
 
   const token = document.cookie.split("=")[1];
@@ -162,6 +162,8 @@ const Leaveform = ({ isPaternity }) => {
   var totalDays = calculateLeaveDays();
 
   const handleConfirm = async () => {
+
+
     try {
       console.log(
         "LOP",
@@ -170,6 +172,8 @@ const Leaveform = ({ isPaternity }) => {
         toFirstHalf,
         toSecondHalf
       );
+
+      setConfirmStatus(CURRENT_STATUS.LOADING)
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
@@ -204,6 +208,10 @@ const Leaveform = ({ isPaternity }) => {
           },
         }
       );
+
+
+      setConfirmStatus(CURRENT_STATUS.SUCCESS);
+
       console.log("ksdhfgiyrsgbrwnh");
       if (res.status === 201) {
         setIsLOP(!isLOP);
@@ -212,6 +220,8 @@ const Leaveform = ({ isPaternity }) => {
         console.log(res.data.leave._id);
         sendLeaveEmail(res.data.leave._id, "false");
       } else {
+        setConfirmStatus(CURRENT_STATUS.ERROR);
+
         toast.error("Error in requesting Leave");
       }
 
@@ -701,8 +711,7 @@ const Leaveform = ({ isPaternity }) => {
           setLopStatus = {setLopStatus}
           handleCancel={handleCancel}
           handleConfirm={handleConfirm}
-          status = {""}
-
+          status = {confirmStatus}
         />
       )}
     </div>

@@ -15,6 +15,8 @@ import PermissionEmailTemplate from "./PermissionTemplate";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useNavigate } from "react-router-dom";
 import PermissionDetailTable from "./PermissionDetailsTable";
+import { CURRENT_STATUS } from "../../../statusIndicator";
+import { OrbitProgress } from "react-loading-indicators";
 dayjs.extend(duration);
 
 const PermissionForm = () => {
@@ -25,7 +27,12 @@ const PermissionForm = () => {
   const [isPermission, setIsPermission] = useState(false);
   const [amPm, setAmPm] = useState("");
   const [classfalse, setclassfalse] = useState("");
+  const [errors, setErrors] = useState({ permissionDate: false, permissionReason: false }); // New state for errors
+  const [checkStatus,setCheckStatus] = useState(CURRENT_STATUS.IDEAL)
+  const [applyStatus,setApplyStatus] = useState(CURRENT_STATUS.IDEAL)
+
   const token = document.cookie.split("=")[1];
+
   console.log(token);
   const decodedToken = jwtDecode(token);
   console.log("in", decodedToken.empId);
@@ -99,6 +106,7 @@ const PermissionForm = () => {
           "Permession Sendttttt",
           typeof dayjs.duration(toTime.diff(fromTime)).asHours()
         );
+        setApplyStatus(CURRENT_STATUS.LOADING);
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/permission/apply`,
           {
@@ -116,6 +124,7 @@ const PermissionForm = () => {
             },
           }
         );
+        setApplyStatus(CURRENT_STATUS.SUCCESS);
         if (res.status === 201) {
           toast.success("Requested Permission Successfully");
           var data = res.data;
@@ -136,9 +145,18 @@ const PermissionForm = () => {
   };
 
   const checkPermission = async () => {
+    if (!validateFields()) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+
+
     if (fromTime && toTime && permissionDate) {
-      setclassfalse(() => "");
+      setclassfalse("");
       try {
+
+        setCheckStatus(CURRENT_STATUS.LOADING);
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/permission/checkPermission`,
           {
@@ -157,26 +175,33 @@ const PermissionForm = () => {
             },
           }
         );
-
-        console.log(res);
-
+        setCheckStatus(CURRENT_STATUS.SUCCESS);
         if (res.status === 202) {
           toast.error("The Permission Time is Already Applied");
         } else if (res.status === 203) {
           toast.warning("The Permission Time is Already Applied");
         } else {
-          console.log("in else");
           setIsPermission(!isPermission);
         }
       } catch (e) {
-        toast.error("Somthing went wrong");
+        toast.error("Something went wrong");
       }
     } else {
-      console.log("classfalse", classfalse);
-      setclassfalse(() => "false");
+      setclassfalse("false");
       setIsPermission(false);
     }
   };
+
+  const validateFields = () => {
+    const newErrors = {
+      permissionDate: permissionDate === null,
+      permissionReason: permissionReason.trim() === "",
+    };
+
+    setErrors(newErrors);
+    return !newErrors.permissionDate && !newErrors.permissionReason; // Return true if there are no errors
+  };
+
   console.log("checiittt", decodedToken.managerMail);
   const sendPermissionEmail = async (objId) => {
     const emailContent = await render(
@@ -234,44 +259,37 @@ const PermissionForm = () => {
         <h1 className="text-2xl text-center font-bold w-full mb-5">
           Permission Form
         </h1>
+
         <div className="w-[50%]">
           <label
             className={`${
-              classfalse !== "" ? "text-red-500" : "text-black"
+              errors.permissionDate ? "text-red-500" : "text-black"
             } block text-gray-700 mb-1 font-bold text-lg`}
           >
-            {classfalse === "" ? (
-              <div>Permission Date</div>
-            ) : (
-              <div>Enter the date field *</div>
-            )}
-
-            {/* <label className="block text-gray-700 mb-1 font-bold text-lg"> */}
-            {/* Permission Date */}
+            {errors.permissionDate ? "Please select a date *" : "Permission Date"}
           </label>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-  <DatePicker
-    value={permissionDate}
-    onChange={(newValue) => setPermissionDate(newValue)}
-    shouldDisableDate={(date) => {
-      // Get today's date and current month
-      const today = dayjs();
-      const currentMonth = today.month();
-
-      // Disable if the date is before today, not in the current month, or if it's a weekend (Saturday or Sunday)
-      const day = date.day();
-      return day === 0 || day === 6 || date.isBefore(today, 'day') || date.month() !== currentMonth;
-    }}
-    renderInput={(params) => (
-      <input
-        {...params.inputProps}
-        className="w-[150%] border rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500 -z-2"
-        placeholder="Select Permission Date"
-      />
-    )}
-    format="DD/MM/YYYY"
-  />
-</LocalizationProvider>
+            <DatePicker
+              value={permissionDate}
+              onChange={(newValue) => setPermissionDate(newValue)}
+              shouldDisableDate={(date) => {
+                const today = dayjs();
+                const currentMonth = today.month();
+                const day = date.day();
+                return day === 0 || day === 6 || date.isBefore(today, "day") || date.month() !== currentMonth;
+              }}
+              renderInput={(params) => (
+                <input
+                  {...params.inputProps}
+                  className={`w-[150%] border ${
+                    errors.permissionDate ? "border-red-500" : "border-gray-300"
+                  } rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500`}
+                  placeholder="Select Permission Date"
+                />
+              )}
+              format="DD/MM/YYYY"
+            />
+          </LocalizationProvider>
         </div>
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -281,7 +299,7 @@ const PermissionForm = () => {
               value={fromTime}
               onChange={(newValue) => {
                 setFromTime(newValue);
-                const amOrPm = newValue.format("A"); // This returns "AM" or "PM"
+                const amOrPm = newValue.format("A");
                 setAmPm(amOrPm);
               }}
               minTime={dayjs().set("hour", 9).set("minute", 0)}
@@ -293,27 +311,39 @@ const PermissionForm = () => {
               value={toTime}
               minTime={fromTime.add(1, "hour")}
               maxTime={fromTime.add(2, "hour")}
-              onChange={(newValue) => {
-                setToTime(newValue);
-              }}
+              onChange={(newValue) => setToTime(newValue)}
               renderInput={(params) => <TextField {...params} />}
             />
           </div>
         </LocalizationProvider>
 
-        <textarea
-          placeholder="Reason for permission"
-          className="resize-none border-2 w-[80%] p-2 "
-          rows={3}
-          onChange={(e) => setPermissionReason(e.target.value)}
-        />
+        <div className="w-[80%]">
+          <label
+            className={`${
+              errors.permissionReason ? "text-red-500" : "text-black"
+            } block text-gray-700 mb-1 font-bold text-lg`}
+          >
+            {errors.permissionReason ? "Reason is required *" : "Reason for permission"}
+          </label>
+          <textarea
+            placeholder="Reason for permission"
+            className={`resize-none border-2 w-[100%] p-2 ${
+              errors.permissionReason ? "border-red-500" : "border-gray-300"
+            }`}
+            rows={3}
+            onChange={(e) => setPermissionReason(e.target.value)}
+          />
+        </div>
 
-        <button
+        {checkStatus === CURRENT_STATUS.LOADING?
+           <div className="flex justify-center">
+                        <OrbitProgress variant="track-disc" color="#078ebc" size="medium" text="Wait" textColor="" />
+           </div>:<button
           className="p-3 bg-blue-500 rounded-lg w-40 "
           onClick={checkPermission}
         >
           Submit
-        </button>
+        </button>}
 
         {isPermission && (
           <ConfirmPermission
@@ -325,6 +355,7 @@ const PermissionForm = () => {
             employeeName={decodedToken.empName}
             onClose={setIsPermission}
             applyPermission={applyPermission}
+            status={applyStatus}
           />
         )}
       </div>
