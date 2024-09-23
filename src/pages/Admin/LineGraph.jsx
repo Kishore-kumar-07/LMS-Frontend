@@ -5,12 +5,12 @@ export default function LineGraph({color}) {
 
   const emptySeries = {
   series: [],
-  margin: { top: 10, right: 10, left: 25, bottom: 25 },
+  // margin: { top: 10, right: 10, left: 25, bottom: 25 },
   height: 150,
 };
 
   return (
-    <div className = "w-[50%]">
+    <div className = "w-full border border-[#c0c0c0] rounded-lg">
       <LineChart
       
       xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
@@ -26,7 +26,7 @@ export default function LineGraph({color}) {
           
         },
       ]}
-      height={200}
+      height={225}
     />
     </div>
   );

@@ -48,14 +48,18 @@ const Charts = () => {
     <div className=''>
               <div className="w-full h-fit p-1 rounded-lg mb-3 border border-[#c0c0c0]">
                 <div className="flex justify-evenly">
+                  <div>
                   <BarChart />
+                  </div>
                   {/* <DoughnutChart/> */}
+                  <div>
                   <DoughnutChart three_p = {three_p}  gvr = {gvr}/>
+                  </div>
                 </div>
               </div>
-              <div className="rounded-lg flex justify-between">
+              <div className="rounded-lg flex ">
                 <LineGraph />
-                <LineGraph />
+                {/* <LineGraph /> */}
               </div>
             </div>
   )
