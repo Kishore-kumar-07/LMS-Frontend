@@ -72,7 +72,7 @@ function EmployeeHome() {
           ""
         )}
       </div>
-      <div className=" w-full text-black  text-center text-sm p-2">
+   <div className="fixed bottom-0 left-0 w-full text-black  text-center text-sm p-2">
         <a href="https://sece.ac.in/" target="_blank" rel="noopener noreferrer">
           Copyright©2024 Sri Eshwar College of Engineering
         </a>
