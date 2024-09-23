@@ -10,8 +10,9 @@ const EmailTemplate = ({
   fromDay,
   toDay,
   leaveId,
-  LOP,
+  noOfLOP,
   leaveDescription,
+  totalLeave
 }) => (
   <Html>
     <Head />
@@ -43,18 +44,6 @@ const EmailTemplate = ({
           marginBottom: "20px",
         }}
       >
-        <tr>
-          <td
-            style={{
-              padding: "10px",
-              backgroundColor: "#f0f0f0",
-              fontWeight: "bold",
-            }}
-          >
-            LOP:
-          </td>
-          <td style={{ padding: "10px", backgroundColor: "#fff" }}>{LOP}</td>
-        </tr>
         <tr>
           <td
             style={{
@@ -103,6 +92,30 @@ const EmailTemplate = ({
               {toDay}
             </td>
           </td>
+        </tr>
+        <tr>
+          <td
+            style={{
+              padding: "10px",
+              backgroundColor: "#f0f0f0",
+              fontWeight: "bold",
+            }}
+          >
+            Total Leave:
+          </td>
+          <td style={{ padding: "10px", backgroundColor: "#fff" }}>{totalLeave}</td>
+        </tr>
+        <tr>
+          <td
+            style={{
+              padding: "10px",
+              backgroundColor: "#f0f0f0",
+              fontWeight: "bold",
+            }}
+          >
+            Number of LOP:
+          </td>
+          <td style={{ padding: "10px", backgroundColor: "#fff" }}>{noOfLOP}</td>
         </tr>
         <tr>
           <td

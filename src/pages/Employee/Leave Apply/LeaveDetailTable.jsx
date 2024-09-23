@@ -109,10 +109,10 @@ function LeaveDetailTable() {
         },
         {
           col1: "Eligibility",
-          col2: fetchedData.plDetails ? fetchedData.plDetails.eligibility : 0,
-          col3: fetchedData.clDetails ? fetchedData.clDetails.eligibility : 0,
+          col2: fetchedData.plDetails ? fetchedData.plDetails.credit : 0,
+          col3: fetchedData.clDetails ? fetchedData.clDetails.credit : 0,
           col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.eligibility
+            ? fetchedData.paternityLeave.credit
             : 0,
         },
         {

@@ -337,13 +337,17 @@ const PermissionForm = () => {
 
         {checkStatus === CURRENT_STATUS.LOADING?
            <div className="flex justify-center">
-                        <OrbitProgress variant="track-disc" color="#078ebc" size="medium" text="Wait" textColor="" />
-           </div>:<button
+                        <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait" textColor="" />
+           </div>:
+           <div>
+           <button
           className="p-3 bg-blue-500 rounded-lg w-40 "
           onClick={checkPermission}
         >
           Submit
-        </button>}
+        </button>
+        </div>
+        }
 
         {isPermission && (
           <ConfirmPermission
