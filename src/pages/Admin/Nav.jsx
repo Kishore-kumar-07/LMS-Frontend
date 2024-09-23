@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import GVR from '../../images/GVRLogo.png';
-import userImg from '../../images/profile.png'
+import userImg from '../../images/profile.png';
 import { useNavigate } from 'react-router-dom';
 
-
-function Nav() {
-
-
+function Nav({ setIsRequest, setIsPermission }) {
+  const [selected, setSelected] = useState('dashboard');
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userDetails, setUserDetails] = useState({});
@@ -16,18 +14,38 @@ function Nav() {
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
 
+  const [activeNav, setActiveNav] = useState('Dashboard');
+
+  const handleClick = (section) => {
+    setSelected(section);
+    if (section === 'dashboard') {
+      setIsRequest(false);
+      setIsPermission(false);
+    } else if (section === 'leaves') {
+      setIsRequest(true);
+      setIsPermission(false);
+    } else if (section === 'permission') {
+      setIsPermission(true);
+      setIsRequest(false);
+    }
+  };
+
   useEffect(() => {
     const getUserDetails = async () => {
       try {
-        const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/emp/getEmp`, { empId }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/emp/getEmp`,
+          { empId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
         setUserDetails(res.data[0]);
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        console.error('Error fetching user details:', error);
       }
     };
 
@@ -39,62 +57,114 @@ function Nav() {
   };
 
   const handleLogout = () => {
-    // Remove the JWT cookie by setting its expiration date to a past date
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     console.log('Logged out, cookie removed');
-    navigate("/");
-};
+    navigate('/');
+  };
 
   return (
     <>
-      <div className='w-[100%] flex justify-center items-center rounded-lg pl-5 pr-5'>
-        <div className='w-[100%] shadow-md flex justify-between items-center px-5 py-2 rounded-lg '>
-          <div className='text-xl font-semibold'>
-            <img src={GVR} alt="GVR Logo" className='h-10' />
+      <div className="w-[100%] flex justify-center items-center">
+        <div className="w-[100%] flex justify-between items-center px-5 py-2 shadow">
+          <div className="text-xl font-semibold">
+            <img src={GVR} alt="GVR Logo" className="h-10" />
           </div>
-          <div className='relative'>
-            <button className='flex justify-center items-center ' onClick={handleUserClick}>
-              <img src={userImg} alt="User" className='h-10' />
+          <div>
+            <ul className="flex gap-10 text-black">
+              <li className="relative">
+                <span
+                  onClick={() => {
+                    handleClick('dashboard');
+                    setActiveNav('Dashboard');
+                  }}
+                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
+                    activeNav === 'Dashboard'
+                      ? 'text-[#015E84] border-[#015E84]'
+                      : 'text-black border-transparent'
+                  }`}
+                >
+                  Dashboard
+                </span>
+              </li>
+
+              <li className="relative">
+                <span
+                  onClick={() => {
+                    handleClick('leaves');
+                    setActiveNav('Leaves');
+                  }}
+                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
+                    activeNav === 'Leaves'
+                      ? 'text-[#015E84] border-[#015E84]'
+                      : 'text-black border-transparent'
+                  }`}
+                >
+                  Leaves
+                </span>
+              </li>
+
+              <li className="relative">
+                <span
+                  onClick={() => {
+                    handleClick('permission');
+                    setActiveNav('Permissions');
+                  }}
+                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
+                    activeNav === 'Permissions'
+                      ? 'text-[#015E84] border-[#015E84]'
+                      : 'text-black border-transparent'
+                  }`}
+                >
+                  Permissions
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div className="relative">
+            <button
+              className="flex justify-center items-center"
+              onClick={handleUserClick}
+            >
+              <img src={userImg} alt="User" className="h-10" />
             </button>
             {isDropdownOpen && (
-              <div className='absolute right-0  w-fit bg-white shadow-lg rounded-lg p-4 z-50'>
-                <div className='flex flex-col justify-center items-center'>
-                  
-                  <h1 className='text-xl font-bold'>{userDetails.empName}</h1>
-                  <table className='text-left text-gray-700 mt-2'>
+              <div className="absolute right-0 w-fit bg-white shadow-lg rounded-lg p-4 z-50">
+                <div className="flex flex-col justify-center items-center">
+                  <h1 className="text-xl font-bold">{userDetails.empName}</h1>
+                  <table className="text-left text-gray-700 mt-2">
                     <tbody>
                       <tr>
-                        <td className='font-semibold'>Designation:</td>
+                        <td className="font-semibold">Designation:</td>
                         <td>{userDetails.designation}</td>
                       </tr>
                       <tr>
-                        <td className='font-semibold'>Reporting Manager:</td>
+                        <td className="font-semibold">Reporting Manager:</td>
                         <td>{userDetails.reportionManager}</td>
                       </tr>
                       <tr>
-                        <td className='font-semibold'>DOJ:</td>
+                        <td className="font-semibold">DOJ:</td>
                         <td>{userDetails.dateOfJoining}</td>
                       </tr>
                       <tr>
-                        <td className='font-semibold'>Function:</td>
+                        <td className="font-semibold">Function:</td>
                         <td>{userDetails.function}</td>
                       </tr>
                       <tr>
-                        <td className='font-semibold'>Department:</td>
+                        <td className="font-semibold">Department:</td>
                         <td>{userDetails.department}</td>
                       </tr>
                       <tr>
-                        <td className='font-semibold'>Band/Level:</td>
+                        <td className="font-semibold">Band/Level:</td>
                         <td>{userDetails.level}</td>
                       </tr>
                       <tr>
-                        <td className='font-semibold'>Location:</td>
+                        <td className="font-semibold">Location:</td>
                         <td>{userDetails.location}</td>
                       </tr>
                     </tbody>
                   </table>
                   <button
-                    className='mt-4 bg-red-500 text-white px-4 py-2 rounded-lg'
+                    className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
                     onClick={handleLogout}
                   >
                     Logout
@@ -106,9 +176,9 @@ function Nav() {
         </div>
       </div>
       {isDropdownOpen && (
-        <div 
-          className='fixed inset-0 bg-black opacity-50' 
-          onClick={() => setIsDropdownOpen(false)} 
+        <div
+          className="fixed inset-0 bg-black opacity-50"
+          onClick={() => setIsDropdownOpen(false)}
         />
       )}
     </>

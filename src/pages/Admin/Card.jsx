@@ -13,9 +13,9 @@ const Card = (props) => {
   const imageSrc = images[props.image];
 
   return (
-    <div className="w-[300px] h-[140px] flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3  ">
+    <div className="w-[250px] h-[120px] flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3  ">
       <div className="flex flex-row text-white">
-        <p className="text-2xl text-black">{props.label}</p>
+        <p className="text-xl text-black">{props.label}</p>
       </div>
 
       <div className="text-4xl font-semibold text-black">

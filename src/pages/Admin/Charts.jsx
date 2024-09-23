@@ -1,7 +1,7 @@
 import React from 'react'
 import BarChart from './BarChart'
 import DoughnutChart from './DoughnutChart'
-import LineChart from './LineChart'
+import LineGraph from './LineGraph'
 import { jwtDecode } from "jwt-decode";
 import { useEffect ,useState} from 'react';
 import axios from 'axios';
@@ -46,15 +46,16 @@ const Charts = () => {
 
   return (
     <div className=''>
-              <div className="w-full h-fit p-3 rounded-lg mb-3 border border-[#c0c0c0]">
-                <div className="flex justify-between">
+              <div className="w-full h-fit p-1 rounded-lg mb-3 border border-[#c0c0c0]">
+                <div className="flex justify-evenly">
                   <BarChart />
                   {/* <DoughnutChart/> */}
                   <DoughnutChart three_p = {three_p}  gvr = {gvr}/>
                 </div>
               </div>
-              <div className=" h-fit rounded-lg">
-                <LineChart />
+              <div className="rounded-lg flex justify-between">
+                <LineGraph />
+                <LineGraph />
               </div>
             </div>
   )
