@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import GVR from '../../images/GVRLogo.png';
 import userImg from '../../images/profile.png';
 import { useNavigate } from 'react-router-dom';
+import NotificationButton from './NotificationButton';
 
 function Nav({setOption}) {
 
@@ -53,12 +54,13 @@ function Nav({setOption}) {
 
   return (
     <>
-      <div className='w-full flex justify-center items-center  rounded-lg p-5'>
+      <div className='w-full   flex justify-center items-center mb-5  '>
         <div  style={{ boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)" }} className='w-[100%]  flex justify-between items-center px-5 py-2 rounded-lg '>
           <div onClick={()=>setOption("Home")} className='text-xl font-semibold cursor-pointer'>
             <img src={GVR} alt="GVR Logo" className='h-10' />
           </div>
-          <div className=''>
+          <div className='flex w-56 justify-between items-center'>
+            <NotificationButton/>
             <button className='flex justify-center items-center ' onClick={handleUserClick}>
               <img src={userImg} alt="User" className='h-10' />
             </button>

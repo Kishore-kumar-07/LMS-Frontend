@@ -1,12 +1,20 @@
 import React from 'react';
+import { CURRENT_STATUS } from '../../../statusIndicator';
+import { OrbitProgress } from 'react-loading-indicators';
 
-const LeaveNotification = ({ totalLeaveDays, casualLeaveDays, lopDays, handleCancel, handleConfirm }) => {
+const LeaveNotification = ({ totalLeaveDays, casualLeaveDays, lopDays, handleCancel, handleConfirm,status }) => {
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[25%]">
-        <h2 className="text-xl font-semibold mb-4 text-blue-500">Leave Application Summary</h2>
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">  
+   
+     <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+        <h2 className="text-lg font-semibold mb-4">Leave Application Summary</h2>
         
-        <table className="w-full text-left ">
+       {status === CURRENT_STATUS.LOADING?
+            <div className="flex justify-center p-20">
+            <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait" textColor="" />
+</div>
+     :<> <table className="w-full text-left">
+
           <tbody>
             <tr>
               <td className="py-4 font-semibold text-xl">Total Leave Days:</td>
@@ -39,6 +47,8 @@ const LeaveNotification = ({ totalLeaveDays, casualLeaveDays, lopDays, handleCan
             Confirm
           </button>
         </div>
+        </>
+        }
       </div>
     </div>
   );

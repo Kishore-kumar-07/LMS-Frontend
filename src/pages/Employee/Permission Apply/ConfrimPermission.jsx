@@ -1,4 +1,6 @@
 import React from "react";
+import { OrbitProgress } from "react-loading-indicators";
+import { CURRENT_STATUS } from "../../../statusIndicator";
 
 const ConfirmPermission = ({
   hours,
@@ -9,6 +11,7 @@ const ConfirmPermission = ({
   employeeName,
   onClose,
   applyPermission,
+  status
 }) => {
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
@@ -22,7 +25,10 @@ const ConfirmPermission = ({
             X
           </h2>
         </div>
-
+     {status===CURRENT_STATUS.LOADING?
+           <div className="flex justify-center p-20">
+                        <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait" textColor="" />
+           </div> :<>
         <table className="w-full border text-lg border-gray-300">
           <tbody>
             <tr className="border border-gray-300">
@@ -75,6 +81,7 @@ const ConfirmPermission = ({
             Confirm
           </button>
         </div>
+        </>}
       </div>
     </div>
   );

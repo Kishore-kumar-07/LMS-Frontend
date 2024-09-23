@@ -50,7 +50,7 @@ const Leaveform = ({ isPaternity }) => {
   const [toSecondHalf, setToSecondHalf] = useState(false);
   const [today, setToday] = useState(dayjs().subtract(1, "day"));
   const [lopStatus, setLopStatus] = useState(CURRENT_STATUS.IDEAL);
-
+  const [confirmStatus, setConfirmStatus] = useState(CURRENT_STATUS.IDEAL);
   // const [isAppliedLeave, setIsAppliedLeave] = useState(false);
 
   const token = document.cookie.split("=")[1];
@@ -162,6 +162,8 @@ const Leaveform = ({ isPaternity }) => {
   var totalDays = calculateLeaveDays();
 
   const handleConfirm = async () => {
+
+
     try {
       console.log(
         "LOP",
@@ -170,6 +172,8 @@ const Leaveform = ({ isPaternity }) => {
         toFirstHalf,
         toSecondHalf
       );
+
+      setConfirmStatus(CURRENT_STATUS.LOADING)
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
@@ -179,7 +183,7 @@ const Leaveform = ({ isPaternity }) => {
           leaveType: leaveType,
           from: {
             date: formatDate(fromDate),
-            firstHalf: fromDay,
+            firstHalf: fromFirstHalf,
             secondHalf: fromSecondHalf,
           },
           to: {
@@ -189,13 +193,18 @@ const Leaveform = ({ isPaternity }) => {
           },
           numberOfDays:
             leaveType === "Casual Leave"
-              ? summary.CL
+              ? summary.CL 
               : leaveType === "privilege Leave"
               ? summary.PL
               : summary.Paternity,
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: summary.LOP,
+          leaveDays:   leaveType === "Casual Leave"
+          ? summary.CL + summary.LOP
+          : leaveType === "privilege Leave"
+          ? summary.PL + summary.LOP
+          : summary.Paternity + summary.LOP,
         },
         {
           headers: {
@@ -204,14 +213,20 @@ const Leaveform = ({ isPaternity }) => {
           },
         }
       );
+
+
+      setConfirmStatus(CURRENT_STATUS.SUCCESS);
+
       console.log("ksdhfgiyrsgbrwnh");
       if (res.status === 201) {
         setIsLOP(!isLOP);
         setPopupVisible(!popupVisible);
         toast.success("Leave Appliled Successfully");
         console.log(res.data.leave._id);
-        sendLeaveEmail(res.data.leave._id, "false");
+        sendLeaveEmail(res.data.leave._id, summary.LOP);
       } else {
+        setConfirmStatus(CURRENT_STATUS.ERROR);
+
         toast.error("Error in requesting Leave");
       }
 
@@ -228,7 +243,8 @@ const Leaveform = ({ isPaternity }) => {
     }
   };
   var fromDay = !isHalfDayFrom ? "FullDay" : "Half Day";
-  var toDay = !isHalfDayTo ? "FullDay" : "Half day";
+  var toDay = formatDate(fromDate) == formatDate(toDate) ? fromDay : !isHalfDayTo ? "FullDay" : "Half day";
+
   const sendLeaveEmail = async (objId, LOP) => {
     const emailContent = await render(
       <EmailTemplate
@@ -242,7 +258,14 @@ const Leaveform = ({ isPaternity }) => {
         userName={decodedToken.empName}
         imageUrl="https://www.gilbarco.com/us/sites/gilbarco.com.us/files/2022-07/gilbarco_logo.png"
         leaveId={objId}
-        LOP={LOP}
+        noOfLOP={LOP}
+        totalLeave={
+          leaveType === "Casual Leave"
+          ? summary.CL + summary.LOP
+          : leaveType === "privilege Leave"
+          ? summary.PL + summary.LOP
+          : summary.Paternity + summary.LOP
+        }
         leaveDescription={
           leaveReason === "Others" ? leaveDescription : leaveReason
         }
@@ -370,6 +393,7 @@ const Leaveform = ({ isPaternity }) => {
             )}
           </div>
         </div>
+        
 
         {/* From Date */}
         <div className="w-full mb-4 flex flex-wrap gap-4 items-center  ">
@@ -498,12 +522,13 @@ const Leaveform = ({ isPaternity }) => {
               type="button"
               onClick={() => handleToDayTypeChange("full")}
               className={`p-2 rounded-md ${
-                !isHalfDayTo ? "bg-blue-500 text-white" : "bg-gray-200"
+                !isHalfDayTo || formatDate(toDate)==formatDate(fromDate) ? "bg-blue-500 text-white" : "bg-gray-200"
               }`}
             >
               Full Day
             </button>
-            <button
+           
+         { formatDate(toDate)!=formatDate(fromDate) && <button
               type="button"
               onClick={() => handleToDayTypeChange("half")}
               className={`p-2 rounded-md ${
@@ -511,11 +536,11 @@ const Leaveform = ({ isPaternity }) => {
               }`}
             >
               Half Day
-            </button>
+            </button>}
           </div>
 
           {/* First/Second Half To */}
-          {isHalfDayTo && (
+          {isHalfDayTo && formatDate(toDate)!=formatDate(fromDate) && (
             <div className="flex gap-4 mt-8 text-lg">
               {["First Half", "Second Half"].map((half) => (
                 <label key={half} className="flex items-center">
@@ -525,6 +550,7 @@ const Leaveform = ({ isPaternity }) => {
                     value={half}
                     checked={toHalf === half}
                     onChange={() => {
+                    
                       if (half === "First Half") {
                         setFromSecondHalf(true);
                         setToSecondHalf(false);
@@ -543,6 +569,8 @@ const Leaveform = ({ isPaternity }) => {
             </div>
           )}
         </div>
+
+     
 
         {/* Leave Reason */}
         <div className="w-full mb-4">
@@ -612,7 +640,7 @@ const Leaveform = ({ isPaternity }) => {
             </div>
            {lopStatus === CURRENT_STATUS.LOADING ?
            <div className="flex justify-center p-20">
-                        <OrbitProgress variant="track-disc" color="#078ebc" size="medium" text="Wait" textColor="" />
+                        <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait" textColor="" />
            </div>
  
              :<div className="w-full flex justify-center items-center">
@@ -701,8 +729,7 @@ const Leaveform = ({ isPaternity }) => {
           setLopStatus = {setLopStatus}
           handleCancel={handleCancel}
           handleConfirm={handleConfirm}
-          status = {""}
-
+          status = {confirmStatus}
         />
       )}
     </div>
