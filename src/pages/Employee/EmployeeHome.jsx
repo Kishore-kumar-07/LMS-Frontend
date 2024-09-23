@@ -25,6 +25,7 @@ function EmployeeHome() {
     <>
       <div className="h-screen w-screen bg-gradient-to-l from-[#DAF0FF] from-60% to-white flex flex-col">
         <Nav setOption={setOption}/>
+ 
         {option === "Home" ? (
           <div className="h-screen w-screen flex flex-col items-center justify-center">
             <div className="w-[90%] h-[90%] flex justify-around items-start ">
