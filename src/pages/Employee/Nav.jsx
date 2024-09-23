@@ -65,7 +65,7 @@ function Nav({setOption}) {
               <img src={userImg} alt="User" className='h-10' />
             </button>
             {isDropdownOpen && (
-              <div className='absolute right-0  bg-white shadow-lg rounded-lg p-4 z-50'>
+              <div className='absolute right-3 bg-white shadow-lg rounded-lg p-4 z-50'>
                 <div className='flex flex-col'>
                   
                   <h1 className='text-xl font-bold'>{userDetails.empName}</h1>

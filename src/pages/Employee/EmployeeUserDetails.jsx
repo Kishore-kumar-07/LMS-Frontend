@@ -47,15 +47,15 @@ function EmployeeUserDetails({setIsPaternity}) {
 
   return (
     <>
-      <div className="w-full flex flex-col gap-5 p-5">
-        <div className="w-full flex justify-center pr-48 items-center">
+      <div className="w-full flex flex-col gap-5 p-5 ">
+        <div className="w-full flex justify-center items-center">
           <img src={UserIcon} alt="USER PROFILE" className="w-20 " />
         </div>
-        <div className="flex items-center gap-3 text-3xl pr-48 font-bold justify-center">
+        <div className="flex items-center gap-3 text-3xl  font-bold justify-center">
           <h1>{decodedToken.empName}</h1>
         </div>
 
-        <table className="table-auto w-full mt-5 text-left">
+        <table className="table-auto w-full mt-2 text-left">
           <tbody>
             <tr className="">
               <td className="font-bold text-lg py-2 pr-6">Designation:</td>

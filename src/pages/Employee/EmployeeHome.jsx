@@ -28,11 +28,11 @@ function EmployeeHome() {
  
         {option === "Home" ? (
           <div className="h-screen w-screen flex flex-col items-center justify-center">
-            <div className="w-[90%] h-[90%] flex justify-around items-start ">
-              <div className="h-[60%]">
+            <div className="w-[90%] h-[90%] flex justify-around items-start p-5 ">
+              <div className="">
                 <EmployeeUserDetails setIsPaternity={setIsPaternity} />
               </div>
-              <div className="flex flex-col w-[40%] gap-3 text-lg font-semibold">
+              <div className="flex flex-col w-[40%] gap-3 text-lg font-semibold ">
                 <OptionsCard
                   name={"Pay Slip"}
                   icon={<FaPrint />}
@@ -72,7 +72,7 @@ function EmployeeHome() {
           ""
         )}
       </div>
-      <div className="fixed bottom-0 left-0 w-full text-black  text-center text-sm p-2">
+      <div className=" w-full text-black  text-center text-sm p-2">
         <a href="https://sece.ac.in/" target="_blank" rel="noopener noreferrer">
           Copyright©2024 Sri Eshwar College of Engineering
         </a>

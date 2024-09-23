@@ -11,7 +11,7 @@ const Table = () => {
   const headers = [
     "S.No",
     "Name",
-    "Employee-Type",
+    "Type",
     "Leave-Type",
     "From",
     "To",
@@ -37,7 +37,7 @@ const Table = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReason, setSelectedReason] = useState(null);
 
-  const rowsPerPage = 5;
+  const rowsPerPage = 6;
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   useEffect(() => {
@@ -66,10 +66,7 @@ const Table = () => {
 
       if (response.status === 200) {
         toast.success("Leave request approved successfully!");
-        // setLeaveStatus((prevStatus) => ({
-        //   ...prevStatus,
-        //   [selectedLeaveId]: 'Approved',
-        // }));
+        
       } else {
         toast.error("Failed to approve leave request.");
       }
@@ -84,10 +81,7 @@ const Table = () => {
   };
 
   const handleReject = async (id) => {
-    // if (!rejectionReason.trim()) {
-    //   toast.error("Please provide a rejection reason.");
-    //   return;
-    // }
+    
 
     try {
       const response = await axios.post(
@@ -159,7 +153,7 @@ const Table = () => {
           },
         }
       );
-      const filteredData = response.data;
+      const filteredData = response.data.reverse();
       setData(filteredData);
       // Initialize leaveStatus with data
       const statusMap = filteredData.reduce((acc, item) => {
@@ -177,7 +171,7 @@ const Table = () => {
   const dataToDisplay = data.slice(startIndex, endIndex);
 
   return (
-    <div className="w-[100%] bg-slate-100 p-3 border-slate-950 rounded-lg">
+    <div className="w-[100%]  p-3 border-slate-950 rounded-lg">
       <ToastContainer />
       <div className="w-[100%] overflow-x-auto">
         <table className=" divide-y divide-gray-200 bg-white w-full">
@@ -215,7 +209,7 @@ const Table = () => {
                   {row.to.date}
                 </td>
                 <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
-                  {row.numberOfDays}
+                  {row.leaveDays}
                 </td>
                 <td
                   className="px-2 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer"
@@ -226,10 +220,10 @@ const Table = () => {
                 <td
                   className={`px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 flex flex-row gap-4 ${
                     row.status === "Approved"
-                      ? "bg-green-200"
+                      ? "text-green-500"
                       : row.status === "Denied"
-                      ? "bg-red-200"
-                      : "bg-yellow-200"
+                      ? "text-red-500"
+                      : "text-yellow-500"
                   }`}
                 >
                   <span className="ml-2 text-lg font-semibold ">
