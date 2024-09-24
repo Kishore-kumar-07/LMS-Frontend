@@ -13,7 +13,6 @@ const PermissionTable = () => {
   const headers = [
     "S.No",
     "Name",
-    "Employee-Type",
     "Type",
     "From",
     "To",
@@ -125,43 +124,31 @@ const PermissionTable = () => {
           },
         }
       );
-      const filteredData = response.data;
+      const filteredData = response.data.reverse();
       setFilteredData(filteredData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  const handleSearch = (event) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-
-    if (query === "") {
-      setFilteredData(data);
-    } else {
-      setFilteredData(
-        data.filter((row) => row.empName.toLowerCase().startsWith(query))
-      );
-    }
-    setCurrentPage(1); // Reset to first page after filtering
-  };
+ 
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const dataToDisplay = filteredData.slice(startIndex, endIndex);
 
   return (
-    <div className="w-full bg-slate-100 p-3 border-slate-950 rounded-lg">
+    <div className="w-[100%] p-3 border-slate-950 rounded-lg">
       <ToastContainer />
 
-      <div className="w-full overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 bg-white">
+      <div className="w-[100%] overflow-x-auto">
+        <table className="w-full divide-y divide-gray-200 bg-white">
           <thead className="bg-gray-50">
             <tr>
               {headers.map((header, index) => (
                 <th
                   key={index}
-                  className="px-4 py-3 text-left font-bold text-sm text-gray-500 uppercase tracking-wider"
+                  className="px-5 py-3 text-left font-bold text-sm text-gray-500 uppercase tracking-wider  "
                 >
                   {header}
                 </th>
@@ -170,48 +157,45 @@ const PermissionTable = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {dataToDisplay.map((row, rowIndex) => (
-              <tr key={rowIndex + 1}>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900">
+              <tr key={rowIndex + 1} className = "h-fit">
+                <td className=" text-md font-medium  text-gray-900 px-2 py-2">
                   {startIndex + rowIndex + 1}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
                   {row.empName}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
                   {row.role}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900">
-                  Permission
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
                   {row.from}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
                   {row.to}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-md font-medium text-gray-900">
+                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900 justify-center items-center">
                   {row.hrs < 1
                     ? `${(row.hrs * 60).toFixed(2)} mins`
                     : `${row.hrs.toFixed(2)} hrs`}
                 </td>
                 <td
-                  className="px-4 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer"
+                  className="px-2 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer justify-center items-center"
                   onClick={() => handleReasonClick(row.reason)}
                 >
                   <MdMessage />
                 </td>
                 <td
-                  className={`px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 gap-4 ${
+                  className={`px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900 gap-4 ${
                     row.status === "Approved"
-                      ? "bg-green-200"
+                      ? "text-green-500"
                       : row.status === "Denied"
-                      ? "bg-red-200"
-                      : "bg-yellow-200"
+                      ? "text-red-500"
+                      : "text-yellow-500"
                   }`}
                 >
                   {row.status}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900  gap-4">
+                <td className="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900  gap-4">
                   <button
                     className="text-green-500 hover:text-green-700 m-2 text-2xl"
                     onClick={() => handleApprove(row._id)}

@@ -84,7 +84,7 @@ export const Circular = () => {
 
   return (
     <>
-      <div className="relative w-[100%] h-[85%]  overflow-y-auto">
+      <div className="relative h-[85%] overflow-y-auto">
         <div className="p-4 w-full flex-1">
           {messages.length === 0 ? (
             <p className="text-gray-600">No messages yet. Start a conversation!</p>

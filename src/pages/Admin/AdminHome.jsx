@@ -1,230 +1,252 @@
-import React, { useEffect, useState } from "react";
-import Nav from "./Nav";
-import Sidenav from "./Sidenav";
-import Leaves from "./Leaves";
-import Charts from "./Charts";
-import axios from "axios";
-import { MdMessage } from "react-icons/md";
-import { toast } from "react-toastify";
-import Card from "./Card";
-import PermissionTable from "./PermissionTable";
-import { jwtDecode } from "jwt-decode";
-import Circular from "./Circular";
+  import React, { useState, useEffect } from "react";
+  import Nav from "./Nav";
+  import Footer from "./Footer";
+  import Employee from "./Employee";
+  import Charts from "./Charts";
+  import Card from "./Card";
+  import PermissionTable from "./PermissionTable";
+  import { jwtDecode } from "jwt-decode";
+  import Table from "./Table";
+  import axios from "axios";
+  import { FaSearch } from "react-icons/fa";
+  import './admin.css';
+  import LineGraph from "./LineGraph";
+  import { Gauge } from '@mui/x-charts/Gauge';
 
-import Table from "./Table";
+  const AdminHome = () => {
+    const token = document.cookie.split("=")[1];
+    const decodedToken = jwtDecode(token);
+    const empId = decodedToken.empId;
+    const [searchQuery, setSearchQuery] = useState('');
 
-const AdminHome = () => {
-  const token = document.cookie.split("=")[1];
-  const decodedToken = jwtDecode(token);
-  const empId = decodedToken.empId;
+    const headers = [
+      "Name",
+      "Employee-Type",
+      "Leave-Type",
+      "From",
+      "To",
+      "Days",
+      "Reason",
+      "Action",
+    ];
 
-  const headers = [
-    "Name",
-    "Employee-Type",
-    "Leave-Type",
-    "From",
-    "To",
-    "Days",
-    "Reason",
-    "Action",
-  ];
+    const [empAll, setEmpAll] = useState([]);
+    const [cardData, setCardData] = useState([]);
+    const [TotalRequests, setTotalRequests] = useState(0);
+    const [pending, setpending] = useState(0);
+    const [approved, setApproved] = useState(0);
+    const [denied, setDenied] = useState(0);
 
-  const [selected, setSelected] = useState("Today");
+    const departments = [
+      "All Departments",
+      "Computer Science",
+      "Mechanical Engineering",
+      "Electrical Engineering",
+      "Civil Engineering",
+      "Biomedical Engineering",
+    ];
 
-  const departments = [
-    "Computer Science",
-    "Mechanical Engineering",
-    "Electrical Engineering",
-    "Civil Engineering",
-    "Biomedical Engineering",
-    // Add more departments as needed
-  ];
-  const [inputValue, setInputValue] = useState(""); // Default value
-  const [filteredOptions, setFilteredOptions] = useState(departments);
-  const [showDropdown, setShowDropdown] = useState(false);
+    
 
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
+    const [isRequest, setIsRequest] = useState(false);
+    const [isPermission, setIsPermission] = useState(false);
 
-    const filtered = departments.filter((dept) =>
-      dept.toLowerCase().includes(value.toLowerCase())
+    useEffect(() => {
+      getAllEmployee();
+      getCardData();
+    }, []);
+
+    const getAllEmployee = async () => {
+      try {
+        const allEmp = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/emp/getAll`,
+          { empId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("in admin home ", allEmp);
+        setEmpAll(allEmp.data);
+      } catch {
+        console.log("error");
+      }
+    };
+
+    const getCardData = async () => {
+      try {
+        const cardData = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/leave/cardData`,
+          
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("in admin home ", cardData.data );
+        setCardData(cardData.data);
+      } catch {
+        console.log("error");
+      }
+    };
+
+    
+
+    useEffect(()=>{
+      const total = cardData.length;
+      const approved = cardData.filter((row)=> row.status === "Approved").length;
+      const pending = cardData.filter((row)=> row.status === "Pending").length;
+      const denied = total-approved-pending;
+      setTotalRequests(total)
+      setApproved(approved)
+      setDenied(denied)
+      setpending(pending)
+    },[cardData])
+
+    // Function to handle search query change
+    const handleSearchChange = (e) => {
+      setSearchQuery(e.target.value);
+    };
+
+    // Filter employees based on the search query
+    const filteredEmployees = empAll.filter((employee) =>
+      employee.empName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    setFilteredOptions(filtered);
-    setShowDropdown(true); // Show dropdown on typing
-  };
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [selectedEmployeeIndex, setSelectedEmployeeIndex] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
 
-  const handleOptionClick = (option) => {
-    setInputValue(option);
-    setShowDropdown(false); // Hide dropdown after selection
-  };
+    const handleClick = (index) => {
+      
+        console.log("after clicking", index);
+        setSelectedEmployee(filteredEmployees[index]);
+        setSelectedEmployeeIndex(index);
+        setShowPopup(true);
+      
+    };
 
-  const getButtonClass = (option) =>
-    `pl-2 pr-2 pt-1 pb-1 rounded-lg w-20px cursor-pointer transition-colors duration-300 ${
-      selected === option ? "bg-[#6d67e4] text-white" : "bg-transparent"
-    }`;
+    const closePopup = () => {
+      setSelectedEmployee(null);
+      setSelectedEmployeeIndex(null);
+      setShowPopup(false);
+    };
 
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedReason, setSelectedReason] = useState(null);
-  const rowsPerPage = 6; // Adjust as needed
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-
-  const [isRequest, setIsRequest] = useState(false);
-  const [isPermission, setIsPermission] = useState(false);
-
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const dataToDisplay = data.slice(startIndex, endIndex);
-
-  return (
-    <div className="flex w-screen h-screen">
-      <Sidenav setIsRequest={setIsRequest} setIsPermission={setIsPermission} />
-      <main className="flex flex-col pt-2 w-screen h-screen">
-        {/* <div className="w-full flex justify-between h-12 mb-5 items-center pl-5 pr-5 bg-slate-100 border-slate-950 rounded-lg">
-          <h2 className="font-semibold text-xl">Dashboard</h2>
-          <div>
-            <img src={profile} alt="profile" width={40} height={40} />
-          </div>
-        </div> */}
-        <Nav />
-        <div className="w-full h-full ">
-          <div className="w-full h-[98%] flex justify-between items-center">
-            <div className="w-[80%] h-full p-5 ">
-              <div className="h-20px w-full flex justify-between gap-10 pb-5">
-                <div className="w-[48%]">
-                  {/* <label className="block text-gray-700 mb-1">Leave Type</label> */}
-                  <select
-                    className={`w-full border rounded-md p-2 focus:outline-none focus:ring `}
-                    // value={leaveType}
-                    // onChange={(e) => setLeaveType(e.target.value)}
-                  >
-                    <option value="">Select Department</option>
-                    {decodedToken.role !== "3P" && (
-                      <option value="Stores">Stores</option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Quality">Quality</option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Manufacturing Engineering">
-                        Manufacturing Engineering
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Facilities & Maintenance">
-                        Facilities & Maintenance
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Sourcing">Sourcing</option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Planning">
-                        Planning
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Customer Service">
-                       Customer Service
-                      </option>
-                    )}
-                     {decodedToken.role !== "3P" && (
-                      <option value="Finance">
-                        Finance
-                      </option>
-                    )}
-                     {decodedToken.role !== "3P" && (
-                      <option value="EHS">
-                        EHS
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="TACC Lab">
-                       TACC Lab
-                      </option>
-                    )}
-                    {decodedToken.role !== "3P" && (
-                      <option value="Engineering">
-                       Engineering
-                      </option>
-                    )}
-                  </select>
-                  {/* {errors.leaveType && <p className="text-red-500 text-sm">{errors.leaveType}</p>} */}
+    return (
+      <>
+        <div className="flex w-screen h-screen">
+          <main className="flex flex-col w-screen h-screen">
+            <Nav setIsRequest={setIsRequest} setIsPermission={setIsPermission} />
+            <div className="w-full h-full">
+              <div className="w-full h-[98%] flex justify-between items-center">
+                <div className="w-[75%] h-full p-5">
+                  <div className="h-20px w-full flex justify-between gap-10 pb-5">
+                    <div className="w-[30%]">
+                      <select
+                        className={`w-full border rounded-md p-2 focus:outline-none focus:ring `}
+                      >
+                        {departments.map((row)=>(
+                          <option>{row}</option>
+                        ))}
+                        
+                      </select>
+                    </div>
+                  </div>
+                  <div className="w-full h-fit p-3 rounded-lg">
+                    <div className="flex justify-between">
+                      <Card label="Total Leaves Requested" value={TotalRequests} image="gmail" />
+                      <Card label="Total Pending" value={pending} image="gmail" />
+                      <Card label="Total Leaves Granted" value={approved} image="accept" />
+                      <Card label="Total Leaves Denied" value={denied} image="cancel" />
+                    </div>
+                  </div>
+                  {isRequest ? (
+                    <div>
+                      <Table />
+                    </div>
+                  ) : isPermission ? (
+                    <div>
+                      <PermissionTable />
+                    </div>
+                  ) : (
+                    <div>
+                      <Charts />
+                    </div>
+                  )}
+                  {showPopup && selectedEmployee && (
+                    <div className=" fixed inset-0 flex items-center justify-center ">
+                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                      <div className="bg-white p-8 rounded-lg w-[50%]  relative">
+                        <button
+                          className="absolute top-2 right-2 text-black text-5xl"
+                          onClick={closePopup}
+                        >
+                          &times;
+                        </button>
+                        <h1 className="text-2xl font-bold mb-4">
+                          {selectedEmployee.empName}'s Details
+                        </h1>
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex">
+                            <h2 className="text-lg font-semibold">Type:</h2>
+                            <span className="ml-2">{selectedEmployee.role}</span>
+                          </div>
+                          <div className="flex">
+                            <h2 className="text-lg font-semibold">ID:</h2>
+                            <span className="ml-2">{selectedEmployee.empId}</span>
+                          </div>
+                        </div>
+                        <div className="flex gap-10 justify-center items-center" >
+                          <LineGraph colour_ = {"#4e79a7"}/>
+                          <Gauge width={200} height={200} value={60} startAngle={-90} endAngle={90} />
+                        </div>
+                        
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="h-[10%]  flex gap-5  border-2 solid p-1 radius-2px rounded-lg">
-                  <div
-                    className={getButtonClass("Today")}
-                    onClick={() => setSelected("Today")}
-                  >
-                    Today
+                <div className="w-[25%] h-[100%] border-x-2 solid pt-3 p-3 flex flex-col gap-2">
+                  <div className="flex gap-2 items-center">
+                    <FaSearch />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      placeholder="Search Employee"
+                      className="border-2 p-2 rounded-lg w-full"
+                    />
                   </div>
-                  <div
-                    className={getButtonClass("Weekly")}
-                    onClick={() => setSelected("Weekly")}
-                  >
-                    Weekly
-                  </div>
-                  <div
-                    className={getButtonClass("Month")}
-                    onClick={() => setSelected("Month")}
-                  >
-                    Monthly
-                  </div>
-                  <div
-                    className={getButtonClass("Year")}
-                    onClick={() => setSelected("Year")}
-                  >
-                    Yearly
-                  </div>
-                </div>
+
+                  {/* Render filtered employee list */}
+                  {filteredEmployees.map((employee, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleClick(index)}
+                      className={`rounded-lg hover:cursor-pointer ${
+                        selectedEmployeeIndex === index
+                          ? "bg-blue-100 shadow-lg"
+                          : ""
+                      }`}
+                    >
+                      <Employee
+                        employeeName={employee.empName}
+                        employeeType={employee.role}
+                      />
+                    </div>
+                  ))}
+                </div>       
               </div>
-              <div className="w-full h-fit p-6 rounded-lg">
-                <div className="flex justify-between">
-                  <Card
-                    label="Total Leaves Requested"
-                    value="20"
-                    image="gmail"
-                  />
-                  <Card
-                    label="Total Leaves Granted"
-                    value="15"
-                    image="accept"
-                  />
-                  <Card label="Total Leaves Denied" value="5" image="cancel" />
-                </div>
-              </div>
-              {isRequest ? (
-                <div>
-                  <Table />
-                </div>
-              ) : isPermission ? (
-                <div>
-                  <PermissionTable />
-                </div>
-              ) : (
-                <div>
-                  {" "}
-                  <Charts />
-                </div>
-              )}
             </div>
-            <div className="w-[20%] h-[100%] flex justify-center border-x-2 solid">
-              <Circular />
-            </div>
-          </div>
+          </main>
+          
         </div>
+        
+      </>
+    );
+  };
 
-        {/* Modal for displaying reason */}
-      </main>
-      <div className="fixed bottom-0 left-0 w-full text-black  text-center text-sm p-2">
-        <a href="https://sece.ac.in/" target="_blank" rel="noopener noreferrer">
-          Copyright©2024 Sri Eshwar College of Engineering
-        </a>
-      </div>
-    </div>
-  );
-};
-
-export default AdminHome;
+  export default AdminHome;

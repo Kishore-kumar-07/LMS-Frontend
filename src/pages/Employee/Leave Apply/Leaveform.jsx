@@ -289,9 +289,9 @@ const Leaveform = ({ isPaternity }) => {
 
       if (response.status === 200) {
         toast.success("Mail sent Successfully");
-        setTimeout(() => {
+        // setTimeout(() => {
           navigate("/thank-you");
-        }, 3000);
+        // }, 3000);
       } else {
         toast.error("Error in sending Email");
       }
@@ -359,7 +359,7 @@ const Leaveform = ({ isPaternity }) => {
     <div className="w-[70%] md:w-[50%] py-8  border-2 rounded-lg bg-gradient-to-l from-[#DAF0FF] to-white shadow-xl flex flex-col justify-center items-center">
       <ToastContainer />
       <h2 className="text-4xl font-bold mb-4 text-center text-blue-800">
-        Apply for Leave
+        Leave Form
       </h2>
       <form
         onSubmit={handleSubmit}
@@ -367,8 +367,8 @@ const Leaveform = ({ isPaternity }) => {
       >
         {/* Leave Type */}
         <div className="w-full mb-4">
-          <label className="block text-gray-700 mb-2 text-xl font-bold">
-            Leave Type
+          <label className="block mb-2 text-xl font-bold">
+            Leave Type *
           </label>
           <div className="flex gap-4 flex-wrap">
             {[
@@ -404,9 +404,9 @@ const Leaveform = ({ isPaternity }) => {
               } block mb-2 text-lg`}
             >
               {toDate && classfalse === "" ? (
-                <div>From Date </div>
+                <div className = "font-bold">From Date </div>
               ) : (
-                <div> enter the From Date*</div>
+                <div className = "font-bold"> From Date*</div>
               )}
             </label>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -492,9 +492,9 @@ const Leaveform = ({ isPaternity }) => {
               } block mb-2 text-lg`}
             >
               {toDate && classfalse === "" ? (
-                <div>To Date </div>
+                <div className = "font-bold">To Date </div>
               ) : (
-                <div> enter the To Date*</div>
+                <div className = "font-bold">To Date*</div>
               )}
             </label>{" "}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -574,8 +574,8 @@ const Leaveform = ({ isPaternity }) => {
 
         {/* Leave Reason */}
         <div className="w-full mb-4">
-          <label className="block text-gray-700 mb-2 text-lg">
-            Leave Reason
+          <label className="block font-bold mb-2 text-lg">
+            Leave Reason* 
           </label>
           <div className="flex gap-4 flex-wrap text-lg">
             {[
@@ -602,7 +602,7 @@ const Leaveform = ({ isPaternity }) => {
         {/* Leave Description */}
         {leaveReason === "Others" && (
           <div className="w-full flex items-center mb-3">
-            <label className="block text-gray-700 mb-2 text-lg mr-5">
+            <label className="block text-black font-bold mb-2 text-lg mr-5">
               Leave Description
             </label>
             <textarea
@@ -617,13 +617,14 @@ const Leaveform = ({ isPaternity }) => {
       
         <button
           type="submit"
-          className="w-52 bg-blue-500 text-white p-3 rounded-md text-lg font-bold shadow-lg"
+          className="w-44 bg-blue-500 text-white p-3 rounded-md text-xl font-bold shadow-lg"
         >
-          Submit Leave
+          Submit
         </button>
       </form>
 
       {/* Popup for Leave Details */}
+
       {popupVisible && !(lopStatus === CURRENT_STATUS.SUCCESS) && (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
