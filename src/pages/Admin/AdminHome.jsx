@@ -3,7 +3,7 @@ import Nav from "./Nav";
 import Footer from "./Footer";
 import Employee from "./Employee";
 import Charts from "./Charts";
-import Card from "./Card";
+// import Card from "./Card";
 import PermissionTable from "./PermissionTable";
 import { jwtDecode } from "jwt-decode";
 import Table from "./Table";
@@ -12,6 +12,7 @@ import { FaSearch } from "react-icons/fa";
 import "./admin.css";
 import LineGraph from "./LineGraph";
 import { Gauge } from "@mui/x-charts/Gauge";
+import Circular from "./Circular";
 
 const AdminHome = () => {
   const token = document.cookie.split("=")[1];
@@ -116,6 +117,7 @@ const AdminHome = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedEmployeeIndex, setSelectedEmployeeIndex] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [activeTab, setActiveTab] = useState("employee");
 
   const handleClick = (index) => {
     console.log("after clicking", index);
@@ -124,11 +126,17 @@ const AdminHome = () => {
     setShowPopup(true);
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   const closePopup = () => {
     setSelectedEmployee(null);
     setSelectedEmployeeIndex(null);
     setShowPopup(false);
   };
+
+  
 
   return (
     <>
@@ -136,7 +144,7 @@ const AdminHome = () => {
         <main className="flex flex-col w-screen h-screen">
           <Nav setIsRequest={setIsRequest} setIsPermission={setIsPermission} />
           <div className="w-full h-full">
-            <div className="w-full h-[98%] flex justify-between items-center">
+            <div className="w-full h-full flex justify-between items-center">
               <div className="w-[75%] h-full p-5">
                 <div className="h-20px w-full flex justify-between gap-10 pb-5">
                   <div className="w-[30%]">
@@ -171,7 +179,7 @@ const AdminHome = () => {
                 </div>
                 {isRequest ? (
                   <div>
-                    <Table />
+                    <Table cardData = {getCardData}/>
                   </div>
                 ) : isPermission ? (
                   <div>
@@ -219,35 +227,59 @@ const AdminHome = () => {
                   </div>
                 )}
               </div>
-              <div className="w-[25%] h-[100%] border-x-2 solid pt-3 p-3 flex flex-col gap-2">
-                <div className="flex gap-2 items-center">
-                  <FaSearch />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    placeholder="Search Employee"
-                    className="border-2 p-2 rounded-lg w-full"
-                  />
+
+              <div className="w-full sm:w-[25%] h-full border-x-2 solid pt-3 p-3 flex flex-col gap-2">
+                {/* Tab navigation */}
+                <div className="flex gap-4 w-full justify-around p-1 rounded-lg">
+                  <div
+                    className={`cursor-pointer py-2 px-4 transition-all duration-300 ${
+                      activeTab === "employee"
+                        ? "font-bold text-lg border-b-2 border-black"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => handleTabChange("employee")}
+                  >
+                    Employee
+                  </div>
+                  <div
+                    className={`cursor-pointer py-2 px-4 transition-all duration-300 ${
+                      activeTab === "circular"
+                        ? "font-bold text-lg border-b-2 border-black"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => handleTabChange("circular")}
+                  >
+                    Circular
+                  </div>
                 </div>
 
-                {/* Render filtered employee list */}
-                {filteredEmployees.map((employee, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleClick(index)}
-                    className={`rounded-lg hover:cursor-pointer ${
-                      selectedEmployeeIndex === index
-                        ? "bg-blue-100 shadow-lg"
-                        : ""
-                    }`}
-                  >
-                    <Employee
-                      employeeName={employee.empName}
-                      employeeType={employee.role}
-                    />
-                  </div>
-                ))}
+                {/* Content rendering with responsive behavior */}
+                <div className="overflow-y-auto h-[500px] sm:h-[600px]">
+                  {activeTab === "employee" ? (
+                    filteredEmployees.map((employee, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleClick(index)}
+                        className={`rounded-lg hover:cursor-pointer p-2 ${
+                          selectedEmployeeIndex === index
+                            ? "bg-blue-100 shadow-lg"
+                            : ""
+                        }`}
+                      >
+                        <div>
+                          <Employee
+                            employeeName={employee.empName}
+                            employeeType={employee.role}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="">
+                      <Circular />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -258,3 +290,28 @@ const AdminHome = () => {
 };
 
 export default AdminHome;
+
+const Card = (props) => {
+  // const imageSrc = images[props.image];
+
+  return (
+    <div className="w-[250px] h-[120px] flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3  ">
+      <div className="flex flex-row text-white">
+        <p className="text-xl text-black">{props.label}</p>
+      </div>
+
+      <div className="text-4xl font-semibold text-black">
+        <p>{props.value}</p>
+      </div>
+
+      {/* {imageSrc && (
+        <img
+          src={imageSrc}
+          alt={props.imageName}
+          className="absolute bottom-2 right-2 w-14 h-14 opacity-50"
+        />
+      )} */}
+    </div>
+    
+  );
+};
