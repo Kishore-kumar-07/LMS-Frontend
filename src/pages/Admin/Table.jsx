@@ -5,7 +5,8 @@ import { MdMessage, MdClose, MdEdit } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { CURRENT_STATUS } from "../../statusIndicator";
+import { BeatLoader } from "react-spinners";
 
 const Table = () => {
   const headers = [
@@ -36,6 +37,7 @@ const Table = () => {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReason, setSelectedReason] = useState(null);
+  const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const rowsPerPage = 6;
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -50,6 +52,7 @@ const Table = () => {
 
   const handleAccept = async (id) => {
     try {
+      setStatus(CURRENT_STATUS.LOADING);
       console.log("in try");
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/accept`,
@@ -64,9 +67,10 @@ const Table = () => {
         }
       );
 
+      setStatus(CURRENT_STATUS.IDEAL);
+
       if (response.status === 200) {
         toast.success("Leave request approved successfully!");
-        
       } else {
         toast.error("Failed to approve leave request.");
       }
@@ -81,9 +85,8 @@ const Table = () => {
   };
 
   const handleReject = async (id) => {
-    
-
     try {
+      setStatus(CURRENT_STATUS.LOADING);
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/deny`,
         {
@@ -96,7 +99,7 @@ const Table = () => {
           },
         }
       );
-
+      setStatus(CURRENT_STATUS.IDEAL);
       if (response.status === 200) {
         toast.success("Leave request declined successfully!");
         setLeaveStatus((prevStatus) => ({
@@ -211,11 +214,8 @@ const Table = () => {
                 <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
                   {row.leaveDays}
                 </td>
-                <td
-                  className="px-2 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer"
-                  
-                >
-                  <MdMessage onClick={() => handleReasonClick(row.reason)}/>
+                <td className="px-2 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer">
+                  <MdMessage onClick={() => handleReasonClick(row.reason)} />
                 </td>
                 <td
                   className={`px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 flex flex-row gap-4 ${
@@ -230,20 +230,33 @@ const Table = () => {
                     {row.status}
                   </span>
                 </td>
-                <td className=" text-sm font-medium  pr-4flex gap-3 ">
-                  <button
-                    className=" text-green-500 m-2 text-2xl"
-                    onClick={() => handleAccept(row._id)}
-                  >
-                    ☑
-                  </button>
-                  <button
-                    className="text-red-500 hover:text-red-700 text-2xl"
-                    onClick={() => handleReject(row._id)}
-                  >
-                    ☒
-                  </button>
-                </td>
+                {status === CURRENT_STATUS.LOADING ? (
+                  <td>
+                    <div className="w-full flex justify-center items-center py-2">
+                    <BeatLoader
+                      color="#66ded2"
+                      margin={1}
+                      size={7}
+                      speedMultiplier={1}
+                    />
+                  </div>
+                  </td>
+                ) : (
+                  <td className=" text-sm font-medium  pr-4flex gap-3 ">
+                    <button
+                      className=" text-green-500 m-2 text-2xl"
+                      onClick={() => handleAccept(row._id)}
+                    >
+                      ☑
+                    </button>
+                    <button
+                      className="text-red-500 hover:text-red-700 text-2xl"
+                      onClick={() => handleReject(row._id)}
+                    >
+                      ☒
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
