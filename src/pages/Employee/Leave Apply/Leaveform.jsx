@@ -624,97 +624,78 @@ const Leaveform = ({ isPaternity }) => {
       </form>
 
       {/* Popup for Leave Details */}
-      {popupVisible &&!(lopStatus === CURRENT_STATUS.SUCCESS) && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center overflow-x-auto">
-            <div className="flex justify-between">
-              <h3 className="text-xl font-bold mb-4 text-blue-800">
-                Leave Details
-              </h3>
-              <h3
-                className="text-xl font-bold mb-4 text-red-500 cursor-pointer"
-                onClick={handlePopupClose}
-              >
-                X
-              </h3>
-            </div>
-           {lopStatus === CURRENT_STATUS.LOADING ?
-           <div className="flex justify-center p-20">
-                        <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait" textColor="" />
-           </div>
- 
-             :<div className="w-full flex justify-center items-center">
-              <table className="w-[90%] border-collapse text-lg border border-gray-300">
-                <thead>
-                  {/* <tr>
-                    <th className="border border-gray-300 p-2 text-left">
-                      Field
-                    </th>
-                    <th className="border border-gray-300 p-2 text-left">
-                      Value
-                    </th>
-                  </tr> */}
-                </thead>
-                <tbody>
-                  {/* Display Leave Details */}
-                  <tr>
-                    <td className="border  border-gray-300 p-2">Leave Type</td>
-                    <td className="border border-gray-300 p-2">
-                      {leaveDetails.leaveType}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">From Date</td>
-                    <td className="border border-gray-300 p-2">
-                      {leaveDetails.fromDate}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">To Date</td>
-                    <td className="border border-gray-300 p-2">
-                      {leaveDetails.toDate}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">
-                      Number of Days
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {leaveDetails.totalDays}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Leave Reason</td>
-                    <td className="border border-gray-300 p-2">
-                      {leaveDetails.leaveReason}
-                    </td>
-                  </tr>
-                  {leaveDetails.leaveDescription && (
-                    <tr>
-                      <td className="border border-gray-300 p-2">
-                        Leave Description
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.leaveDescription}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>}
+      {popupVisible && !(lopStatus === CURRENT_STATUS.SUCCESS) && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold text-blue-800">Leave Details</h3>
+        <button
+          className="text-red-500 text-xl font-bold hover:text-red-700 transition-colors"
+          onClick={handlePopupClose}
+        >
+          X
+        </button>
+      </div>
 
-            <div className="pt-5 flex justify-center items-center">
-           { lopStatus === CURRENT_STATUS.IDEAL &&<button
-                className="bg-green-500  w-[100px] rounded-md h-[40px]"
-                onClick={checkLeave}
-              >
-                Confirm
-              </button>
-}
-            </div>
-          </div>
+      {lopStatus === CURRENT_STATUS.LOADING ? (
+        <div className="flex justify-center p-20">
+          <OrbitProgress
+            variant="track-disc"
+            color="#078ebc"
+            size="small"
+            text="Wait"
+            textColor=""
+          />
+        </div>
+      ) : (
+        <div className="w-full flex justify-center items-center">
+          <table className="w-[90%] text-left text-lg border-collapse border border-gray-300">
+            <tbody>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">Leave Type</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.leaveType}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">From Date</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.fromDate}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">To Date</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.toDate}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">Number of Days</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.totalDays}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">Leave Reason</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.leaveReason}</td>
+              </tr>
+              {leaveDetails.leaveDescription && (
+                <tr>
+                  <td className="border border-gray-300 p-2 font-semibold text-gray-600">Leave Description</td>
+                  <td className="border border-gray-300 p-2">{leaveDetails.leaveDescription}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
+
+      <div className="pt-5 flex justify-center items-center">
+        {lopStatus === CURRENT_STATUS.IDEAL && (
+          <button
+            className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
+            onClick={checkLeave}
+          >
+            Confirm
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
       {isLOP && (
         <LeaveNotification
           totalLeaveDays={totalDays}
