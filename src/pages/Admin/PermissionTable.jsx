@@ -6,8 +6,9 @@ import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import { IoMdSearch } from "react-icons/io";
 import { MdArrowDropDown } from "react-icons/md";
-
+import { BeatLoader } from "react-spinners";
 import "react-toastify/dist/ReactToastify.css";
+import { CURRENT_STATUS } from "../../statusIndicator";
 
 const PermissionTable = () => {
   const headers = [
@@ -36,6 +37,7 @@ const PermissionTable = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("All");
+  const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const rowsPerPage = 6; // Adjust as needed
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -46,6 +48,7 @@ const PermissionTable = () => {
 
   const handleApprove = async (id) => {
     try {
+      setStatus(CURRENT_STATUS.LOADING);
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/permission/accept`,
         {
@@ -59,6 +62,7 @@ const PermissionTable = () => {
         }
       );
 
+      setStatus(CURRENT_STATUS.SUCCESS);
       if (response.status === 200) {
         toast.success(`Permission request Approved successfully!`);
         getData();
@@ -72,6 +76,7 @@ const PermissionTable = () => {
 
   const handleReject = async (id) => {
     try {
+      setStatus(CURRENT_STATUS.LOADING);
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/permission/deny`,
         {
@@ -84,6 +89,7 @@ const PermissionTable = () => {
           },
         }
       );
+      setStatus(CURRENT_STATUS.SUCCESS);
 
       if (response.status === 200) {
         toast.error(`Permission request Rejected successfully!`);
@@ -131,8 +137,6 @@ const PermissionTable = () => {
     }
   };
 
- 
-
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const dataToDisplay = filteredData.slice(startIndex, endIndex);
@@ -157,7 +161,7 @@ const PermissionTable = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {dataToDisplay.map((row, rowIndex) => (
-              <tr key={rowIndex + 1} className = "h-fit">
+              <tr key={rowIndex + 1} className="h-fit">
                 <td className=" text-md font-medium  text-gray-900 px-2 py-2">
                   {startIndex + rowIndex + 1}
                 </td>
@@ -195,20 +199,34 @@ const PermissionTable = () => {
                 >
                   {row.status}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900  gap-4">
-                  <button
-                    className="text-green-500 hover:text-green-700 m-2 text-2xl"
-                    onClick={() => handleApprove(row._id)}
-                  >
-                    ☑
-                  </button>
-                  <button
-                    className="text-red-500 hover:text-red-700 text-2xl"
-                    onClick={() => handleReject(row._id)}
-                  >
-                    ☒
-                  </button>
-                </td>
+                {status === CURRENT_STATUS.LOADING ? (
+                  <td>
+                    {" "}
+                    <div className="w-full flex justify-center items-center py-2">
+                      <BeatLoader
+                        color="#66ded2"
+                        margin={1}
+                        size={7}
+                        speedMultiplier={1}
+                      />
+                    </div>
+                  </td>
+                ) : (
+                  <td className="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900  gap-4">
+                    <button
+                      className="text-green-500 hover:text-green-700 m-2 text-2xl"
+                      onClick={() => handleApprove(row._id)}
+                    >
+                      ☑
+                    </button>
+                    <button
+                      className="text-red-500 hover:text-red-700 text-2xl"
+                      onClick={() => handleReject(row._id)}
+                    >
+                      ☒
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -238,10 +256,8 @@ const Popup = ({ isOpen, onClose, content }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
-      {/* Popup Content */}
       <div className="bg-white text-black p-6 rounded-lg shadow-lg z-10 max-w-lg w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-900">Details</h2>
@@ -268,10 +284,8 @@ const EditPopup = ({ isOpen, onClose, row, onStatusChange }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
-      {/* Popup Content */}
       <div className="bg-white text-black p-6 rounded-lg shadow-lg z-10 max-w-lg w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-900">Edit Permission</h2>

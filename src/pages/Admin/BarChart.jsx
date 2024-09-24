@@ -7,9 +7,9 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -29,9 +29,9 @@ const BarChart = () => {
     labels: [], // To hold the days or departments
     datasets: [
       {
-        label: 'Leaves',
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        label: "Leaves",
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
         data: [], // To hold the number of leaves per day/department
       },
@@ -61,27 +61,29 @@ const BarChart = () => {
 
       // Filter and process the leaves
       const today = new Date();
-      console.log(today)
+      console.log(today);
       const lastWeek = new Date();
       lastWeek.setDate(today.getDate() - 7);
 
-      const filteredLeaves = weekDataResponse.data.filter(leave => {
+      const filteredLeaves = weekDataResponse.data.filter((leave) => {
         const leaveDate = new Date(leave.today);
-        console.log("leave date is ",leaveDate)
+        console.log("leave date is ", leaveDate);
         return leaveDate >= lastWeek && leaveDate <= today;
       });
 
       // Group leaves by date or department (for now, grouping by date)
       const leaveCountByDay = {};
-      console.log(filteredLeaves)
-      filteredLeaves.forEach(leave => {
+      console.log(filteredLeaves);
+      filteredLeaves.forEach((leave) => {
         const leaveDateObj = new Date(leave.today);
-        const leaveDate = leaveDateObj.toLocaleString('en-US', { weekday: 'short' }) + ' ' +
-                    leaveDateObj.toLocaleString('en-US', { month: 'short' }) + ' ' +
-                    leaveDateObj.getDate() + ' ' +
-                    leaveDateObj.getFullYear();
-         
-         console.log(leaveDate)
+        const leaveDate =
+          leaveDateObj.toLocaleString("en-US", { month: "short" }) +
+          " " +
+          leaveDateObj.getDate() +
+          " " +
+          leaveDateObj.getFullYear();
+
+        console.log(leaveDate);
         if (leaveCountByDay[leaveDate]) {
           leaveCountByDay[leaveDate]++;
         } else {
@@ -92,17 +94,17 @@ const BarChart = () => {
       // Prepare labels and data for the chart
       const labels = Object.keys(leaveCountByDay);
       const leaveCounts = Object.values(leaveCountByDay);
-      console.log(labels)
-      console.log(leaveCounts)
+      console.log(labels);
+      console.log(leaveCounts);
 
       // Update the chart data
       setChartData({
         labels,
         datasets: [
           {
-            label: 'Leaves per Day',
-            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            label: "Leaves per Day",
+            backgroundColor: "rgba(75, 192, 192, 0.6)",
+            borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
             data: leaveCounts,
           },
