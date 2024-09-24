@@ -11,7 +11,7 @@ const LeaveNotification = ({ totalLeaveDays, casualLeaveDays, lopDays, handleCan
         
        {status === CURRENT_STATUS.LOADING?
             <div className="flex justify-center p-20">
-            <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait" textColor="" />
+            <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait"  />
 </div>
      :<> <table className="w-full text-left">
 

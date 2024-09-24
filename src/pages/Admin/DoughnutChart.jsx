@@ -4,8 +4,6 @@ import { Chart, ArcElement, Tooltip, Legend, Title } from "chart.js";
 
 const DoughnutChart = ({three_p , gvr}) => {
 
-  
-
   Chart.register(ArcElement, Tooltip, Legend, Title);
   Chart.defaults.plugins.tooltip.backgroundColor = "";
   Chart.defaults.plugins.legend.position = "right";

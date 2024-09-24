@@ -32,13 +32,13 @@
 
     const [empAll, setEmpAll] = useState([]);
     const [cardData, setCardData] = useState([]);
-    const [weekData, setWeekData] = useState([]);
     const [TotalRequests, setTotalRequests] = useState(0);
     const [pending, setpending] = useState(0);
     const [approved, setApproved] = useState(0);
     const [denied, setDenied] = useState(0);
 
     const departments = [
+      "All Departments",
       "Computer Science",
       "Mechanical Engineering",
       "Electrical Engineering",
@@ -46,9 +46,7 @@
       "Biomedical Engineering",
     ];
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedReason, setSelectedReason] = useState(null);
-    const rowsPerPage = 6; // Adjust as needed
+    
 
     const [isRequest, setIsRequest] = useState(false);
     const [isPermission, setIsPermission] = useState(false);
@@ -56,7 +54,6 @@
     useEffect(() => {
       getAllEmployee();
       getCardData();
-      getBarData();
     }, []);
 
     const getAllEmployee = async () => {
@@ -97,24 +94,7 @@
       }
     };
 
-    const getBarData = async () => {
-      try {
-        const weekData = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/leave/weekData`,
-          
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("in admin home ", weekData );
-        setWeekData(weekData.data);
-      } catch {
-        console.log("error");
-      }
-    };
+    
 
     useEffect(()=>{
       const total = cardData.length;
@@ -165,12 +145,14 @@
               <div className="w-full h-[98%] flex justify-between items-center">
                 <div className="w-[75%] h-full p-5">
                   <div className="h-20px w-full flex justify-between gap-10 pb-5">
-                    <div className="w-[48%]">
+                    <div className="w-[30%]">
                       <select
                         className={`w-full border rounded-md p-2 focus:outline-none focus:ring `}
                       >
-                        <option value="">Select Department</option>
-                        {/* Add other department options based on the decoded token */}
+                        {departments.map((row)=>(
+                          <option>{row}</option>
+                        ))}
+                        
                       </select>
                     </div>
                   </div>
