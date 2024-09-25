@@ -8,7 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { BeatLoader } from "react-spinners";
 
-const Table = () => {
+
+const Table = ({cardData}) => {
   const headers = [
     "S.No",
     "Name",
@@ -21,6 +22,8 @@ const Table = () => {
     "Action",
     "Edit",
   ];
+
+  
 
   const [isActionPopupOpen, setActionPopupOpen] = useState(false);
   const [isReasonPopupOpen, setReasonPopupOpen] = useState(false);
@@ -70,13 +73,16 @@ const Table = () => {
       setStatus(CURRENT_STATUS.IDEAL);
 
       if (response.status === 200) {
+        
         toast.success("Leave request approved successfully!");
       } else {
         toast.error("Failed to approve leave request.");
       }
 
       getData();
+      cardData();
     } catch (error) {
+      setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error accepting leave:", error);
       toast.error("Failed to send request");
     }
@@ -111,9 +117,11 @@ const Table = () => {
       }
 
       getData();
+      cardData();
       setReasonPopupOpen(false);
       setActionPopupOpen(false);
     } catch (error) {
+      setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error rejecting leave:", error);
       toast.error("Failed to send request");
     }

@@ -4,11 +4,14 @@ import { jwtDecode } from 'jwt-decode';
 import GVR from '../../images/GVRLogo.png';
 import userImg from '../../images/profile.png';
 import { useNavigate } from 'react-router-dom';
+import { FaPaperPlane } from "react-icons/fa";
+
 
 function Nav({ setIsRequest, setIsPermission }) {
   const [selected, setSelected] = useState('dashboard');
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCircular, setIsCircular] = useState(false);
   const [userDetails, setUserDetails] = useState({});
   const token = document.cookie.split('=')[1];
   const decodedToken = jwtDecode(token);
@@ -56,6 +59,10 @@ function Nav({ setIsRequest, setIsPermission }) {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const handleCircularClick = () =>{
+    setIsCircular(!isCircular);
+  }
+
   const handleLogout = () => {
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     console.log('Logged out, cookie removed');
@@ -65,7 +72,7 @@ function Nav({ setIsRequest, setIsPermission }) {
   return (
     <>
       <div className="w-[100%] flex justify-center items-center">
-        <div className="w-[100%] flex justify-between items-center px-5 py-2 shadow">
+        <div className="w-[100%] flex justify-between items-center px-10 py-2 shadow">
           <div className="text-xl font-semibold">
             <img src={GVR} alt="GVR Logo" className="h-10" />
           </div>
@@ -120,7 +127,8 @@ function Nav({ setIsRequest, setIsPermission }) {
               </li>
             </ul>
           </div>
-          <div className="relative">
+          <div className="flex ">
+            
             <button
               className="flex justify-center items-center"
               onClick={handleUserClick}
@@ -172,6 +180,8 @@ function Nav({ setIsRequest, setIsPermission }) {
                 </div>
               </div>
             )}
+
+            
           </div>
         </div>
       </div>

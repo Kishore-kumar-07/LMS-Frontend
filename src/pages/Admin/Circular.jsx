@@ -84,16 +84,16 @@ export const Circular = () => {
 
   return (
     <>
-      <div className="relative h-[85%] overflow-y-auto">
-        <div className="p-4 w-full flex-1">
+      <div className="">
+        <div className="w-full ">
           {messages.length === 0 ? (
             <p className="text-gray-600">No messages yet. Start a conversation!</p>
           ) : (
-            <ul className="w-full">
+            <ul className="w-full flex flex-col gap-1 overflow-y-hidden">
               {messages.map((msg, index) => (
                 <li
                   key={index}
-                  className="bg-gray-100 p-2 rounded-md m-2 cursor-pointer"
+                  className="border border-[#c0c0c0] p-2 rounded-md m-2 cursor-pointer"
                   onClick={() => handleMessageClick(msg)}
                 >
                   <div className="flex flex-col gap-3">
