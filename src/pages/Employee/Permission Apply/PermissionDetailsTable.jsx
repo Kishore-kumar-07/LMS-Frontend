@@ -58,7 +58,7 @@ const PermissionDetailTable = () => {
               </tr>
               <tr className="hover:bg-gray-50 transition-colors">
                 <td className="py-4 px-6 border-b border-gray-200 text-gray-600 font-bold  text-lg  text-left">
-                  Permission Avalied
+                  Permission Availed
                 </td>
                 <td className="py-4 px-6 border-b border-gray-200 text-gray-700  text-lg  text-center">
                   {userDetails.permissionAvailed}

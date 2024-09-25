@@ -60,18 +60,7 @@ function LeaveDetailTable() {
       col3: 0,
       col4: 0,
     },
-    {
-      col1: "Availed(Including future month leave availed)",
-      col2: 0,
-      col3: 0,
-      col4: 0,
-    },
-    {
-      col1: "Closing Balance(Including future month leave availed)",
-      col2: 0,
-      col3: 0,
-      col4: 0,
-    },
+  
   ]);
 
   const token = document.cookie.split("=")[1];
@@ -177,26 +166,26 @@ function LeaveDetailTable() {
             ? fetchedData.paternityLeave.carryForward
             : 0,
         },
-        {
-          col1: "Availed(Including future month leave availed)",
-          col2: fetchedData.plDetails ? fetchedData.plDetails.futureAvailed : 0,
-          col3: fetchedData.clDetails ? fetchedData.clDetails.futureAvailed : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.futureAvailed
-            : 0,
-        },
-        {
-          col1: "Closing Balance(Including future month leave availed)",
-          col2: fetchedData.plDetails
-            ? fetchedData.plDetails.futureClosingBalance
-            : 0,
-          col3: fetchedData.clDetails
-            ? fetchedData.clDetails.futureClosingBalance
-            : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.futureClosingBalance
-            : 0,
-        },
+        // {
+        //   col1: "Availed(Including future month leave availed)",
+        //   col2: fetchedData.plDetails ? fetchedData.plDetails.futureAvailed : 0,
+        //   col3: fetchedData.clDetails ? fetchedData.clDetails.futureAvailed : 0,
+        //   col4: fetchedData.paternityLeave
+        //     ? fetchedData.paternityLeave.futureAvailed
+        //     : 0,
+        // },
+        // {
+        //   col1: "Closing Balance(Including future month leave availed)",
+        //   col2: fetchedData.plDetails
+        //     ? fetchedData.plDetails.futureClosingBalance
+        //     : 0,
+        //   col3: fetchedData.clDetails
+        //     ? fetchedData.clDetails.futureClosingBalance
+        //     : 0,
+        //   col4: fetchedData.paternityLeave
+        //     ? fetchedData.paternityLeave.futureClosingBalance
+        //     : 0,
+        // },
       ];
       console.log(newData)
       setTableData(newData);

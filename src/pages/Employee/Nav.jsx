@@ -60,7 +60,7 @@ function Nav({setOption}) {
           <div onClick={() => setOption("Home")} className='text-xl font-semibold cursor-pointer'>
             <img src={GVR} alt="GVR Logo" className='h-10' />
           </div>
-          <div className='flex w-56 justify-around items-center relative'> {/* Added relative positioning here */}
+          <div className='flex w-56 justify-around items-center relative mr-10'> {/* Added relative positioning here */}
             <NotificationButton />
             <button className='flex justify-center items-center' onClick={handleUserClick}>
               <img src={userImg} alt="User" className='h-10 ' />

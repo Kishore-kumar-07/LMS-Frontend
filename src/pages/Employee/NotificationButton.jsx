@@ -29,6 +29,7 @@ const NotificationButton = () => {
         }
       );
       setCirculars(res.data);
+
     } catch (e) {
       console.log("ERROR IN CIRCULAR");
     }
@@ -71,10 +72,10 @@ const NotificationButton = () => {
 
   const handleMarkAsRead = () => {
     setPopupVisible(false);
-    setCirculars((prev) =>
-      prev.filter((n) => n.id !== selectedNotification.id)
-    );
-    setSelectedNotification(null); // same functionality as close
+    // setCirculars((prev) =>
+    //   prev.filter((n) => n.id !== selectedNotification.id)
+    // );
+    // setSelectedNotification(null); // same functionality as close
   };
 
   return (
@@ -93,7 +94,7 @@ const NotificationButton = () => {
       {isTooltipVisible && (
         <div
           ref={tooltipRef} // reference for the tooltip div
-          className="absolute left-1/2 transform -translate-x-1/2 z-10 mt-10 w-96 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200"
+          className="absolute left-1/2 transform -translate-x-1/2 z-10 mt-2 w-96 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200"
         >
           <div className="p-5 bg-gradient-to-r from-blue-100 to-white rounded-t-lg shadow-md">
             <h3 className="text-gray-800 font-semibold text-lg mb-3">

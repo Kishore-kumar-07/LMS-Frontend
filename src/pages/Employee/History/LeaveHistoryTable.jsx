@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Pagination from './Pagination';
 
 const LeaveHistoryTable = (props) => {
-  const tableHead = ["S.No", "Employee Name", "Leave Type", "From Date", "To Date", "No of Days", "Reason Type", "Reason of Leave", "Status", "LOP"];
+  const tableHead = ["S.No", "Leave Type", "From Date", "To Date", "No of Days", "Reason of Leave", "Status", "LOP"];
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 7;
@@ -41,12 +41,12 @@ const LeaveHistoryTable = (props) => {
                 return (
                   <tr key={index}>
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{index + 1}</td>
-                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.empName}</td>
+                    {/* <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.empName}</td> */}
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.leaveType}</td>
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.from.date}</td>
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.to.date}</td>
-                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.numberOfDays}</td>
-                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.reasonType}</td>
+                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.leaveDays}</td>
+                    {/* <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.reasonType}</td> */}
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.reason}</td>
                     <td className={`px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900 ${statusBgColor}`}>
                       {val.status}

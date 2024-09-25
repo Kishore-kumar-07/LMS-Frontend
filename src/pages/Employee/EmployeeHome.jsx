@@ -40,13 +40,13 @@ function EmployeeHome() {
                   value="PaySlip"
                 />
                 <OptionsCard
-                  name={"Leave Apply"}
+                  name={"Apply Leave"}
                   icon={<SlCalender />}
                   setOption={setOption}
                   value="Leave"
                 />
                 <OptionsCard
-                  name={"Permission Apply"}
+                  name={"Apply Permission "}
                   icon={<MdWatchLater />}
                   setOption={setOption}
                   value="Permission"

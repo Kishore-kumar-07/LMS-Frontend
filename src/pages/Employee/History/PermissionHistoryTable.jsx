@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Pagination from './Pagination';
 
 const PermissionHistoryTable = ({ PermissionLogs }) => {
-  const tableHead = ["S.No", "Employee Name", "Date", "From", "To", "Duration", "Reason of Permission", "Status"];
+  const tableHead = ["S.No", "Date", "From", "To", "Duration", "Reason of Permission", "Status"];
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
@@ -39,7 +39,7 @@ const PermissionHistoryTable = ({ PermissionLogs }) => {
                 return (
                   <tr key={index}>
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{index + 1}</td>
-                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.empName}</td>
+                    {/* <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.empName}</td> */}
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.date}</td>
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.from}</td>
                     <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.to}</td>

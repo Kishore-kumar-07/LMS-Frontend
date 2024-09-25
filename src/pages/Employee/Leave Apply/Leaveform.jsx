@@ -37,7 +37,7 @@ const Leaveform = ({ isPaternity }) => {
   const [isHalfDayTo, setIsHalfDayTo] = useState(false);
   const [fromHalf, setFromHalf] = useState("");
   const [toHalf, setToHalf] = useState("");
-  const [leaveReason, setLeaveReason] = useState("Personal ");
+  const [leaveReason, setLeaveReason] = useState("Personal");
   const [leaveDescription, setLeaveDescription] = useState("");
   const [popupVisible, setPopupVisible] = useState(false);
   const [leaveDetails, setLeaveDetails] = useState({});
@@ -83,7 +83,7 @@ const Leaveform = ({ isPaternity }) => {
     e.preventDefault();
     console.log("Cancelled!");
     setIsLOP(!isLOP);
-    setLopStatus(CURRENT_STATUS.IDEAL);
+    setLopStatus(CURRENT_STATUS.IDEAL)
 
     setPopupVisible(!popupVisible);
   };
@@ -91,9 +91,9 @@ const Leaveform = ({ isPaternity }) => {
   const checkLeave = async () => {
     console.log("Check Leave");
     try {
-      setLopStatus(CURRENT_STATUS.LOADING);
+      setLopStatus(CURRENT_STATUS.LOADING)
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
+       ` ${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
         {
           empId: decodedToken.empId,
           role: decodedToken.role,
@@ -113,7 +113,7 @@ const Leaveform = ({ isPaternity }) => {
         }
       );
 
-      setLopStatus(CURRENT_STATUS.SUCCESS);
+      setLopStatus(CURRENT_STATUS.SUCCESS)
 
       if (res.status === 202) {
         toast.error("Date is Already Applied");
@@ -162,6 +162,8 @@ const Leaveform = ({ isPaternity }) => {
   var totalDays = calculateLeaveDays();
 
   const handleConfirm = async () => {
+
+
     try {
       console.log(
         "LOP",
@@ -171,9 +173,9 @@ const Leaveform = ({ isPaternity }) => {
         toSecondHalf
       );
 
-      setConfirmStatus(CURRENT_STATUS.LOADING);
+      setConfirmStatus(CURRENT_STATUS.LOADING)
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/apply`,
+       ` ${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
           empId: decodedToken.empId,
           empName: decodedToken.empName,
@@ -191,27 +193,27 @@ const Leaveform = ({ isPaternity }) => {
           },
           numberOfDays:
             leaveType === "Casual Leave"
-              ? summary.CL
+              ? summary.CL 
               : leaveType === "privilege Leave"
               ? summary.PL
               : summary.Paternity,
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: summary.LOP,
-          leaveDays:
-            leaveType === "Casual Leave"
-              ? summary.CL + summary.LOP
-              : leaveType === "privilege Leave"
-              ? summary.PL + summary.LOP
-              : summary.Paternity + summary.LOP,
+          leaveDays:   leaveType === "Casual Leave"
+          ? summary.CL + summary.LOP
+          : leaveType === "privilege Leave"
+          ? summary.PL + summary.LOP
+          : summary.Paternity + summary.LOP,
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization:` Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
+
 
       setConfirmStatus(CURRENT_STATUS.SUCCESS);
 
@@ -231,7 +233,7 @@ const Leaveform = ({ isPaternity }) => {
       var data = res.data;
       console.log(data.leave._id);
 
-      console.log("data", res.data);
+      // console.log("data", res.data);
     } catch (error) {
       console.error("Error Leave Apply", error);
       toast.error("Error in Applying Leave");
@@ -241,12 +243,7 @@ const Leaveform = ({ isPaternity }) => {
     }
   };
   var fromDay = !isHalfDayFrom ? "FullDay" : "Half Day";
-  var toDay =
-    formatDate(fromDate) == formatDate(toDate)
-      ? fromDay
-      : !isHalfDayTo
-      ? "FullDay"
-      : "Half day";
+  var toDay = formatDate(fromDate) == formatDate(toDate) ? fromDay : !isHalfDayTo ? "FullDay" : "Half day";
 
   const sendLeaveEmail = async (objId, LOP) => {
     const emailContent = await render(
@@ -264,10 +261,10 @@ const Leaveform = ({ isPaternity }) => {
         noOfLOP={LOP}
         totalLeave={
           leaveType === "Casual Leave"
-            ? summary.CL + summary.LOP
-            : leaveType === "privilege Leave"
-            ? summary.PL + summary.LOP
-            : summary.Paternity + summary.LOP
+          ? summary.CL + summary.LOP
+          : leaveType === "privilege Leave"
+          ? summary.PL + summary.LOP
+          : summary.Paternity + summary.LOP
         }
         leaveDescription={
           leaveReason === "Others" ? leaveDescription : leaveReason
@@ -277,7 +274,7 @@ const Leaveform = ({ isPaternity }) => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/mail/send`,
+       `${process.env.REACT_APP_BASE_URL}/mail/send`,
         {
           email: "mohammedashif.a2022cse@sece.ac.in",
           html: emailContent,
@@ -293,7 +290,7 @@ const Leaveform = ({ isPaternity }) => {
       if (response.status === 200) {
         toast.success("Mail sent Successfully");
         // setTimeout(() => {
-        navigate("/thank-you");
+          navigate("/thank-you");
         // }, 3000);
       } else {
         toast.error("Error in sending Email");
@@ -338,6 +335,8 @@ const Leaveform = ({ isPaternity }) => {
       halfDayInfo,
       leaveType,
     });
+
+    // setPopupVisible(true);
   };
 
   const handleFromDayTypeChange = (type) => {
@@ -368,7 +367,9 @@ const Leaveform = ({ isPaternity }) => {
       >
         {/* Leave Type */}
         <div className="w-full mb-4">
-          <label className="block mb-2 text-xl font-bold">Leave Type *</label>
+          <label className="block mb-2 text-xl font-bold">
+            Leave Type *
+          </label>
           <div className="flex gap-4 flex-wrap">
             {[
               "Casual Leave",
@@ -392,6 +393,7 @@ const Leaveform = ({ isPaternity }) => {
             )}
           </div>
         </div>
+        
 
         {/* From Date */}
         <div className="w-full mb-4 flex flex-wrap gap-4 items-center  ">
@@ -402,9 +404,9 @@ const Leaveform = ({ isPaternity }) => {
               } block mb-2 text-lg`}
             >
               {toDate && classfalse === "" ? (
-                <div className="font-bold">From Date </div>
+                <div className = "font-bold">From Date </div>
               ) : (
-                <div className="font-bold"> From Date*</div>
+                <div className = "font-bold"> From Date*</div>
               )}
             </label>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -433,13 +435,8 @@ const Leaveform = ({ isPaternity }) => {
           <div className="flex gap-4 mt-7">
             <button
               type="button"
-              onClick={() => {
-                setFromHalf("");
-                setFromFirstHalf(false);
-                setFromSecondHalf(false);
-                handleFromDayTypeChange("full");
-              }}
-              className={`h-14 px-6 font-semibold rounded-md ${
+              onClick={() => handleFromDayTypeChange("full")}
+              className={`h-14 px-6 font-semibold  rounded-md ${
                 !isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
               }`}
             >
@@ -447,10 +444,8 @@ const Leaveform = ({ isPaternity }) => {
             </button>
             <button
               type="button"
-              onClick={() => {
-                handleFromDayTypeChange("half");
-              }}
-              className={`h-14 px-6 font-semibold rounded-md ${
+              onClick={() => handleFromDayTypeChange("half")}
+              className={`h-14 px-6 font-semibold  rounded-md ${
                 isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
               }`}
             >
@@ -461,34 +456,29 @@ const Leaveform = ({ isPaternity }) => {
           {/* First/Second Half From */}
           {isHalfDayFrom && (
             <div className="flex gap-4 mt-8 text-lg">
-              {[(!toFirstHalf) && (formatDate(toDate) == formatDate(fromDate) )? "First Half" : "", "Second Half"].map(
-                (half) =>
-                  half !== "" && (
-                    <label key={half} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="halfDayFrom"
-                        value={half}
-                        checked={fromHalf === half}
-                        onChange={() => {
-                          if (fromFirstHalf && toFirstHalf) {
-                            handleFromDayTypeChange("full");
-                            setFromFirstHalf(false);
-                          } else if (half === "First Half") {
-                            setFromFirstHalf(true);
-                            setFromHalf(half);
-                          } else if (half === "Second Half") {
-                            setFromSecondHalf(true);
-                            setFromHalf(half);
-                            setFromFirstHalf(false);
-                          }
-                        }}
-                        className="mr-2"
-                      />
-                      {half}
-                    </label>
-                  )
-              )}
+              {[toHalf!=="First Half"&&"First Half", "Second Half"].map((half) => (
+                <label key={half} className="flex items-center">
+                  <input
+                    type="radio"
+                    name="halfDayFrom"
+                    value={half}
+                    checked={fromHalf === half}
+                    onChange={() => {
+                      if (half === "First Half") {
+                        setFromFirstHalf(true);
+                        setToFirstHalf(false);
+                      }
+                      if (half === "Second Half") {
+                        setFromFirstHalf(false);
+                        setToFirstHalf(true);
+                      }
+                      setFromHalf(half);
+                    }}
+                    className="mr-2"
+                  />
+                  {half}
+                </label>
+              ))}
             </div>
           )}
         </div>
@@ -502,9 +492,9 @@ const Leaveform = ({ isPaternity }) => {
               } block mb-2 text-lg`}
             >
               {toDate && classfalse === "" ? (
-                <div className="font-bold">To Date </div>
+                <div className = "font-bold">To Date </div>
               ) : (
-                <div className="font-bold">To Date*</div>
+                <div className = "font-bold">To Date*</div>
               )}
             </label>{" "}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -530,35 +520,27 @@ const Leaveform = ({ isPaternity }) => {
           <div className="flex gap-4 mt-7">
             <button
               type="button"
-              onClick={() => {
-                handleToDayTypeChange("full");
-                setToFirstHalf(false);
-                setToHalf("");
-              }}
+              onClick={() => handleToDayTypeChange("full")}
               className={`h-14 px-6 font-semibold  rounded-md ${
-                !isHalfDayTo || formatDate(toDate) == formatDate(fromDate)
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
+                !isHalfDayTo || formatDate(toDate)==formatDate(fromDate) ? "bg-blue-500 text-white" : "bg-gray-200"
               }`}
             >
               Full Day
             </button>
-
-            {formatDate(toDate) != formatDate(fromDate) && (
-              <button
-                type="button"
-                onClick={() => handleToDayTypeChange("half")}
-                className={`h-14 px-6 font-semibold rounded-md ${
-                  isHalfDayTo ? "bg-blue-500 text-white" : "bg-gray-200"
-                }`}
-              >
-                Half Day
-              </button>
-            )}
+           
+         { formatDate(toDate)!=formatDate(fromDate) && <button
+              type="button"
+              onClick={() => handleToDayTypeChange("half")}
+              className={`h-14 px-6 font-semibold  rounded-md ${
+                isHalfDayTo ? "bg-blue-500 text-white" : "bg-gray-200"
+              }`}
+            >
+              Half Day
+            </button>}
           </div>
 
           {/* First/Second Half To */}
-          {isHalfDayTo && formatDate(toDate) != formatDate(fromDate) && (
+          {isHalfDayTo && formatDate(toDate)!=formatDate(fromDate) && (
             <div className="flex gap-4 mt-8 text-lg">
               {["First Half"].map((half) => (
                 <label key={half} className="flex items-center">
@@ -568,17 +550,16 @@ const Leaveform = ({ isPaternity }) => {
                     value={half}
                     checked={toHalf === half}
                     onChange={() => {
+                    
                       if (half === "First Half") {
-                        setToFirstHalf(true);
-                        setFromFirstHalf(false);
-                        setToHalf(half);
+                        setFromSecondHalf(true);
+                        setToSecondHalf(false);
                       }
-                      if (fromFirstHalf && toFirstHalf) {
-                        handleFromDayTypeChange("full");
-                        setFromFirstHalf(false);
+                      if (half === "Second Half") {
                         setFromSecondHalf(false);
-                        setFromHalf("");
+                        setToSecondHalf(true);
                       }
+                      setToHalf(half);
                     }}
                     className="mr-2"
                   />
@@ -589,16 +570,20 @@ const Leaveform = ({ isPaternity }) => {
           )}
         </div>
 
+     
+
         {/* Leave Reason */}
         <div className="w-full mb-4">
-          <label className="block font-bold mb-2 text-lg">Leave Reason</label>
+          <label className="block font-bold mb-2 text-lg">
+            Leave Reason* 
+          </label>
           <div className="flex gap-4 flex-wrap text-lg">
             {[
-              "Personal ",
-              "Medical ",
-              "paternity ",
+              "Personal",
+              "Medical",
+              "Paternity",
               "Family Function",
-              "Others ",
+              "Others",
             ].map((reason) => (
               <label key={reason} className="flex items-center">
                 <input
@@ -629,7 +614,7 @@ const Leaveform = ({ isPaternity }) => {
             ></textarea>
           </div>
         )}
-
+      
         <button
           type="submit"
           className="w-44 bg-blue-500 text-white p-3 rounded-md text-xl font-bold shadow-lg"
@@ -641,100 +626,76 @@ const Leaveform = ({ isPaternity }) => {
       {/* Popup for Leave Details */}
 
       {popupVisible && !(lopStatus === CURRENT_STATUS.SUCCESS) && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-blue-800">Leave Details</h3>
-              <button
-                className="text-red-500 text-xl font-bold hover:text-red-700 transition-colors"
-                onClick={handlePopupClose}
-              >
-                X
-              </button>
-            </div>
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold text-blue-800">Leave Details</h3>
+        <button
+          className="text-red-500 text-xl font-bold hover:text-red-700 transition-colors"
+          onClick={handlePopupClose}
+        >
+          X
+        </button>
+      </div>
 
-            {lopStatus === CURRENT_STATUS.LOADING ? (
-              <div className="flex justify-center p-20">
-                <OrbitProgress
-                  variant="track-disc"
-                  color="#078ebc"
-                  size="small"
-                  text="Wait"
-                  textColor=""
-                />
-              </div>
-            ) : (
-              <div className="w-full flex justify-center items-center">
-                <table className="w-[90%] text-left text-lg border-collapse border border-gray-300">
-                  <tbody>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Leave Type
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.leaveType}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        From Date
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.fromDate}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        To Date
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.toDate}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Number of Days
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.totalDays}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Leave Reason
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.leaveReason}
-                      </td>
-                    </tr>
-                    {leaveDetails.leaveDescription && (
-                      <tr>
-                        <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                          Leave Description
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          {leaveDetails.leaveDescription}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            <div className="pt-5 flex justify-center items-center">
-              {lopStatus === CURRENT_STATUS.IDEAL && (
-                <button
-                  className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
-                  onClick={checkLeave}
-                >
-                  Confirm
-                </button>
+      {lopStatus === CURRENT_STATUS.LOADING ? (
+        <div className="flex justify-center p-20">
+          <OrbitProgress
+            variant="track-disc"
+            color="#078ebc"
+            size="small"
+            text="Wait"
+            textColor=""
+          />
+        </div>
+      ) : (
+        <div className="w-full flex justify-center items-center">
+          <table className="w-[90%] text-left text-lg border-collapse border border-gray-300">
+            <tbody>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">Leave Type</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.leaveType}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">From Date</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.fromDate}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">To Date</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.toDate}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">Number of Days</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.totalDays}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-semibold text-gray-600">Leave Reason</td>
+                <td className="border border-gray-300 p-2">{leaveDetails.leaveReason}</td>
+              </tr>
+              {leaveDetails.leaveDescription && (
+                <tr>
+                  <td className="border border-gray-300 p-2 font-semibold text-gray-600">Leave Description</td>
+                  <td className="border border-gray-300 p-2">{leaveDetails.leaveDescription}</td>
+                </tr>
               )}
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
       )}
+
+      <div className="pt-5 flex justify-center items-center">
+        {lopStatus === CURRENT_STATUS.IDEAL && (
+          <button
+            className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
+            onClick={checkLeave}
+          >
+            Confirm
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+)}
 
       {isLOP && (
         <LeaveNotification
@@ -747,10 +708,10 @@ const Leaveform = ({ isPaternity }) => {
               : summary.Paternity
           }
           lopDays={summary.LOP}
-          setLopStatus={setLopStatus}
+          setLopStatus = {setLopStatus}
           handleCancel={handleCancel}
           handleConfirm={handleConfirm}
-          status={confirmStatus}
+          status = {confirmStatus}
         />
       )}
     </div>
