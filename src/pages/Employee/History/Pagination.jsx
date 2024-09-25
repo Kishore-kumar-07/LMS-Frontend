@@ -1,7 +1,5 @@
 import React from 'react';
-import { HiArrowCircleRight } from "react-icons/hi";
-import { HiArrowCircleLeft } from "react-icons/hi";
-
+import { HiArrowCircleRight, HiArrowCircleLeft } from 'react-icons/hi';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const handleClick = (page) => {
@@ -43,11 +41,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   };
 
   return (
-    <div className="flex justify-center mt-4">
+    <div className="flex justify-center mt-6">
       <button
         onClick={() => handleClick(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-3 py-1 border border-gray-300 rounded-l-lg  text-gray-600 "
+        className="px-3 py-2 border border-gray-300 rounded-l-lg bg-white hover:bg-gray-100"
       >
         <HiArrowCircleLeft />
       </button>
@@ -55,7 +53,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <button
           key={index}
           onClick={() => handleClick(pageNumber)}
-          className={`px-3 py-1 border-t border-b border-gray-300 ${currentPage === pageNumber ? 'bg-gray-300' : 'bg-white'} text-gray-600 `}
+          className={`px-3 py-2 border-t border-b border-gray-300 ${currentPage === pageNumber ? 'bg-blue-500 text-white' : 'bg-white hover:bg-gray-100'} `}
           disabled={pageNumber === '...'}
         >
           {pageNumber}
@@ -64,10 +62,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => handleClick(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-3 py-1 border border-gray-300 rounded-r-lg  text-gray-600 "
+        className="px-3 py-2 border border-gray-300 rounded-r-lg bg-white hover:bg-gray-100"
       >
         <HiArrowCircleRight />
-
       </button>
     </div>
   );

@@ -1,14 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import { FaBell } from "react-icons/fa";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const NotificationButton = () => {
   const [isTooltipVisible, setTooltipVisible] = useState(false);
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [circulars, setCirculars] = useState([]);
-  
+
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const tooltipRef = useRef(null); // reference for the tooltip div
@@ -41,7 +41,7 @@ const NotificationButton = () => {
         setTooltipVisible(false);
       }
     };
-    
+
     if (isTooltipVisible) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -84,19 +84,21 @@ const NotificationButton = () => {
         onClick={() => setTooltipVisible(!isTooltipVisible)}
       >
         <FaBell
-          className={`size-7 ${
+          className={`size-7 mt-2 ml-2 ${
             circulars.length === 0 ? "text-black" : "text-yellow-400"
           }`}
         />
       </button>
-      
+
       {isTooltipVisible && (
         <div
           ref={tooltipRef} // reference for the tooltip div
-          className="absolute left-1/2 transform -translate-x-1/2 z-10 mt-2 w-96 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200"
+          className="absolute left-1/2 transform -translate-x-1/2 z-10 mt-10 w-96 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200"
         >
           <div className="p-5 bg-gradient-to-r from-blue-100 to-white rounded-t-lg shadow-md">
-            <h3 className="text-gray-800 font-semibold text-lg mb-3">Notifications</h3>
+            <h3 className="text-gray-800 font-semibold text-lg mb-3">
+              Notifications
+            </h3>
           </div>
           <div className="bg-white max-h-60 overflow-y-auto">
             <ul className="py-2">
@@ -108,8 +110,12 @@ const NotificationButton = () => {
                     onClick={() => handleNotificationClick(notification)}
                   >
                     <div>
-                      <p className="text-blue-600 font-semibold">{notification.subject}</p>
-                      <p className="text-sm text-gray-500">{formatDate(notification.createdAt)}</p>
+                      <p className="text-blue-600 font-semibold">
+                        {notification.subject}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(notification.createdAt)}
+                      </p>
                     </div>
                     <div className="ml-auto">
                       <FaBell className="text-yellow-400" />
@@ -117,7 +123,9 @@ const NotificationButton = () => {
                   </li>
                 ))
               ) : (
-                <li className="px-5 py-4 text-center text-gray-500">No new notifications</li>
+                <li className="px-5 py-4 text-center text-gray-500">
+                  No new notifications
+                </li>
               )}
             </ul>
           </div>
@@ -148,16 +156,20 @@ const NotificationButton = () => {
             </button>
             <h2 className="text-lg font-bold">Notification</h2>
             <p className="mt-2">
-              <span className="font-semibold">Employee Name:</span> {selectedNotification.empName}
+              <span className="font-semibold">Employee Name:</span>{" "}
+              {selectedNotification.empName}
             </p>
             <p className="mt-2">
-              <span className="font-semibold">Subject:</span> {selectedNotification.subject}
+              <span className="font-semibold">Subject:</span>{" "}
+              {selectedNotification.subject}
             </p>
             <p className="mt-2">
-              <span className="font-semibold">Message:</span> {selectedNotification.message}
+              <span className="font-semibold">Message:</span>{" "}
+              {selectedNotification.message}
             </p>
             <p className="mt-4 text-sm text-gray-500">
-              <span className="font-semibold">Date:</span> {formatDate(selectedNotification.createdAt)}
+              <span className="font-semibold">Date:</span>{" "}
+              {formatDate(selectedNotification.createdAt)}
             </p>
             <div className="mt-4">
               <button

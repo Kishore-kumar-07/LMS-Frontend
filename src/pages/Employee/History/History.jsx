@@ -1,76 +1,87 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { useState,useEffect } from 'react';
 import axios from 'axios';
 import LeaveHistoryTable from './LeaveHistoryTable';
 import PermissionHistoryTable from './PermissionHistoryTable';
 
 function History() {
   const token = document.cookie.split('=')[1];
-  console.log(token)
   const decodedToken = jwtDecode(token);
 
-  const [leaveLogs , setLeaveLogs] = useState([]);
-  const [permissionLogs , setPermissionLogs] = useState([]);
+  const [leaveLogs, setLeaveLogs] = useState([]);
+  const [permissionLogs, setPermissionLogs] = useState([]);
+  const [activeTab, setActiveTab] = useState('leave'); // State to control the active tab
 
+  useEffect(() => {
+    getEmployeeLeaveLogs();
+    getEmployeePermissionsLogs();
+  }, []);
 
-useEffect(()=>{
-  getEmployeeLeaveLogs()
-  getEmployeePermissionsLogs()
-  console.log("Leave Logs",leaveLogs)
-  console.log("Permission Logs",permissionLogs)
-},[])
-
-
-const getEmployeeLeaveLogs = async()=>{
-  try{
-    const res =await axios.post(`${process.env.REACT_APP_BASE_URL}/leave/getLeave`,
-    {
-      empId:decodedToken.empId
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+  const getEmployeeLeaveLogs = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/leave/getLeave`,
+        { empId: decodedToken.empId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setLeaveLogs(res.data);
+    } catch (e) {
+      console.error('History Error', e);
     }
-    )
-    setLeaveLogs(res.data);
-    console.log("history",res)
-  }
-  catch(e){
-    console.error("History Error",e)
-  }
-}
+  };
 
-const getEmployeePermissionsLogs = async()=>{
-  try{
-    const res =await axios.post(`${process.env.REACT_APP_BASE_URL}/permission/getPermission`,
-    {
-      empId:decodedToken.empId
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+  const getEmployeePermissionsLogs = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/permission/getPermission`,
+        { empId: decodedToken.empId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setPermissionLogs(res.data);
+    } catch (e) {
+      console.error('History Error', e);
     }
-    )
-    setPermissionLogs(res.data);
-    console.log("per",res)
-  }
-  catch(e){
-    console.error("History Error",e)
-  }
-}
+  };
+
   return (
-    <div className='h-full w-full flex justify-center items-center'>
-    <div className='w-[90%] h-[90%] flex flex-col  justify-around items-center'>
-    <LeaveHistoryTable LeaveLogs={leaveLogs}/>
-    <PermissionHistoryTable PermissionLogs={permissionLogs}/>
+    <div className="h-full w-screen flex ">
+      {/* Sidebar */}
+      <div className="w-[10%] bg-gray-800 text-white p-4">
+        <h2 className="text-lg font-bold mb-4">History</h2>
+        <button
+          className={`w-full p-2 text-lg font-semibold mb-1 rounded ${activeTab === 'leave' ? 'text-blue-500 bg-slate-500 bg-opacity-40 ' : 'text-white-700 hover:bg-gray-600'}`}
+          onClick={() => setActiveTab('leave')}
+        >
+          Leave
+        </button>
+        <button
+          className={`w-full p-2 text-lg font-semibold rounded ${activeTab === 'permission' ? 'text-blue-500 bg-slate-500 bg-opacity-40 ' : 'text-white-700 hover:bg-gray-600'}`}
+          onClick={() => setActiveTab('permission')}
+        >
+          Permission
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="w-[100%] flex justify-center items-start p-4">
+        {activeTab === 'leave' ? (
+          <LeaveHistoryTable LeaveLogs={leaveLogs} />
+        ) : (
+          <PermissionHistoryTable PermissionLogs={permissionLogs} />
+        )}
+      </div>
     </div>
-   </div>
-  )
+  );
 }
 
-export default History
+export default History;

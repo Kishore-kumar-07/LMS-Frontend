@@ -16,7 +16,7 @@ const PermissionHistoryTable = ({ PermissionLogs }) => {
 
   return (
     <>
-      <div className='w-[100%] p-1 bg-slate-100 rounded-lg'>
+      <div className='w-[100%] p-1  rounded-lg'>
         <h1 className='text-xl font-semibold mb-2'>
           Permission Log
         </h1>
@@ -25,7 +25,7 @@ const PermissionHistoryTable = ({ PermissionLogs }) => {
             <thead className="divide-y divide-gray-200 bg-white">
               <tr className="bg-gray-50">
                 {tableHead.map((val, index) => (
-                  <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-widest">
+                  <th key={index} className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-widest">
                     {val}
                   </th>
                 ))}
@@ -38,12 +38,12 @@ const PermissionHistoryTable = ({ PermissionLogs }) => {
 
                 return (
                   <tr key={index}>
-                    <td className='px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{index + 1}</td>
-                    <td className='px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.empName}</td>
-                    <td className='px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.date}</td>
-                    <td className='px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.from}</td>
-                    <td className='px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.to}</td>
-                    <td className='px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900'>
+                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{index + 1}</td>
+                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.empName}</td>
+                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.date}</td>
+                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.from}</td>
+                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.to}</td>
+                    <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>
                       {val.hrs < 1 ? `${(val.hrs * 60).toFixed(2)} mins` : `${val.hrs.toFixed(2)} hrs`}
                     </td>
                     <td className='px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.reason}</td>
