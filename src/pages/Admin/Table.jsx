@@ -82,6 +82,7 @@ const Table = ({cardData}) => {
       getData();
       cardData();
     } catch (error) {
+      setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error accepting leave:", error);
       toast.error("Failed to send request");
     }
@@ -120,6 +121,7 @@ const Table = ({cardData}) => {
       setReasonPopupOpen(false);
       setActionPopupOpen(false);
     } catch (error) {
+      setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error rejecting leave:", error);
       toast.error("Failed to send request");
     }
