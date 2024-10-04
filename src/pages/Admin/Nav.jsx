@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaPaperPlane } from "react-icons/fa";
 
 
-function Nav({ setIsRequest, setIsPermission }) {
+function Nav({ setIsRequest, setIsPermission , setIsEmployees }) {
   const [selected, setSelected] = useState('dashboard');
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -24,12 +24,22 @@ function Nav({ setIsRequest, setIsPermission }) {
     if (section === 'dashboard') {
       setIsRequest(false);
       setIsPermission(false);
+      setIsEmployees(false);
     } else if (section === 'leaves') {
       setIsRequest(true);
       setIsPermission(false);
+      setIsEmployees(false);
+
     } else if (section === 'permission') {
       setIsPermission(true);
       setIsRequest(false);
+      setIsEmployees(false);
+
+    } else if (section === 'Employees') {
+      setIsPermission(false);
+      setIsRequest(false);
+      setIsEmployees(true);
+
     }
   };
 
@@ -123,6 +133,22 @@ function Nav({ setIsRequest, setIsPermission }) {
                   }`}
                 >
                   Permissions
+                </span>
+              </li>
+
+              <li className="relative">
+                <span
+                  onClick={() => {
+                    handleClick('Employees');
+                    setActiveNav('Employees');
+                  }}
+                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
+                    activeNav === 'Employees'
+                      ? 'text-[#015E84] border-[#015E84]'
+                      : 'text-black border-transparent'
+                  }`}
+                >
+                  Employees
                 </span>
               </li>
             </ul>

@@ -13,12 +13,15 @@ import "./admin.css";
 import LineGraph from "./LineGraph";
 import { Gauge } from "@mui/x-charts/Gauge";
 import Circular from "./Circular";
+import Details from "./Details";
 
 const AdminHome = () => {
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  
 
   const headers = [
     "Name",
@@ -49,6 +52,7 @@ const AdminHome = () => {
 
   const [isRequest, setIsRequest] = useState(false);
   const [isPermission, setIsPermission] = useState(false);
+  const [isEmployees, setIsEmployees] = useState(false);
 
   useEffect(() => {
     getAllEmployee();
@@ -106,18 +110,21 @@ const AdminHome = () => {
 
   // Function to handle search query change
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    setSearchTerm(e.target.value);
   };
 
   // Filter employees based on the search query
   const filteredEmployees = empAll.filter((employee) =>
-    employee.empName.toLowerCase().includes(searchQuery.toLowerCase())
+    employee.empName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedEmployeeIndex, setSelectedEmployeeIndex] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [activeTab, setActiveTab] = useState("employee");
+  // const [searchTerm, setSearchTerm] = useState("");
+
+  // const [activeTab, setActiveTab] = useState("employee");
 
   const handleClick = (index) => {
     console.log("after clicking", index);
@@ -126,9 +133,9 @@ const AdminHome = () => {
     setShowPopup(true);
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
+  // const handleTabChange = (tab) => {
+  //   setActiveTab(tab);
+  // };
 
   const closePopup = () => {
     setSelectedEmployee(null);
@@ -142,9 +149,15 @@ const AdminHome = () => {
     <>
       <div className="flex w-screen h-screen">
         <main className="flex flex-col w-screen h-screen">
-          <Nav setIsRequest={setIsRequest} setIsPermission={setIsPermission} />
+          <Nav setIsRequest={setIsRequest} setIsPermission={setIsPermission} setIsEmployees={setIsEmployees} />
           <div className="w-full h-full">
-            <div className="w-full h-full flex justify-between items-center">
+          {isEmployees ? (
+                <div className="pt-5">
+                  <Details />
+                </div>
+              ) : 
+            (<div className="w-full h-full flex justify-between items-center">
+                
               <div className="w-[75%] h-full p-5">
                 <div className="h-20px w-full flex justify-between gap-10 pb-5">
                   <div className="w-[30%]">
@@ -231,31 +244,18 @@ const AdminHome = () => {
               <div className="w-full sm:w-[25%] h-full border-x-2 solid pt-3 p-3 flex flex-col gap-2">
                 {/* Tab navigation */}
                 <div className="flex gap-4 w-full justify-around p-1 rounded-lg">
-                  <div
-                    className={`cursor-pointer py-2 px-4 transition-all duration-300 ${
-                      activeTab === "employee"
-                        ? "font-bold text-lg border-b-2 border-black"
-                        : "text-gray-500"
-                    }`}
-                    onClick={() => handleTabChange("employee")}
-                  >
-                    Employee
-                  </div>
-                  <div
-                    className={`cursor-pointer py-2 px-4 transition-all duration-300 ${
-                      activeTab === "circular"
-                        ? "font-bold text-lg border-b-2 border-black"
-                        : "text-gray-500"
-                    }`}
-                    onClick={() => handleTabChange("circular")}
-                  >
-                    Circular
-                  </div>
-                </div>
+                <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="w-full max-w-md p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
+          placeholder="Search Employee"
+        />
+        </div>
 
                 {/* Content rendering with responsive behavior */}
                 <div className="overflow-y-auto h-[500px] sm:h-[600px]">
-                  {activeTab === "employee" ? (
+                  {
                     filteredEmployees.map((employee, index) => (
                       <div
                         key={index}
@@ -274,14 +274,10 @@ const AdminHome = () => {
                         </div>
                       </div>
                     ))
-                  ) : (
-                    <div className="">
-                      <Circular />
-                    </div>
-                  )}
+                  }
                 </div>
               </div>
-            </div>
+            </div>)}
           </div>
         </main>
       </div>
