@@ -20,9 +20,7 @@ const Table = ({cardData}) => {
     "Days",
     "Reason",
     "Action",
-    "Edit",
   ];
-
   
 
   const [isActionPopupOpen, setActionPopupOpen] = useState(false);
@@ -40,7 +38,7 @@ const Table = ({cardData}) => {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReason, setSelectedReason] = useState(null);
-  const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
+  // const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const rowsPerPage = 6;
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -177,6 +175,22 @@ const Table = ({cardData}) => {
     }
   };
 
+  const [saveButtonsVisible, setSaveButtonsVisible] = useState({});
+  const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
+
+  const handleStatusChange = (id, newStatus) => {
+    // Update the status for the particular row
+    setLeaveStatus((prevStatus) => ({
+      ...prevStatus,
+      [id]: newStatus,
+    }));
+    // Show the save button for this row
+    setSaveButtonsVisible((prevSaveButtons) => ({
+      ...prevSaveButtons,
+      [id]: true,
+    }));
+  };
+
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const dataToDisplay = data.slice(startIndex, endIndex);
@@ -225,46 +239,25 @@ const Table = ({cardData}) => {
                 <td className="px-2 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer">
                   <MdMessage onClick={() => handleReasonClick(row.reason)} />
                 </td>
-                <td
-                  className={`px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 flex flex-row gap-4 ${
-                    row.status === "Approved"
-                      ? "text-green-500"
-                      : row.status === "Denied"
-                      ? "text-red-500"
-                      : "text-yellow-500"
-                  }`}
-                >
-                  <span className="ml-2 text-lg font-semibold ">
-                    {row.status}
-                  </span>
+                <td className="px-4 py-2 text-sm font-medium">
+                  <select
+                    className="border border-gray-300 rounded-md px-2 py-1"
+                    value={leaveStatus[row._id] || "Pending"}
+                    onChange={(e) => handleStatusChange(row._id, e.target.value)}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Declined">Declined</option>
+                  </select>
+                  {saveButtonsVisible[row._id] && (
+                    <button
+                      className="ml-2 bg-blue-500 text-white px-3 py-1 rounded-md"
+                      // onClick={() => handleSave(row._id)}
+                    >
+                      Save
+                    </button>
+                  )}
                 </td>
-                {status === CURRENT_STATUS.LOADING ? (
-                  <td>
-                    <div className="w-full flex justify-center items-center py-2">
-                    <BeatLoader
-                      color="#66ded2"
-                      margin={1}
-                      size={7}
-                      speedMultiplier={1}
-                    />
-                  </div>
-                  </td>
-                ) : (
-                  <td className=" text-sm font-medium  pr-4flex gap-3 ">
-                    <button
-                      className=" text-green-500 m-2 text-2xl"
-                      onClick={() => handleAccept(row._id)}
-                    >
-                      ☑
-                    </button>
-                    <button
-                      className="text-red-500 hover:text-red-700 text-2xl"
-                      onClick={() => handleReject(row._id)}
-                    >
-                      ☒
-                    </button>
-                  </td>
-                )}
               </tr>
             ))}
           </tbody>

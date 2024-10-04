@@ -6,6 +6,8 @@ import LoginTextFeild from "./LoginTextFeild";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+
+  const navigate = useNavigate();
   const idRef = useRef();
   const disableClick = (e) => {
     idRef.current?.focus();
@@ -21,6 +23,10 @@ const Login = () => {
     }
   }, []);
 
+  const handleLoginButton = () =>{
+    navigate('/loginotp')
+  }
+
   return (
     <>
       <div
@@ -35,13 +41,12 @@ const Login = () => {
               Welcome to Gilbarco <br />
               Leave Management System
             </h1>
-            <p className="w-[70%] pt-20 pl-20 text-xl font-bold text-[15px]">
-              Experience seamless leave management with our kiosk-based system,
-              engineered for quick and convenient access. Enhance workflow
-              efficiency by processing leave requests and approvals directly
-              from your workplace, leveraging the robust and dependable software
-              solutions from Gilbarco.
+            <p className="w-[70%] pt-16 pl-20 text-xl font-semibold">
+            To log in using RFID, please scan your card. Alternatively, click 'Login' to use your phone number for authentication
             </p>
+            <div className = " pt-10 pl-20">
+              <button className="w-24 h-10 border-2 font-semibold text-lg rounded-lg border-black" onClick={handleLoginButton}>Login</button>
+            </div>
             <img src={scanner} className="w-40 h-40 ml-20" alt="Scanner" />
           </div>
         </div>

@@ -6,6 +6,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Thankyou from "./pages/Thankyou/Thankyou";
 import AdminHome from './pages/Admin/AdminHome'
 import { useEffect } from "react";
+import Error404 from "./pages/Error/Error404";
+import Error500 from "./pages/Error/Error500"; 
+import Details from "./pages/Admin/Details";
+import Loginotp from './pages/User/Loginotp'
 
 function App() {
 
@@ -40,6 +44,22 @@ function App() {
     {
       path:'/thank-you',
       element:<Thankyou/>
+    },
+    {
+      path:'/error404',
+      element:<Error404/>
+    },
+    {
+      path:'/error500',
+      element:<Error500/>
+    },
+    {
+      path:'/details',
+      element:<Details/>
+    },
+    {
+      path:'/loginotp',
+      element:<Loginotp/>
     },
   ]);
   return (

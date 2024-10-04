@@ -233,7 +233,7 @@ const Leaveform = ({ isPaternity }) => {
       var data = res.data;
       console.log(data.leave._id);
 
-      console.log("data", res.data);
+      // console.log("data", res.data);
     } catch (error) {
       console.error("Error Leave Apply", error);
       toast.error("Error in Applying Leave");
