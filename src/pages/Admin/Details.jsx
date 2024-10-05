@@ -3,6 +3,8 @@ import {jwtDecode} from "jwt-decode";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import * as FileSaver from 'file-saver';
+import XLSX from 'sheetjs-style';
 
 
 const Details = () => {
@@ -14,6 +16,18 @@ const Details = () => {
   const [selectedType, setSelectedType] = useState(""); // State to store selected type
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]); // Store all employees
+
+  const fileType ='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  const fileExtension = '.xlsx';
+
+
+  const exportData = () =>{
+    const ws = XLSX.utils.json_to_sheet(filteredEmployees);
+    const wb = {Sheets : {'data' : ws}, SheetNames : ['data']};
+    const excelBuffer = XLSX.write(wb, { bookType : 'xlsx' , type : 'array'});
+    const data=  new Blob([excelBuffer], {type : fileType});
+    FileSaver.saveAs(data,"Report" + fileExtension);
+  }
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -118,8 +132,8 @@ const Details = () => {
   return (
     <div className="bg-white p-5 w-full h-full mx-auto flex flex-col justify-start items-start">
             <ToastContainer />
-      <div className="mb-6 flex justify-start items-start space-x-4">
-        <input
+      <div className="mb-6 flex justify-between items-start space-x-4 w-full">
+        <div className = "flex gap-5"><input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -135,6 +149,10 @@ const Details = () => {
           <option value="GVR">GVR</option>
           <option value="3P">3P</option>
         </select>
+        </div>
+        <div className=  "pr-5">
+        <button onClick={exportData} className="p-2 bg-green-300 text-black w-20 h-10 font-semibold rounded-lg " >Export</button>
+        </div>
       </div>
 
       <table className="table-auto w-full border-collapse">
