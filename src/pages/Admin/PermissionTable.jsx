@@ -38,6 +38,7 @@ const PermissionTable = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("All");
   const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
+  const [editRowId, setEditRowId] = useState(null);
 
   const rowsPerPage = 6; // Adjust as needed
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -46,65 +47,133 @@ const PermissionTable = () => {
     setCurrentPage(page);
   };
 
-  const handleApprove = async (id) => {
+  const handleCancelEdit = () => {
+    setEditRowId(null);
+  };
+
+  const handleEditClick = (id) => {
+    setEditRowId(id);
+  };
+
+  const handleAccept = async (id, status) => {
     try {
       setStatus(CURRENT_STATUS.LOADING);
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/permission/accept`,
-        {
-          permissionId: id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+      if (status === "Pending") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/permission/accept`,
+          {
+            permissionId: id,
           },
-        }
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      setStatus(CURRENT_STATUS.SUCCESS);
-      if (response.status === 200) {
-        toast.success(`Permission request Approved successfully!`);
-        getData();
+        setStatus(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 200) {
+          toast.success("Permission request approved successfully!");
+        } else {
+          toast.error("Failed to approve permission request.");
+        }
+      } else if (status === "Denied") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/permission/acceptRejected`,
+          {
+            permissionId: id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setStatus(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 200) {
+          toast.success("Permission request updated successfully!");
+        } else {
+          toast.error("Failed to update permission request.");
+        }
       } else {
-        toast.error(`Failed to Approve Permission request.`);
+        toast.warn("Permission already in status Approved");
       }
+
+      getData();
+      // cardData();
+      setEditRowId(null);
     } catch (error) {
-      console.error(`Error in approving permission`, error);
+      setStatus(CURRENT_STATUS.IDEAL);
+      console.error("Error accepting leave:", error);
+      toast.error("Failed to send request");
+      setEditRowId(null);
     }
   };
 
-  const handleReject = async (id) => {
+  const handleReject = async (id, status) => {
     try {
       setStatus(CURRENT_STATUS.LOADING);
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/permission/deny`,
-        {
-          permissionId: id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+      if (status === "Pending") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/permission/deny`,
+          {
+            permissionId: id,
           },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setStatus(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 200) {
+          toast.success("Leave request declined successfully!");
+        } else {
+          toast.error("Failed to deny leave request.");
         }
-      );
-      setStatus(CURRENT_STATUS.SUCCESS);
+      } else if (status === "Approved") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/permission/rejectAccepted`,
+          {
+            permissionId: id,
+            // empId: empId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      if (response.status === 200) {
-        toast.error(`Permission request Rejected successfully!`);
-        getData();
+        setStatus(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 200) {
+          toast.success("Permission request updated successfully!");
+        } else {
+          toast.error("Failed to update Permission request.");
+        }
       } else {
-        toast.error(`Failed to Approve Rejected request.`);
+        toast.warn("Permission already in status Rejected");
       }
-    } catch (error) {
-      console.error(`Error in rejecting permission `, error);
-    }
-  };
 
-  const handleEditClick = (row) => {
-    setSelectedRow(row);
-    setEditPopupOpen(true);
+      getData();
+      // cardData();
+      setEditRowId(null);
+    } catch (error) {
+      setStatus(CURRENT_STATUS.IDEAL);
+      console.error("Error rejecting Permission:", error);
+      toast.error("Failed to send request");
+      setEditRowId(null);
+    }
   };
 
   const handleReasonClick = (reason) => {
@@ -188,45 +257,50 @@ const PermissionTable = () => {
                 >
                   <MdMessage />
                 </td>
-                <td
-                  className={`px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900 gap-4 ${
-                    row.status === "Approved"
-                      ? "text-green-500"
-                      : row.status === "Denied"
-                      ? "text-red-500"
-                      : "text-yellow-500"
-                  }`}
-                >
-                  {row.status}
+                <td className=" text-md font-medium text-sm">
+                  {editRowId === row._id ? (
+                    <>
+                      <button
+                        onClick={() => handleAccept(row._id, row.status)}
+                        className="ml-2 bg-green-500 text-white px-2 py-1 rounded"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleReject(row._id, row.status)}
+                        className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
+                      >
+                        Decline
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <span
+                      className={
+                        row.status === "Pending"
+                          ? "text-yellow-500"
+                          : row.status === "Approved"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }
+                    >
+                      {row.status}
+                    </span>
+                  )}
                 </td>
-                {status === CURRENT_STATUS.LOADING ? (
-                  <td>
-                    {" "}
-                    <div className="w-full flex justify-center items-center py-2">
-                      <BeatLoader
-                        color="#66ded2"
-                        margin={1}
-                        size={7}
-                        speedMultiplier={1}
-                      />
-                    </div>
-                  </td>
-                ) : (
-                  <td className="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900  gap-4">
-                    <button
-                      className="text-green-500 hover:text-green-700 m-2 text-2xl"
-                      onClick={() => handleApprove(row._id)}
-                    >
-                      ☑
-                    </button>
-                    <button
-                      className="text-red-500 hover:text-red-700 text-2xl"
-                      onClick={() => handleReject(row._id)}
-                    >
-                      ☒
-                    </button>
-                  </td>
-                )}
+                <td className="px-4 py-2 text-md font-medium">
+                  <button
+                    onClick={() => handleEditClick(row._id)}
+                    className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                  >
+                    <MdEdit />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

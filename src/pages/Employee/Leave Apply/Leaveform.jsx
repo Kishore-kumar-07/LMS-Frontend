@@ -28,7 +28,7 @@ const getMinDate = () => {
   }
 };
 
-const Leaveform = ({ isPaternity }) => {
+const Leaveform = ({ isPaternity,isAdoption }) => {
   const navigate = useNavigate();
   const [classfalse, setclassfalse] = useState("");
   const [fromDate, setFromDate] = useState(null);
@@ -356,7 +356,7 @@ const Leaveform = ({ isPaternity }) => {
   };
 
   return (
-    <div className="w-[70%] md:w-[50%] py-8  border-2 rounded-lg bg-gradient-to-l from-[#DAF0FF] to-white shadow-xl flex flex-col justify-center items-center">
+    <div className="w-[70%]  md:w-[50%] py-8  border-2 rounded-lg bg-gradient-to-l from-[#DAF0FF] to-white shadow-xl flex flex-col justify-center items-center">
       <ToastContainer />
       <h2 className="text-4xl font-bold mb-4 text-center text-blue-800">
         Leave Form
@@ -375,6 +375,7 @@ const Leaveform = ({ isPaternity }) => {
               "Casual Leave",
               decodedToken.role === "GVR" && "Privilege Leave",
               isPaternity && "Paternity Leave",
+              isAdoption && "Adoption Leave"
             ].map(
               (type) =>
                 type && (
@@ -467,6 +468,10 @@ const Leaveform = ({ isPaternity }) => {
                       if (half === "First Half") {
                         setFromFirstHalf(true);
                         setToFirstHalf(false);
+                        if(fromDate != toDate) {
+                            setToDate(fromDate);
+                            
+                        }
                       }
                       if (half === "Second Half") {
                         setFromFirstHalf(false);
@@ -543,7 +548,7 @@ const Leaveform = ({ isPaternity }) => {
           {isHalfDayTo && formatDate(toDate)!=formatDate(fromDate) && (
             <div className="flex gap-4 mt-8 text-lg">
               {["First Half"].map((half) => (
-                <label key={half} className="flex items-center">
+                <label key={half} className="flex items-center ">
                   <input
                     type="radio"
                     name="halfDayTo"

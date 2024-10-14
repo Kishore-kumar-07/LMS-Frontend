@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
 import { MdMessage, MdClose, MdEdit } from "react-icons/md";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { BeatLoader } from "react-spinners";
 
-
-const Table = ({cardData}) => {
+const Table = ({ cardData }) => {
   const headers = [
     "S.No",
     "Name",
@@ -20,135 +19,168 @@ const Table = ({cardData}) => {
     "Days",
     "Reason",
     "Action",
+    "Edit", // Added separate column for Edit button
   ];
-  
 
-  const [isActionPopupOpen, setActionPopupOpen] = useState(false);
+  // const [isActionPopupOpen, setActionPopupOpen] = useState(false);
   const [isReasonPopupOpen, setReasonPopupOpen] = useState(false);
-  const [selectedLeaveId, setSelectedLeaveId] = useState(null);
+  // const [selectedLeaveId, setSelectedLeaveId] = useState(null);
   const [leaveStatus, setLeaveStatus] = useState({});
   const [editRowId, setEditRowId] = useState(null);
   const [isRejecting, setIsRejecting] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedReason, setSelectedReason] = useState(null);
+  const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
-
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedReason, setSelectedReason] = useState(null);
-  // const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const rowsPerPage = 6;
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   useEffect(() => {
     getData();
-  }, [data]);
+  }, []);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleAccept = async (id) => {
+  const handleAccept = async (id, status) => {
     try {
       setStatus(CURRENT_STATUS.LOADING);
-      console.log("in try");
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/accept`,
-        {
-          leaveId: id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+      if (status === "Pending") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/leave/accept`,
+          {
+            leaveId: id,
           },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setStatus(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 200) {
+          toast.success("Leave request approved successfully!");
+        } else {
+          toast.error("Failed to approve leave request.");
         }
-      );
+      } else if (status === "Denied") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/leave/acceptRejected`,
+          {
+            leaveId: id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      setStatus(CURRENT_STATUS.IDEAL);
+        setStatus(CURRENT_STATUS.IDEAL);
 
-      if (response.status === 200) {
-        
-        toast.success("Leave request approved successfully!");
+        if (response.status === 200) {
+          toast.success("Leave request updated successfully!");
+        } else {
+          toast.error("Failed to update leave request.");
+        }
       } else {
-        toast.error("Failed to approve leave request.");
+        toast.warn("Leave already in status Approved");
       }
 
       getData();
       cardData();
+      setEditRowId(null);
+
     } catch (error) {
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error accepting leave:", error);
       toast.error("Failed to send request");
-    }
+      setEditRowId(null);
 
-    setActionPopupOpen(false);
+    }
   };
 
-  const handleReject = async (id) => {
+  const handleReject = async (id, status) => {
     try {
       setStatus(CURRENT_STATUS.LOADING);
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/deny`,
-        {
-          leaveId: id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+      if (status === "Pending") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/leave/deny`,
+          {
+            leaveId: id,
           },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setStatus(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 200) {
+          toast.success("Leave request declined successfully!");
+        } else {
+          toast.error("Failed to deny leave request.");
         }
-      );
-      setStatus(CURRENT_STATUS.IDEAL);
-      if (response.status === 200) {
-        toast.success("Leave request declined successfully!");
-        setLeaveStatus((prevStatus) => ({
-          ...prevStatus,
-          [selectedLeaveId]: "Rejected",
-        }));
+      } else if (status === "Approved") {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}/leave/rejectAccepted`,
+          {
+            leaveId: id,
+            empId: empId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setStatus(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 200) {
+          toast.success("Leave request updated successfully!");
+        } else {
+          toast.error("Failed to update leave request.");
+        }
       } else {
-        toast.error("Failed to decline leave request.");
+        toast.warn("Leave already in status Rejected");
       }
 
       getData();
       cardData();
-      setReasonPopupOpen(false);
-      setActionPopupOpen(false);
+      setEditRowId(null);
+
     } catch (error) {
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error rejecting leave:", error);
       toast.error("Failed to send request");
+      setEditRowId(null);
+
     }
   };
 
-  const handleReasonClick = (reason) => {
-    setSelectedReason(reason);
-    setReasonPopupOpen(true);
-  };
-
-  const handleEditClick = (rowId) => {
-    setSelectedLeaveId(rowId);
-    setActionPopupOpen(true);
-    setIsRejecting(false);
+  const handleEditClick = (id) => {
+    setEditRowId(id);
   };
 
   const handleCancelEdit = () => {
     setEditRowId(null);
-    setActionPopupOpen(false);
-    setRejectionReason("");
   };
-
-  const handleRejectClick = () => {
-    setIsRejecting(true);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   const getData = async () => {
     try {
@@ -164,31 +196,14 @@ const Table = ({cardData}) => {
       );
       const filteredData = response.data.reverse();
       setData(filteredData);
-      // Initialize leaveStatus with data
-      const statusMap = filteredData.reduce((acc, item) => {
-        acc[item._id] = "Pending";
-        return acc;
-      }, {});
-      setLeaveStatus(statusMap);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  const [saveButtonsVisible, setSaveButtonsVisible] = useState({});
-  const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
-
-  const handleStatusChange = (id, newStatus) => {
-    // Update the status for the particular row
-    setLeaveStatus((prevStatus) => ({
-      ...prevStatus,
-      [id]: newStatus,
-    }));
-    // Show the save button for this row
-    setSaveButtonsVisible((prevSaveButtons) => ({
-      ...prevSaveButtons,
-      [id]: true,
-    }));
+  const handleReasonClick = (reason) => {
+    setSelectedReason(reason);
+    setReasonPopupOpen(true);
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -196,10 +211,10 @@ const Table = ({cardData}) => {
   const dataToDisplay = data.slice(startIndex, endIndex);
 
   return (
-    <div className="w-[100%]  p-3 border-slate-950 rounded-lg">
+    <div className="w-[100%] p-3 border-slate-950 rounded-lg">
       <ToastContainer />
       <div className="w-[100%] overflow-x-auto">
-        <table className=" divide-y divide-gray-200 bg-white w-full">
+        <table className="divide-y divide-gray-200 bg-white w-full">
           <thead className="bg-gray-50">
             <tr>
               {headers.map((header, index) => (
@@ -212,173 +227,88 @@ const Table = ({cardData}) => {
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200 ">
+          <tbody className="bg-white divide-y divide-gray-200 text-lg"> {/* Increased row size */}
             {dataToDisplay.map((row, rowIndex) => (
               <tr key={rowIndex + 1} className="">
-                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900 text-center">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 text-center">
                   {rowIndex + 1}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
                   {row.empName}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
                   {row.role}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
                   {row.leaveType}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
                   {row.from.date}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
                   {row.to.date}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-md font-medium text-gray-900  justify-center items-center">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
                   {row.leaveDays}
                 </td>
-                <td className="px-2 py-2 whitespace-nowrap text-2xl font-medium text-gray-900 cursor-pointer">
+                <td className="px-4 py-3 whitespace-nowrap text-md font-medium  text-gray-900 cursor-pointer">
                   <MdMessage onClick={() => handleReasonClick(row.reason)} />
                 </td>
-                <td className="px-4 py-2 text-sm font-medium">
-                  <select
-                    className="border border-gray-300 rounded-md px-2 py-1"
-                    value={leaveStatus[row._id] || "Pending"}
-                    onChange={(e) => handleStatusChange(row._id, e.target.value)}
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Declined">Declined</option>
-                  </select>
-                  {saveButtonsVisible[row._id] && (
-                    <button
-                      className="ml-2 bg-blue-500 text-white px-3 py-1 rounded-md"
-                      // onClick={() => handleSave(row._id)}
-                    >
-                      Save
-                    </button>
+                <td className=" text-md font-medium text-sm">
+                  {editRowId === row._id ? (
+                    <>
+                      <button
+                        onClick={() => handleAccept(row._id, row.status)}
+                        className="ml-2 bg-green-500 text-white px-2 py-1 rounded"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleReject(row._id, row.status)}
+                        className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
+                      >
+                        Decline
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <span
+  className={
+    row.status === "Pending"
+      ? "text-yellow-500"
+      : row.status === "Approved"
+      ? "text-green-500"
+      : "text-red-500"
+  }
+>
+  {row.status}
+</span>
+
                   )}
+                </td>
+                <td className="px-4 py-2 text-md font-medium">
+                  <button
+                    onClick={() => handleEditClick(row._id)}
+                    className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                  >
+                    <MdEdit />
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
       </div>
-
-      {/* Popup for actions */}
-      {isActionPopupOpen && (
-        <ActionPopup
-          isOpen={isActionPopupOpen}
-          onClose={handleCancelEdit}
-          onAccept={handleAccept}
-          onReject={handleRejectClick}
-          isRejecting={isRejecting}
-          rejectionReason={rejectionReason}
-          setRejectionReason={setRejectionReason}
-          onSubmitReject={handleReject}
-        />
-      )}
-
-      {/* Popup for displaying reason */}
-      {isReasonPopupOpen && (
-        <Popup
-          isOpen={isReasonPopupOpen}
-          onClose={() => setReasonPopupOpen(false)}
-          content={selectedReason}
-        />
-      )}
-    </div>
-  );
-};
-
-const ActionPopup = ({
-  isOpen,
-  onClose,
-  onAccept,
-  onReject,
-  isRejecting,
-  rejectionReason,
-  setRejectionReason,
-  onSubmitReject,
-}) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-50"></div>
-
-      <div className="bg-white text-black p-6 rounded-lg shadow-lg z-10 max-w-lg w-full">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">
-            Please review the leave request and select an option to confirm
-          </h2>
-          <button onClick={onClose} className="text-black hover:text-gray-500">
-            <MdClose size={24} />
-          </button>
-        </div>
-
-        {!isRejecting ? (
-          <>
-            <button
-              className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
-              onClick={onAccept}
-            >
-              Approve
-            </button>
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
-              onClick={onReject}
-            >
-              Deny
-            </button>
-          </>
-        ) : (
-          <>
-            <textarea
-              className="w-full   border border-gray-300 p-2 rounded-md mb-4"
-              placeholder="Enter rejection reason"
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-            />
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
-              onClick={onSubmitReject}
-            >
-              Submit
-            </button>
-            <button
-              className="bg-gray-500 text-white px-4 py-2 rounded-md"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const Popup = ({ isOpen, onClose, content }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-50"></div>
-
-      <div className="bg-white text-black p-6 rounded-lg shadow-lg z-10 max-w-lg w-full">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Reason</h2>
-          <button onClick={onClose} className="text-black hover:text-gray-500">
-            <MdClose size={24} />
-          </button>
-        </div>
-        <div>{content}</div>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={handlePageChange}
+      />
     </div>
   );
 };

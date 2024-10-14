@@ -5,7 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function EmployeeUserDetails({setIsPaternity}) {
+function EmployeeUserDetails({ setIsPaternity, setIsAdoption }) {
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
@@ -27,7 +27,7 @@ function EmployeeUserDetails({setIsPaternity}) {
           }
         );
 
-        console.log("details",res.data[0])
+        console.log("details", res.data[0]);
 
         if (res.status === 401) {
           console.log("yes");
@@ -35,8 +35,8 @@ function EmployeeUserDetails({setIsPaternity}) {
         }
 
         setUserDetails(res.data[0]);
-        setIsPaternity(userDetails.isPaternity)
-
+        setIsPaternity(res.data[0].isPaternity);
+        setIsAdoption(res.data[0].isAdpt);
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
@@ -62,8 +62,10 @@ function EmployeeUserDetails({setIsPaternity}) {
               <td className="text-lg py-2">{userDetails.designation}</td>
             </tr>
             <tr className="">
-              <td className="font-bold text-lg py-2 pr-6">Reporting Manager:</td>
-              <td className="text-lg py-2">{userDetails.manager}</td>
+              <td className="font-bold text-lg py-2 pr-6">
+                Reporting Manager:
+              </td>
+              <td className="text-lg py-2 ">{userDetails.manager}</td>
             </tr>
             <tr className="">
               <td className="font-bold text-lg py-2 pr-6">DOJ:</td>

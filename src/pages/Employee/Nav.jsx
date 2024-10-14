@@ -68,7 +68,7 @@ function Nav({ setOption }) {
 
   return (
     <>
-      <div className='w-full flex justify-center items-center mb-5'>
+      <div className='w-screen flex  items-center mb-5'>
         <div
           style={{ boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
           className='w-[100%] flex justify-between items-center px-5 py-2 rounded-lg'>
@@ -78,9 +78,11 @@ function Nav({ setOption }) {
             <img src={logo} alt="Company Logo" width={60} height={40} />
           </div>
 
+
           <div className='flex w-56 justify-around items-center relative '>
             {/* <NotificationButton /> */}
             <button className='flex justify-center items-center' onClick={handleUserClick}>
+
               <img src={userImg} alt="User" className='h-10 ' />
             </button>
             
