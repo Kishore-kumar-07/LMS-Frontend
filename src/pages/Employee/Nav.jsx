@@ -53,21 +53,19 @@ function Nav({setOption}) {
 
   return (
     <>
-      <div className='w-full flex justify-center items-center mb-5'>
+      <div className='w-screen flex  items-center mb-5'>
         <div
           style={{ boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
           className='w-[100%] flex justify-between items-center px-5 py-2 rounded-lg'>
           <div onClick={() => setOption("Home")} className='text-xl font-semibold cursor-pointer'>
             <img src={GVR} alt="GVR Logo" className='h-10' />
           </div>
-          <div className='flex w-56 justify-around items-center relative mr-10'> {/* Added relative positioning here */}
-            <NotificationButton />
-            <button className='flex justify-center items-center' onClick={handleUserClick}>
+          <div className='flex  justify-around items-center relative '> {/* Added relative positioning here */}
+            <button  onClick={handleUserClick}>
               <img src={userImg} alt="User" className='h-10 ' />
             </button>
             {isDropdownOpen && (
               <div className='absolute w-96 top-12 right-0 bg-white shadow-lg rounded-lg p-4 z-50'>
-                {/* Adjusted top to move it below the button */}
                 <div className='flex flex-col'>
                   <h1 className='text-xl font-bold'>{userDetails.empName}</h1>
                   <table className='text-gray-700 mt-2 w-full break-words'>

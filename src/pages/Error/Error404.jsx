@@ -8,6 +8,8 @@ const Error404 = () => {
   const handleBack = () =>{
     navigate('/');
   }
+
+  
   return (
     <>
     <div className = "w-screen h-screen">
