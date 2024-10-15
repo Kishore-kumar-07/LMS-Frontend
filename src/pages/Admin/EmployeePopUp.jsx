@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+
+
 
 import {
   Chart as ChartJS,
@@ -27,6 +32,8 @@ ChartJS.register(
   Legend
 );
 
+const localizer = momentLocalizer(moment);
+
 function EmployeePopUp({ onClose, employeeId }) {
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -51,6 +58,10 @@ function EmployeePopUp({ onClose, employeeId }) {
     getUserDetails();
     getLogDetails();
   }, []);
+
+ 
+
+
 
   const gaugeOptions = {
     responsive: true,
@@ -320,16 +331,25 @@ function EmployeePopUp({ onClose, employeeId }) {
         {/* Bottom Section */}
         <div className="flex gap-6">
           {/* Left - Doughnut and Bar Charts */}
-          <div className="w-1/3 flex flex-col gap-4">
+          <div className="w-1/3 flex flex-col gap-4 justify-center items-center ">
             {/* Doughnut Chart */}
-            <div className="bg-white rounded-lg shadow-sm p-4 h-36">
+            {/* <div className="bg-white rounded-lg shadow-sm p-4 h-36">
               <Doughnut data={gaugeData} options={gaugeOptions} />
-            </div>
+            </div> */}
+            <Calendar
+        localizer={localizer}
+       
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 400, width: 400 }}
+        defaultView="month"
+        views="month"
+      />
 
             {/* Bar Chart */}
-            <div className="bg-white rounded-lg shadow-sm p-4 h-60">
+            {/* <div className="bg-white rounded-lg shadow-sm p-4 h-60">
               <Bar data={barData} options={barOptions} />
-            </div>
+            </div> */}
           </div>
 
           {/* Right - Leave Logs */}
