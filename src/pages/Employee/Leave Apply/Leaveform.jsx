@@ -52,6 +52,7 @@ const Leaveform = ({ isPaternity,isAdoption }) => {
   const [lopStatus, setLopStatus] = useState(CURRENT_STATUS.IDEAL);
   const [confirmStatus, setConfirmStatus] = useState(CURRENT_STATUS.IDEAL);
   // const [isAppliedLeave, setIsAppliedLeave] = useState(false);
+  
 
   const token = document.cookie.split("=")[1];
   console.log(token);
@@ -64,14 +65,39 @@ const Leaveform = ({ isPaternity,isAdoption }) => {
 
   const maxDate = today.add(1, "month").endOf("month");
 
+  const disabledDates = [
+    "2024-01-01", // New Year
+    "2024-01-15", // Pongal
+    "2024-01-16", // Thiruvalluvar Day
+    "2024-01-26", // Republic Day
+    "2024-04-11", // Eid-al-Fitr
+    "2024-05-01", // May Day
+    "2024-08-15", // Independence Day
+    "2024-09-07", // Ganesh Chathurthi
+    "2024-10-02", // Gandhi Jayanthi
+    "2024-10-11", // Ayutha Pooja
+    "2024-10-31", // Diwali
+    "2024-11-01", // Diwali (Laxmi Pooja)
+    "2024-12-25"  // Christmas
+  ];
+  
   const shouldDisableDate = (date) => {
-    return date.day() === 0 || date.day() === 6;
+    const formattedDate = date.format("YYYY-MM-DD");
+    
+    // Disable if it's a Sunday or a holiday
+    return date.day() === 0 || disabledDates.includes(formattedDate);
   };
-
+  
   const shouldDisableToDate = (date) => {
     if (!fromDate) return false;
+  
+    const formattedDate = date.format("YYYY-MM-DD");
+    
+    // Disable if it's a Sunday, a holiday, or not in the same month as fromDate
     return (
-      date.day() === 0 || date.day() === 6 || date.month() !== fromDate.month()
+      date.day() === 0 ||
+      disabledDates.includes(formattedDate) ||
+      date.month() !== fromDate.month()
     );
   };
 
@@ -396,184 +422,171 @@ const Leaveform = ({ isPaternity,isAdoption }) => {
         </div>
         
 
-        {/* From Date */}
-        <div className="w-full mb-4 flex flex-wrap gap-4 items-center  ">
-          <div className="w-[30%]">
-            <label
-              className={`${
-                !toDate && classfalse !== "" ? "text-red-500" : "text-black"
-              } block mb-2 text-lg`}
-            >
-              {toDate && classfalse === "" ? (
-                <div className = "font-bold">From Date </div>
-              ) : (
-                <div className = "font-bold"> From Date*</div>
-              )}
-            </label>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={fromDate}
-                onChange={(newValue) => {
-                  setFromDate(newValue);
-                  setToDate(newValue); // Sync 'toDate' with 'fromDate'
-                }}
-                shouldDisableDate={shouldDisableDate}
-                minDate={today}
-                maxDate={maxDate}
-                renderInput={(params) => (
-                  <input
-                    {...params.inputProps}
-                    className="w-full border rounded-md p-2 focus:outline-none focus:ring"
-                    placeholder="Select From Date"
-                  />
-                )}
-                format="DD/MM/YYYY"
-              />
-            </LocalizationProvider>
-          </div>
-
-          {/* Half/Full Day From */}
-          <div className="flex gap-4 mt-7">
-            <button
-              type="button"
-              onClick={() => handleFromDayTypeChange("full")}
-              className={`h-14 px-6 font-semibold  rounded-md ${
-                !isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              Full Day
-            </button>
-            <button
-              type="button"
-              onClick={() => handleFromDayTypeChange("half")}
-              className={`h-14 px-6 font-semibold  rounded-md ${
-                isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              Half Day
-            </button>
-          </div>
-
-          {/* First/Second Half From */}
-          {isHalfDayFrom && (
-            <div className="flex gap-4 mt-8 text-lg">
-              {[toHalf!=="First Half"&&"First Half", "Second Half"].map((half) => (
-                <label key={half} className="flex items-center">
-                  <input
-                    type="radio"
-                    name="halfDayFrom"
-                    value={half}
-                    checked={fromHalf === half}
-                    onChange={() => {
-                      if (half === "First Half") {
-                        setFromFirstHalf(true);
-                        setToFirstHalf(false);
-                        if(fromDate != toDate) {
-                            setToDate(fromDate);
-                            
-                        }
-                      }
-                      if (half === "Second Half") {
-                        setFromFirstHalf(false);
-                        setToFirstHalf(true);
-                      }
-                      setFromHalf(half);
-                    }}
-                    className="mr-2"
-                  />
-                  {half}
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* To Date */}
         <div className="w-full mb-4 flex flex-wrap gap-4 items-center">
-          <div className="w-[30%]">
-            <label
-              className={`${
-                !toDate && classfalse !== "" ? "text-red-500" : "text-black"
-              } block mb-2 text-lg`}
-            >
-              {toDate && classfalse === "" ? (
-                <div className = "font-bold">To Date </div>
-              ) : (
-                <div className = "font-bold">To Date*</div>
-              )}
-            </label>{" "}
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={toDate}
-                onChange={(newValue) => setToDate(newValue)}
-                shouldDisableDate={shouldDisableToDate}
-                minDate={fromDate || today}
-                maxDate={maxDate}
-                renderInput={(params) => (
-                  <input
-                    {...params.inputProps}
-                    className="w-full border rounded-md p-2 focus:outline-none focus:ring"
-                    placeholder="Select To Date"
-                  />
-                )}
-                format="DD/MM/YYYY"
-              />
-            </LocalizationProvider>
-          </div>
+  <div className="w-[30%]">
+    <label
+      className={`${
+        !toDate && classfalse !== "" ? "text-red-500" : "text-black"
+      } block mb-2 text-lg`}
+    >
+      {toDate && classfalse === "" ? (
+        <div className="font-bold">From Date</div>
+      ) : (
+        <div className="font-bold">From Date*</div>
+      )}
+    </label>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker
+        value={fromDate}
+        onChange={(newValue) => {
+          setFromDate(newValue);
+          setToDate(newValue); // Sync 'toDate' with 'fromDate'
+        }}
+        shouldDisableDate={shouldDisableDate}
+        minDate={today}
+        maxDate={maxDate}
+        renderInput={(params) => (
+          <input
+            {...params.inputProps}
+            className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+            placeholder="Select From Date"
+          />
+        )}
+        format="DD/MM/YYYY"
+      />
+    </LocalizationProvider>
+  </div>
 
-          {/* Half/Full Day To */}
-          <div className="flex gap-4 mt-7">
-            <button
-              type="button"
-              onClick={() => handleToDayTypeChange("full")}
-              className={`h-14 px-6 font-semibold  rounded-md ${
-                !isHalfDayTo || formatDate(toDate)==formatDate(fromDate) ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              Full Day
-            </button>
-           
-         { formatDate(toDate)!=formatDate(fromDate) && <button
-              type="button"
-              onClick={() => handleToDayTypeChange("half")}
-              className={`h-14 px-6 font-semibold  rounded-md ${
-                isHalfDayTo ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              Half Day
-            </button>}
-          </div>
+  {/* Half/Full Day From */}
+  <div className="flex gap-4 mt-7">
+    <button
+      type="button"
+      onClick={() => {
+        handleFromDayTypeChange("full");
+        setFromHalf(null); // Reset half-day selection when full day is selected
+      }}
+      className={`h-14 px-6 font-semibold rounded-md ${
+        !isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
+      }`}
+    >
+      Full Day
+    </button>
+    <button
+      type="button"
+      onClick={() => handleFromDayTypeChange("half")}
+      className={`h-14 px-6 font-semibold rounded-md ${
+        isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
+      }`}
+    >
+      Half Day
+    </button>
+  </div>
 
-          {/* First/Second Half To */}
-          {isHalfDayTo && formatDate(toDate)!=formatDate(fromDate) && (
-            <div className="flex gap-4 mt-8 text-lg">
-              {["First Half"].map((half) => (
-                <label key={half} className="flex items-center ">
-                  <input
-                    type="radio"
-                    name="halfDayTo"
-                    value={half}
-                    checked={toHalf === half}
-                    onChange={() => {
-                    
-                      if (half === "First Half") {
-                        setFromSecondHalf(true);
-                        setToSecondHalf(false);
-                      }
-                      if (half === "Second Half") {
-                        setFromSecondHalf(false);
-                        setToSecondHalf(true);
-                      }
-                      setToHalf(half);
-                    }}
-                    className="mr-2"
-                  />
-                  {half}
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
+  {/* First/Second Half From */}
+  {isHalfDayFrom && (
+    <div className="flex gap-4 mt-8 text-lg">
+      {["First Half", "Second Half"].map((half) => (
+        <label key={half} className="flex items-center">
+          <input
+            type="radio"
+            name="halfDayFrom"
+            value={half}
+            checked={fromHalf === half}
+            onChange={() => {
+              setFromHalf(half);
+              if (half === "First Half") {
+                setToHalf(null); // Reset "To Half" when "First Half" is selected
+              }
+            }}
+            className="mr-2"
+          />
+          {half}
+        </label>
+      ))}
+    </div>
+  )}
+</div>
+
+{/* To Date */}
+<div className="w-full mb-4 flex flex-wrap gap-4 items-center">
+  <div className="w-[30%]">
+    <label
+      className={`${
+        !toDate && classfalse !== "" ? "text-red-500" : "text-black"
+      } block mb-2 text-lg`}
+    >
+      {toDate && classfalse === "" ? (
+        <div className="font-bold">To Date</div>
+      ) : (
+        <div className="font-bold">To Date*</div>
+      )}
+    </label>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker
+        value={toDate}
+        onChange={(newValue) => setToDate(newValue)}
+        shouldDisableDate={shouldDisableToDate}
+        minDate={fromDate || today}
+        maxDate={maxDate}
+        renderInput={(params) => (
+          <input
+            {...params.inputProps}
+            className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+            placeholder="Select To Date"
+          />
+        )}
+        format="DD/MM/YYYY"
+      />
+    </LocalizationProvider>
+  </div>
+
+  {/* Half/Full Day To */}
+  <div className="flex gap-4 mt-7">
+    <button
+      type="button"
+      onClick={() => handleToDayTypeChange("full")}
+      className={`h-14 px-6 font-semibold rounded-md ${
+        !isHalfDayTo || formatDate(toDate) === formatDate(fromDate)
+          ? "bg-blue-500 text-white"
+          : "bg-gray-200"
+      }`}
+    >
+      Full Day
+    </button>
+    {formatDate(toDate) !== formatDate(fromDate) && (
+      <button
+        type="button"
+        onClick={() => handleToDayTypeChange("half")}
+        className={`h-14 px-6 font-semibold rounded-md ${
+          isHalfDayTo ? "bg-blue-500 text-white" : "bg-gray-200"
+        }`}
+      >
+        Half Day
+      </button>
+    )}
+  </div>
+
+  {/* First/Second Half To */}
+  {isHalfDayTo && formatDate(toDate) !== formatDate(fromDate) && fromHalf !== "First Half" && (
+    <div className="flex gap-4 mt-8 text-lg">
+      {["First Half", "Second Half"].map((half) => (
+        <label key={half} className="flex items-center">
+          <input
+            type="radio"
+            name="halfDayTo"
+            value={half}
+            checked={toHalf === half}
+            onChange={() => setToHalf(half)}
+            disabled={fromHalf === "Second Half" && half === "Second Half"}
+            className="mr-2"
+          />
+          {half}
+        </label>
+      ))}
+    </div>
+  )}
+</div>
+
 
      
 

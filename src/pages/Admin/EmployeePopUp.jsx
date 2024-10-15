@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
+import { BarChart } from "@mui/x-charts/BarChart";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -278,11 +280,39 @@ function EmployeePopUp({ onClose, employeeId }) {
           {/* {employeeId}oeringoeirvnotienworigbntriobnrwoi */}
           {/* Right - Line Chart */}
           <div className="w-2/3 bg-white rounded-lg shadow-sm p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2 text-center">
+            <h2 className="text-lg font-semibold text-gray-700 mb-2 text-start">
               Yearly Leave Statistics
             </h2>
             <div className="h-40">
-              <Line data={lineData} options={lineOptions} />
+              {/* <Line data={lineData} options={lineOptions} /> */}
+              <div className="w-full h-[100%]">
+                <BarChart
+                  xAxis={[
+                    {
+                      scaleType: "band",
+                      data: [
+                        "JAN",
+                        "FEB",
+                        "MAR",
+                        "APR",
+                        "MAY",
+                        "JUN",
+                        "JUL",
+                        "AUG",
+                        "SEP",
+                        "OCT",
+                        "NOV",
+                        "DEC  ",
+                      ],
+                    },
+                  ]}
+                  series={[
+                    { data: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4] },
+                    { data: [1, 6, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4] },
+                    // { data: [2, 5, 6] },
+                  ]}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -304,28 +334,36 @@ function EmployeePopUp({ onClose, employeeId }) {
 
           {/* Right - Leave Logs */}
           <div className="w-2/3 bg-white rounded-lg shadow-sm p-4 overflow-y-auto max-h-96">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2 text-center">
+            <h2 className="text-lg font-semibold text-gray-700 mb-2 text-start">
               Leave Logs
             </h2>
             <table className="min-w-full table-auto">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 text-left text-gray-600">Date</th>
+                  <th className="px-4 py-2 text-left text-gray-600">
+                    Applied Date
+                  </th>
                   <th className="px-4 py-2 text-left text-gray-600">
                     Leave Type
                   </th>
+                  <th className="px-4 py-2 text-left text-gray-600">
+                    From Date
+                  </th>
+                  <th className="px-4 py-2 text-left text-gray-600">To Date</th>
                   <th className="px-4 py-2 text-left text-gray-600">Reason</th>
                   <th className="px-4 py-2 text-left text-gray-600">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {leaveLogs.map((log) => (
+                {logData.map((log, index) => (
                   <tr key={log.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 border-b">{log.date}</td>
-                    <td className="px-4 py-2 border-b">{log.type}</td>
+                    <td className="px-4 py-2 border-b">{log.today}</td>
+                    <td className="px-4 py-2 border-b">{log.leaveType}</td>
                     <td className="px-4 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
-                      {log.reason}
+                      {log.from.date}
                     </td>
+                    <td className="px-4 py-2 border-b">{log.to.date}</td>
+                    <td className="px-4 py-2 border-b">{log.reason}</td>
                     <td className="px-4 py-2 border-b">{log.status}</td>
                   </tr>
                 ))}
