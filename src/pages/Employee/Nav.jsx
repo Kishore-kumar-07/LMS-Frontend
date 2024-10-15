@@ -72,7 +72,7 @@ function Nav({ setOption }) {
         <div
           style={{ boxShadow: "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
           className='w-[100%] flex justify-between items-center px-5 py-2 rounded-lg'>
-          
+           
           {/* Dynamic Logo Rendering */}
           <div onClick={() => setOption("Home")} className='text-xl font-semibold cursor-pointer pl-10'>
             <img src={logo} alt="Company Logo" width={60} height={40} />
