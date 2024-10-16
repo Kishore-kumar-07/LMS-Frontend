@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
 import { MdMessage, MdClose, MdEdit } from "react-icons/md";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { BeatLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 const Table = ({ cardData }) => {
   const headers = [
@@ -24,6 +25,7 @@ const Table = ({ cardData }) => {
 
   // const [isActionPopupOpen, setActionPopupOpen] = useState(false);
   const [isReasonPopupOpen, setReasonPopupOpen] = useState(false);
+  const navigation = useNavigate();
   // const [selectedLeaveId, setSelectedLeaveId] = useState(null);
   const [leaveStatus, setLeaveStatus] = useState({});
   const [editRowId, setEditRowId] = useState(null);
@@ -101,13 +103,17 @@ const Table = ({ cardData }) => {
       getData();
       cardData();
       setEditRowId(null);
-
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error accepting leave:", error);
       toast.error("Failed to send request");
       setEditRowId(null);
-
     }
   };
 
@@ -164,13 +170,17 @@ const Table = ({ cardData }) => {
       getData();
       cardData();
       setEditRowId(null);
-
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error rejecting leave:", error);
       toast.error("Failed to send request");
       setEditRowId(null);
-
     }
   };
 
@@ -197,6 +207,12 @@ const Table = ({ cardData }) => {
       const filteredData = response.data.reverse();
       setData(filteredData);
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.error("Error fetching data:", error);
     }
   };
@@ -227,7 +243,9 @@ const Table = ({ cardData }) => {
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200 text-lg"> {/* Increased row size */}
+          <tbody className="bg-white divide-y divide-gray-200 text-lg">
+            {" "}
+            {/* Increased row size */}
             {dataToDisplay.map((row, rowIndex) => (
               <tr key={rowIndex + 1} className="">
                 <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 text-center">
@@ -278,17 +296,16 @@ const Table = ({ cardData }) => {
                     </>
                   ) : (
                     <span
-  className={
-    row.status === "Pending"
-      ? "text-yellow-500"
-      : row.status === "Approved"
-      ? "text-green-500"
-      : "text-red-500"
-  }
->
-  {row.status}
-</span>
-
+                      className={
+                        row.status === "Pending"
+                          ? "text-yellow-500"
+                          : row.status === "Approved"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }
+                    >
+                      {row.status}
+                    </span>
                   )}
                 </td>
                 <td className="px-4 py-2 text-md font-medium">

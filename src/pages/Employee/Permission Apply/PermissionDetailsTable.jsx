@@ -2,8 +2,9 @@ import React from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 const PermissionDetailTable = () => {
+  const navigation = useNavigate();
   const [userDetails, setUserDetails] = useState({});
   const token = document.cookie.split("=")[1];
   console.log(token);
@@ -32,6 +33,12 @@ const PermissionDetailTable = () => {
         setUserDetails(res.data[0]);
         console.log(res.data[0]);
       } catch (error) {
+        if (error.response.status === 400) {
+          navigation("/error404");
+        }
+        if (error.response.status === 500) {
+          navigation("/error500");
+        }
         console.error("Error fetching user details:", error);
       }
     };

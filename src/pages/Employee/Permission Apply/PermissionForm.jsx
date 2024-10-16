@@ -20,6 +20,7 @@ import { OrbitProgress } from "react-loading-indicators";
 dayjs.extend(duration);
 
 const PermissionForm = () => {
+  const navigation = useNavigate();
   const navigate = useNavigate();
   const [toTime, setToTime] = useState(dayjs().add(1, "hour"));
   const [permissionDate, setPermissionDate] = useState(null);
@@ -27,9 +28,12 @@ const PermissionForm = () => {
   const [isPermission, setIsPermission] = useState(false);
   const [amPm, setAmPm] = useState("");
   const [classfalse, setclassfalse] = useState("");
-  const [errors, setErrors] = useState({ permissionDate: false, permissionReason: false }); // New state for errors
-  const [checkStatus,setCheckStatus] = useState(CURRENT_STATUS.IDEAL)
-  const [applyStatus,setApplyStatus] = useState(CURRENT_STATUS.IDEAL)
+  const [errors, setErrors] = useState({
+    permissionDate: false,
+    permissionReason: false,
+  }); // New state for errors
+  const [checkStatus, setCheckStatus] = useState(CURRENT_STATUS.IDEAL);
+  const [applyStatus, setApplyStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
 
@@ -136,6 +140,12 @@ const PermissionForm = () => {
         }
       }
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.error("Error permission Apply", error);
       toast.error("Error is requesting Permission");
     } finally {
@@ -150,12 +160,9 @@ const PermissionForm = () => {
       return;
     }
 
-
-
     if (fromTime && toTime && permissionDate) {
       setclassfalse("");
       try {
-
         setCheckStatus(CURRENT_STATUS.LOADING);
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/permission/checkPermission`,
@@ -183,7 +190,13 @@ const PermissionForm = () => {
         } else {
           setIsPermission(!isPermission);
         }
-      } catch (e) {
+      } catch (error) {
+        if (error.response.status === 400) {
+          navigation("/error404");
+        }
+        if (error.response.status === 500) {
+          navigation("/error500");
+        }
         toast.error("Something went wrong");
       }
     } else {
@@ -240,6 +253,12 @@ const PermissionForm = () => {
         toast.error("error in sending mail");
       }
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.error(
         "Error sending email:",
         error.response ? error.response.data : error.message
@@ -266,7 +285,9 @@ const PermissionForm = () => {
               errors.permissionDate ? "text-red-500" : "text-black"
             } block text-gray-700 mb-1 font-bold text-lg`}
           >
-            {errors.permissionDate ? "Please select a date *" : "Permission Date"}
+            {errors.permissionDate
+              ? "Please select a date *"
+              : "Permission Date"}
           </label>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -276,7 +297,12 @@ const PermissionForm = () => {
                 const today = dayjs();
                 const currentMonth = today.month();
                 const day = date.day();
-                return day === 0 || day === 6 || date.isBefore(today, "day") || date.month() !== currentMonth;
+                return (
+                  day === 0 ||
+                  day === 6 ||
+                  date.isBefore(today, "day") ||
+                  date.month() !== currentMonth
+                );
               }}
               renderInput={(params) => (
                 <input
@@ -323,7 +349,9 @@ const PermissionForm = () => {
               errors.permissionReason ? "text-red-500" : "text-black"
             } block text-gray-700 mb-1 font-bold text-lg`}
           >
-            {errors.permissionReason ? "Reason is required *" : "Reason for permission"}
+            {errors.permissionReason
+              ? "Reason is required *"
+              : "Reason for permission"}
           </label>
           <textarea
             placeholder="Reason for permission"
@@ -335,19 +363,26 @@ const PermissionForm = () => {
           />
         </div>
 
-        {checkStatus === CURRENT_STATUS.LOADING?
-           <div className="flex justify-center">
-                        <OrbitProgress variant="track-disc" color="#078ebc" size="small" text="Wait" textColor="" />
-           </div>:
-           <div>
-           <button
-          className="p-3 bg-blue-500 rounded-lg w-40 "
-          onClick={checkPermission}
-        >
-          Submit
-        </button>
-        </div>
-        }
+        {checkStatus === CURRENT_STATUS.LOADING ? (
+          <div className="flex justify-center">
+            <OrbitProgress
+              variant="track-disc"
+              color="#078ebc"
+              size="small"
+              text="Wait"
+              textColor=""
+            />
+          </div>
+        ) : (
+          <div>
+            <button
+              className="p-3 bg-blue-500 rounded-lg w-40 "
+              onClick={checkPermission}
+            >
+              Submit
+            </button>
+          </div>
+        )}
 
         {isPermission && (
           <ConfirmPermission

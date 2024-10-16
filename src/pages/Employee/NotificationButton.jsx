@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { FaBell } from "react-icons/fa";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
+import { useNavigate } from "react-router-dom";
 const NotificationButton = () => {
   const [isTooltipVisible, setTooltipVisible] = useState(false);
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -18,6 +18,7 @@ const NotificationButton = () => {
   }, []);
 
   const getCircular = async () => {
+    const navigation = useNavigate();
     try {
       var res = await axios.get(
         `${process.env.REACT_APP_BASE_URL}/circular/getAll`,
@@ -29,8 +30,13 @@ const NotificationButton = () => {
         }
       );
       setCirculars(res.data);
-
-    } catch (e) {
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.log("ERROR IN CIRCULAR");
     }
   };

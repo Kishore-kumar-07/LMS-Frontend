@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { CURRENT_STATUS } from "../../../statusIndicator";
 import { OrbitProgress } from "react-loading-indicators";
-
 const getMinDate = () => {
   const today = dayjs();
   const dayOfWeek = today.day(); // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
@@ -29,7 +28,7 @@ const getMinDate = () => {
 };
 
 const Leaveform = ({ isPaternity, isAdoption }) => {
-  const navigate = useNavigate();
+  const navigation = useNavigate();
   const [classfalse, setclassfalse] = useState("");
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -146,7 +145,13 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         setSummary(res.data);
         handleLOP();
       }
-    } catch (e) {
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       toast.error("Somthing went wrong");
     }
   };
@@ -258,6 +263,12 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
       // console.log("data", res.data);
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.error("Error Leave Apply", error);
       toast.error("Error in Applying Leave");
     } finally {
@@ -324,6 +335,12 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         toast.error("Error in sending Email");
       }
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.error(
         "Error sending email:",
         error.response ? error.response.data : error.message
