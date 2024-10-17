@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Line, Doughnut, Bar } from "react-chartjs-2";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { Doughnut } from "react-chartjs-2";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
-
 
 import {
   Chart as ChartJS,
@@ -19,7 +17,6 @@ import {
 } from "chart.js";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useScatterChartProps } from "@mui/x-charts/internals";
 
 // Register the necessary chart.js components
 ChartJS.register(
@@ -35,9 +32,22 @@ ChartJS.register(
 const localizer = momentLocalizer(moment);
 
 function EmployeePopUp({ onClose, employeeId }) {
+  const [events, setEvents] = useState([]);
+  const [leaveCounts, setLeaveCounts] = useState(Array(12).fill(0));
+  const [lopCounts, setLopCounts] = useState(Array(12).fill(0));
+
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
+
+  const [userData, setUserData] = useState({});
+  const [logData, setLogData] = useState([]);
+
+  useEffect(() => {
+    getUserDetails();
+    getLogDetails();
+  }, []);
+
   const gaugeData = {
     datasets: [
       {
@@ -51,36 +61,14 @@ function EmployeePopUp({ onClose, employeeId }) {
     ],
   };
 
-  const [userData, setUserData] = useState({});
-  const [logData, setLogData] = useState([]);
-
-  useEffect(() => {
-    getUserDetails();
-    getLogDetails();
-  }, []);
-
- 
-
-
-
   const gaugeOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       title: { display: true, text: "Gauge Chart" },
+      
     },
-  };
-
-  const barData = {
-    labels: ["January", "February", "March", "April", "May"],
-    datasets: [
-      {
-        label: "Monthly Sales",
-        data: [12, 19, 3, 5, 2],
-        backgroundColor: "#4bc0c0",
-      },
-    ],
   };
 
   const getUserDetails = async () => {
@@ -97,11 +85,7 @@ function EmployeePopUp({ onClose, employeeId }) {
           },
         }
       );
-      console.log(
-        "employeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-      );
       setUserData(res.data[0]);
-      console.log(res.data[0]);
     } catch (error) {
       console.log(error);
     }
@@ -121,115 +105,117 @@ function EmployeePopUp({ onClose, employeeId }) {
           },
         }
       );
-      console.log("logggggggggggggggggggggggggggggggggggg");
-      setLogData(res.data);
+      setLogData(res.data.reverse());
       console.log(res.data);
+      filterLeaveDataByMonth(res.data); // Filter and calculate leave data by month
     } catch (error) {
       console.log(error);
     }
   };
 
-  const barOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Bar Chart" },
-    },
-    scales: {
-      x: { title: { display: true, text: "Month" } },
-      y: { title: { display: true, text: "Sales" } },
-    },
+  // Function to filter and calculate leave and LOP counts per month
+  const filterLeaveDataByMonth = (logs) => {
+    const leaveCountPerMonth = Array(12).fill(0);
+    const lopCountPerMonth = Array(12).fill(0);
+
+    logs.forEach((log) => {
+      const fromDate = moment(log.from.date, "DD/MM/YYYY");
+      const monthIndex = fromDate.month(); // 0 for January, 11 for December
+
+      console.log(monthIndex);
+      if (log.LOP === 0 && log.status === "Approved") {
+        leaveCountPerMonth[monthIndex] += log.numberOfDays;
+      } else if (log.LOP !== 0 && log.status === "Approved") {
+        lopCountPerMonth[monthIndex] += log.LOP;
+      }
+      console.log(leaveCountPerMonth);
+    });
+
+    setLeaveCounts(leaveCountPerMonth);
+    setLopCounts(lopCountPerMonth);
   };
 
-  const lineData = {
-    labels: ["2018", "2019", "2020", "2021", "2022", "2023"],
-    datasets: [
-      {
-        label: "Number of Leaves",
-        data: [10, 15, 8, 12, 18, 7],
-        borderColor: "#4bc0c0",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        pointBorderColor: "#4bc0c0",
-        pointBackgroundColor: "#fff",
-        pointBorderWidth: 1,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: "#4bc0c0",
-        pointHoverBorderColor: "rgba(220, 220, 220, 1)",
-        pointHoverBorderWidth: 2,
-        pointRadius: 3,
-        pointHitRadius: 10,
-        tension: 0.4,
-      },
-    ],
+  useEffect(() => {
+    setTheEvents();
+  }, [logData]);
+
+  const setTheEvents = () => {
+    setEvents(
+      logData
+        .map((event) => {
+          const fromDate = moment(event.from.date, "DD/MM/YYYY").isValid()
+            ? moment(event.from.date, "DD/MM/YYYY")
+            : null;
+          const toDate = moment(event.to.date, "DD/MM/YYYY").isValid()
+            ? moment(event.to.date, "DD/MM/YYYY")
+            : null;
+
+          if (fromDate && toDate && event.status === "Approved") {
+            const dateArray = [];
+            let currentDate = fromDate.clone();
+            while (currentDate.isSameOrBefore(toDate)) {
+              dateArray.push({
+                start: currentDate.toDate(),
+                end: currentDate.toDate(),
+                title: "",
+                id: event._id,
+              });
+              currentDate.add(1, "days");
+            }
+
+            return dateArray;
+          } else {
+            console.error(
+              `Invalid dates: fromDate = ${event.from.date}, toDate = ${event.to.date}`
+            );
+            return null;
+          }
+        })
+        .flat()
+        .filter((event) => event !== null)
+    );
   };
 
-  const lineOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: "Year",
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Number of Leaves",
-        },
-      },
-    },
+  // Function to reverse the date
+  const reverseDate = (dateStr) => {
+    const parts = dateStr.split("/");
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dateStr;
   };
 
-  const leaveLogs = [
-    {
-      id: 1,
-      date: "2024-01-15",
-      type: "Sick Leave",
-      reason: "Flu",
-      status: "Approved",
-    },
-    {
-      id: 2,
-      date: "2024-02-20",
-      type: "Casual Leave",
-      reason: "Family Function",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      date: "2024-03-05",
-      type: "Vacation Leave",
-      reason: "Holidays",
-      status: "Pending",
-    },
-    {
-      id: 4,
-      date: "2024-03-15",
-      type: "Sick Leave",
-      reason: "Fever",
-      status: "Rejected",
-    },
-    {
-      id: 5,
-      date: "2024-04-10",
-      type: "Casual Leave",
-      reason: "Personal",
-      status: "Approved",
-    },
-  ];
+  // Function to get the color based on the status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Approved":
+        return "green";
+      case "Pending":
+        return "orange";
+      case "Denied":
+        return "red";
+      default:
+        return "gray"; // Default color for unknown status
+    }
+  };
+
+  const eventStyleGetter = (event) => {
+    return {
+      style: {
+        width: "20px",
+        backgroundColor: "red",
+        borderRadius: "100%",
+        border: "none",
+        color: "transparent",
+        padding: "10px",
+      },
+    };
+  };
 
   return (
-    <div className="w-full h-full  rounded-lg shadow-md  absolute px-10  py-1">
+    <div className="w-full h-full rounded-lg shadow-md absolute px-10 py-1 flex justify-center items-center flex-col w-full">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-teal-400 text-white rounded-t-lg p-4 flex justify-between items-center shadow">
+      <div className="bg-gradient-to-r from-blue-500 w-full to-teal-400 text-white rounded-t-lg p-4 flex justify-between items-center shadow">
         <h1 className="text-xl font-semibold">{userData.empName}'s Details</h1>
         <span
           onClick={() => {
@@ -242,7 +228,7 @@ function EmployeePopUp({ onClose, employeeId }) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col gap-6 p-4 bg-gray-50 rounded-b-lg">
+      <div className="flex flex-col gap-6 p-4 bg-gray-50 rounded-b-lg w-full">
         {/* Info Section */}
         <div className="flex gap-6">
           {/* Left - Info */}
@@ -288,15 +274,15 @@ function EmployeePopUp({ onClose, employeeId }) {
               </tbody>
             </table>
           </div>
-          {/* {employeeId}oeringoeirvnotienworigbntriobnrwoi */}
-          {/* Right - Line Chart */}
+
+          {/* Right - Yearly Leave Statistics */}
+          {/* Right - Yearly Leave Statistics */}
           <div className="w-2/3 bg-white rounded-lg shadow-sm p-4">
             <h2 className="text-lg font-semibold text-gray-700 mb-2 text-start">
               Yearly Leave Statistics
             </h2>
-            <div className="h-40">
-              {/* <Line data={lineData} options={lineOptions} /> */}
-              <div className="w-full h-[100%]">
+            <div className="flex h-40 w-full">
+              <div className="w-3/4 h-full flex justify-center items-center">
                 <BarChart
                   xAxis={[
                     {
@@ -313,16 +299,18 @@ function EmployeePopUp({ onClose, employeeId }) {
                         "SEP",
                         "OCT",
                         "NOV",
-                        "DEC  ",
+                        "DEC",
                       ],
                     },
                   ]}
                   series={[
-                    { data: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4] },
-                    { data: [1, 6, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4] },
-                    // { data: [2, 5, 6] },
+                    { label: "Leave", data: leaveCounts },
+                    { label: "LOP", data: lopCounts },
                   ]}
                 />
+              </div>
+              <div className="w-1/4 h-full flex justify-center items-center">
+                <Doughnut data={gaugeData} options={gaugeOptions} />
               </div>
             </div>
           </div>
@@ -330,26 +318,18 @@ function EmployeePopUp({ onClose, employeeId }) {
 
         {/* Bottom Section */}
         <div className="flex gap-6">
-          {/* Left - Doughnut and Bar Charts */}
-          <div className="w-1/3 flex flex-col gap-4 justify-center items-center ">
-            {/* Doughnut Chart */}
-            {/* <div className="bg-white rounded-lg shadow-sm p-4 h-36">
-              <Doughnut data={gaugeData} options={gaugeOptions} />
-            </div> */}
+          {/* Left - Calendar */}
+          <div className="w-1/3 flex flex-col gap-4 justify-center items-center">
             <Calendar
-        localizer={localizer}
-       
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 400, width: 400 }}
-        defaultView="month"
-        views="month"
-      />
-
-            {/* Bar Chart */}
-            {/* <div className="bg-white rounded-lg shadow-sm p-4 h-60">
-              <Bar data={barData} options={barOptions} />
-            </div> */}
+              localizer={localizer}
+              events={events}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: 400, width: 400 }}
+              defaultView="month"
+              views="month"
+              eventPropGetter={eventStyleGetter}
+            />
           </div>
 
           {/* Right - Leave Logs */}
@@ -375,16 +355,29 @@ function EmployeePopUp({ onClose, employeeId }) {
                 </tr>
               </thead>
               <tbody>
-                {logData.map((log, index) => (
-                  <tr key={log.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 border-b">{log.today}</td>
-                    <td className="px-4 py-2 border-b">{log.leaveType}</td>
-                    <td className="px-4 py-2 border-b whitespace-nowrap overflow-hidden text-ellipsis">
-                      {log.from.date}
+                {logData.map((log) => (
+                  <tr key={log._id}>
+                    <td className="px-4 py-2">{reverseDate(log.today)}</td>
+                    <td className="px-4 py-2">{log.leaveType}</td>
+                    <td className="px-4 py-2">{log.from.date}</td>
+                    <td className="px-4 py-2">{log.to.date}</td>
+                    <td className="px-4 py-2">{log.reason}</td>
+                    <td className="px-4 py-2">
+                      <div
+                        className={`w-3 h-3 rounded-full inline-block`}
+                        style={{
+                          backgroundColor: getStatusColor(log.status),
+                        }}
+                      ></div>
+                      <span
+                        className="ml-2 font-semibold"
+                        style={{
+                          color: getStatusColor(log.status), // Change text color based on status
+                        }}
+                      >
+                        {log.status}
+                      </span>
                     </td>
-                    <td className="px-4 py-2 border-b">{log.to.date}</td>
-                    <td className="px-4 py-2 border-b">{log.reason}</td>
-                    <td className="px-4 py-2 border-b">{log.status}</td>
                   </tr>
                 ))}
               </tbody>
