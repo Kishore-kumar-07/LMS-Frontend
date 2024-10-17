@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { ClockLoader } from "react-spinners";
-
 function Loginotp() {
-
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -15,9 +13,9 @@ function Loginotp() {
   const [error, setError] = useState("");
   const [errorotp, setErrorOtp] = useState("");
   const [isResendDisabled, setIsResendDisabled] = useState(true);
-  const [sendStatus,setSendStatus]=useState(CURRENT_STATUS.IDEAL);
-  const [validateStatus,setValidateStatus]=useState(CURRENT_STATUS.IDEAL);
-  const [resendStatus,setResendStatus] = useState(CURRENT_STATUS.IDEAL);
+  const [sendStatus, setSendStatus] = useState(CURRENT_STATUS.IDEAL);
+  const [validateStatus, setValidateStatus] = useState(CURRENT_STATUS.IDEAL);
+  const [resendStatus, setResendStatus] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
     let interval;
@@ -27,16 +25,16 @@ function Loginotp() {
       }, 1000);
     } else if (timer === 0 && isOtpSent) {
       clearInterval(interval);
-      setIsResendDisabled(false);  // Enable the "Resend OTP" button when timer runs out
+      setIsResendDisabled(false); // Enable the "Resend OTP" button when timer runs out
     }
     return () => clearInterval(interval);
   }, [isOtpSent, timer]);
 
   const sendOtp = async () => {
     try {
-      if(isOtpSent){
+      if (isOtpSent) {
         setResendStatus(CURRENT_STATUS.LOADING);
-      }else{
+      } else {
         setSendStatus(CURRENT_STATUS.LOADING);
       }
       const Number = phoneNumber.toString();
@@ -54,9 +52,9 @@ function Loginotp() {
           }
         );
         if (res.status === 200) {
-          if(isOtpSent){
+          if (isOtpSent) {
             setResendStatus(CURRENT_STATUS.SUCCESS);
-          }else{
+          } else {
             setSendStatus(CURRENT_STATUS.SUCCESS);
           }
           setError("");
@@ -66,18 +64,24 @@ function Loginotp() {
         }
         console.log(res);
       } else {
-        if(isOtpSent){
+        if (isOtpSent) {
           setResendStatus(CURRENT_STATUS.IDEAL);
-        }else{
+        } else {
           setSendStatus(CURRENT_STATUS.IDEAL);
         }
         setError("Please enter a valid 10-digit phone number");
         console.log("error");
       }
     } catch (e) {
-      if(isOtpSent){
+      if (e.response.status === 400) {
+        navigate("/error404");
+      }
+      if (e.response.status === 500) {
+        navigate("/error500");
+      }
+      if (isOtpSent) {
         setResendStatus(CURRENT_STATUS.ERROR);
-      }else{
+      } else {
         setSendStatus(CURRENT_STATUS.ERROR);
       }
       setError("Failed to send OTP");
@@ -118,6 +122,12 @@ function Loginotp() {
         setErrorOtp("Incorrect OTP");
       }
     } catch (e) {
+      if (e.response.status === 400) {
+        navigate("/error404");
+      }
+      if (e.response.status === 500) {
+        navigate("/error500");
+      }
       setValidateStatus(CURRENT_STATUS.ERROR);
       setErrorOtp("Incorrect OTP");
     }
@@ -147,27 +157,33 @@ function Loginotp() {
               disabled={isOtpSent} // Disable phone number field after OTP is sent
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            { sendStatus === CURRENT_STATUS.IDEAL ?
+            {sendStatus === CURRENT_STATUS.IDEAL ? (
               <button
                 onClick={sendOtp}
                 className="bg-black hover:bg-gray-800 ml-36 mt-5 text-white font-bold py-2 px-4 rounded"
               >
                 Send OTP
-              </button>:sendStatus === CURRENT_STATUS.LOADING && !isOtpSent ?
-              <div className = "w-full flex justify-center items-center mt-5">
-              <ClockLoader
-            color="#000000"
-            cssOverride={{}}
-            size={30}
-            speedMultiplier={1}
-          />               
-          </div>
-              :""}
+              </button>
+            ) : sendStatus === CURRENT_STATUS.LOADING && !isOtpSent ? (
+              <div className="w-full flex justify-center items-center mt-5">
+                <ClockLoader
+                  color="#000000"
+                  cssOverride={{}}
+                  size={30}
+                  speedMultiplier={1}
+                />
+              </div>
+            ) : (
+              ""
+            )}
           </div>
 
           {isOtpSent && (
             <div>
-              <label htmlFor="otp" className="block text-md font-bold pl-1 mb-4 text-gray-600">
+              <label
+                htmlFor="otp"
+                className="block text-md font-bold pl-1 mb-4 text-gray-600"
+              >
                 Enter OTP
               </label>
               <input
@@ -179,27 +195,35 @@ function Loginotp() {
                 placeholder="Enter OTP"
               />
               <div className="mt-4 flex justify-between items-center">
-               {validateStatus === CURRENT_STATUS.IDEAL? <button
-                  onClick={validateOtp}
-                  className="w-36 ml-32 bg-black text-white py-2 rounded-lg hover:bg-luxury-secondary transition"
-                >
-                  Validate OTP
-                </button>:validateStatus === CURRENT_STATUS.LOADING?<div className = "w-full flex justify-center items-center mt-5">
-              <ClockLoader
-            color="#000000"
-            cssOverride={{}}
-            size={30}
-            speedMultiplier={1}
-          />               
-          </div>:""}
+                {validateStatus === CURRENT_STATUS.IDEAL ? (
+                  <button
+                    onClick={validateOtp}
+                    className="w-36 ml-32 bg-black text-white py-2 rounded-lg hover:bg-luxury-secondary transition"
+                  >
+                    Validate OTP
+                  </button>
+                ) : validateStatus === CURRENT_STATUS.LOADING ? (
+                  <div className="w-full flex justify-center items-center mt-5">
+                    <ClockLoader
+                      color="#000000"
+                      cssOverride={{}}
+                      size={30}
+                      speedMultiplier={1}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
                 <p className="text-sm text-gray-600 mt-2 ml-1">
                   Time left: {timer}s
                 </p>
               </div>
 
-              {errorotp && <p className="text-red-500 text-sm relative">{errorotp}</p>}
+              {errorotp && (
+                <p className="text-red-500 text-sm relative">{errorotp}</p>
+              )}
 
-              {timer === 0 && resendStatus === CURRENT_STATUS.IDEAL ?(
+              {timer === 0 && resendStatus === CURRENT_STATUS.IDEAL ? (
                 <button
                   onClick={sendOtp}
                   className={`bg-black hover:bg-gray-800 ml-36 mt-5 text-white font-bold py-2 px-4 rounded ${
@@ -209,18 +233,18 @@ function Loginotp() {
                 >
                   Resend OTP
                 </button>
-              ):resendStatus === CURRENT_STATUS.LOADING && isOtpSent ?
-              <div className = "w-full flex justify-center items-center mt-5">
-              <ClockLoader
-            color="#000000"
-            cssOverride={{}}
-            size={30}
-            speedMultiplier={1}
-          />               
-          </div>
-              :""
-            
-            }
+              ) : resendStatus === CURRENT_STATUS.LOADING && isOtpSent ? (
+                <div className="w-full flex justify-center items-center mt-5">
+                  <ClockLoader
+                    color="#000000"
+                    cssOverride={{}}
+                    size={30}
+                    speedMultiplier={1}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           )}
         </div>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; // Ensure correct import for jwtDecode
-
+import { jwtDecode } from "jwt-decode"; // Ensure correct import for jwtDecode
+import { useNavigate } from "react-router-dom";
 export const Circular = () => {
+  const navigation = useNavigate();
   const today = new Date().toLocaleDateString("en-GB"); // Format as DD/MM/YYYY
   const formattedDate = today.replace(/\//g, ".");
 
@@ -42,15 +43,24 @@ export const Circular = () => {
   // Fetch circular messages
   const getCircular = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/circular/getAll`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/circular/getAll`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       setMessages(res.data);
-    } catch (e) {
-      console.error("Error fetching circulars", e);
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.error("Error fetching circulars", error);
     }
   };
 
@@ -87,7 +97,9 @@ export const Circular = () => {
       <div className="">
         <div className="w-full ">
           {messages.length === 0 ? (
-            <p className="text-gray-600">No messages yet. Start a conversation!</p>
+            <p className="text-gray-600">
+              No messages yet. Start a conversation!
+            </p>
           ) : (
             <ul className="w-full flex flex-col gap-1 overflow-y-hidden">
               {messages.map((msg, index) => (
@@ -107,15 +119,14 @@ export const Circular = () => {
         </div>
 
         {/* Toggle Button */}
-        <div  className="flex justify-center">
-        <button
-          className="fixed bottom-16 right-4 bg-blue-500 text-white p-2 rounded-md shadow-lg"
-          onClick={toggleChat}
-        >
-          Circular
-        </button>
+        <div className="flex justify-center">
+          <button
+            className="fixed bottom-16 right-4 bg-blue-500 text-white p-2 rounded-md shadow-lg"
+            onClick={toggleChat}
+          >
+            Circular
+          </button>
         </div>
-      
 
         {/* Chat Panel */}
         <div
@@ -166,7 +177,9 @@ export const Circular = () => {
           <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 transition-opacity duration-300">
             <div className="bg-white p-4 rounded-md w-1/3 text-center shadow-lg transition-transform duration-300 transform scale-100">
               <h1 className="font-bold text-lg">Date: {formattedDate}</h1>
-              <h1 className="font-bold mt-2">Subject: {selectedMessage.subject}</h1>
+              <h1 className="font-bold mt-2">
+                Subject: {selectedMessage.subject}
+              </h1>
               <p className="mt-4">Content: {selectedMessage.message}</p>
               <button
                 className="mt-6 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"

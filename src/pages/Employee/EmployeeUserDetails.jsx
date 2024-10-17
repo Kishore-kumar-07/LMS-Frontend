@@ -38,6 +38,12 @@ function EmployeeUserDetails({ setIsPaternity, setIsAdoption }) {
         setIsPaternity(res.data[0].isPaternity);
         setIsAdoption(res.data[0].isAdpt);
       } catch (error) {
+        if (error.response.status === 400) {
+          navigate("/error404");
+        }
+        if (error.response.status === 500) {
+          navigate("/error500");
+        }
         console.error("Error fetching user details:", error);
       }
     };

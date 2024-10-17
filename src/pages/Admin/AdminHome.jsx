@@ -15,13 +15,14 @@ import { Gauge } from "@mui/x-charts/Gauge";
 import Circular from "./Circular";
 import Details from "./Details";
 import EmployeePopup from "./EmployeePopUp";
+import { useNavigate } from "react-router-dom";
 
 const AdminHome = () => {
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
   const [searchTerm, setSearchTerm] = useState("");
-
+  const navigation = useNavigate();
   const headers = [
     "Name",
     "Employee-Type",
@@ -72,7 +73,13 @@ const AdminHome = () => {
       );
       console.log("in admin home ", allEmp);
       setEmpAll(allEmp.data);
-    } catch {
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.log("error");
     }
   };
@@ -91,7 +98,13 @@ const AdminHome = () => {
       );
       console.log("in admin home ", cardData.data);
       setCardData(cardData.data);
-    } catch {
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.log("error");
     }
   };
