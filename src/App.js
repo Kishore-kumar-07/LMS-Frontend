@@ -61,6 +61,10 @@ function App() {
       path:'/loginotp',
       element:<Loginotp/>
     },
+    {
+      path:"*",
+      element:<Error404/>
+    }
   ]);
   return (
     <>
