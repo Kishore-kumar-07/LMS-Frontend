@@ -28,7 +28,6 @@ const getMinDate = () => {
 };
 
 const Leaveform = ({ isPaternity, isAdoption }) => {
-  const navigation = useNavigate();
   const navigate = useNavigate();
 
 
@@ -163,10 +162,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       }
     } catch (error) {
       if (error.response.status === 400) {
-        navigation("/error404");
+        navigate("/error404");
       }
       if (error.response.status === 500) {
-        navigation("/error500");
+        navigate("/error500");
       }
       toast.error("Somthing went wrong");
     }
@@ -289,10 +288,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       // console.log("data", res.data);
     } catch (error) {
       if (error.response.status === 400) {
-        navigation("/error404");
+        navigate("/error404");
       }
       if (error.response.status === 500) {
-        navigation("/error500");
+        navigate("/error500");
       }
       console.error("Error Leave Apply", error);
       toast.error("Error in Applying Leave");
@@ -373,10 +372,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       }
     } catch (error) {
       if (error.response.status === 400) {
-        navigation("/error404");
+        navigate("/error404");
       }
       if (error.response.status === 500) {
-        navigation("/error500");
+        navigate("/error500");
       }
       console.error(
         "Error sending email:",
