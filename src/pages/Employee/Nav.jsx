@@ -12,6 +12,7 @@ import YSF_2 from "../../images/YSF_2.png";
 
 function Nav({ setOption }) {
   const navigate = useNavigate();
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userDetails, setUserDetails] = useState({});
   const [logo, setLogo] = useState(); // Default logo set to GVR
@@ -53,10 +54,10 @@ function Nav({ setOption }) {
         }
       } catch (error) {
         if (error.response.status === 400) {
-          navigation("/error404");
+          navigate("/error404");
         }
         if (error.response.status === 500) {
-          navigation("/error500");
+          navigate("/error500");
         }
         console.error("Error fetching user details:", error);
       }

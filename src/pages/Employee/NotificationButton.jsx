@@ -13,12 +13,14 @@ const NotificationButton = () => {
   const decodedToken = jwtDecode(token);
   const tooltipRef = useRef(null); // reference for the tooltip div
 
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     getCircular();
   }, []);
 
   const getCircular = async () => {
-    const navigation = useNavigate();
     try {
       var res = await axios.get(
         `${process.env.REACT_APP_BASE_URL}/circular/getAll`,
@@ -32,10 +34,10 @@ const NotificationButton = () => {
       setCirculars(res.data);
     } catch (error) {
       if (error.response.status === 400) {
-        navigation("/error404");
+        navigate("/error404");
       }
       if (error.response.status === 500) {
-        navigation("/error500");
+        navigate("/error500");
       }
       console.log("ERROR IN CIRCULAR");
     }
