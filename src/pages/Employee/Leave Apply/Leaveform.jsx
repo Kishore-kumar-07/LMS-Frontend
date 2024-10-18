@@ -29,6 +29,8 @@ const getMinDate = () => {
 
 const Leaveform = ({ isPaternity, isAdoption }) => {
   const navigation = useNavigate();
+  const navigate = useNavigate();
+
 
   const [classfalse, setclassfalse] = useState("");
   const [fromDate, setFromDate] = useState(null);
@@ -239,10 +241,8 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           numberOfDays:
             leaveType === "Casual Leave"
               ? summary.CL
-              ? summary.CL
               : leaveType === "privilege Leave"
-              ? summary.PL
-              : summary.Paternity,
+              ? summary.PL : summary.Paternity,
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: summary.LOP,
