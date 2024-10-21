@@ -449,7 +449,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         {/* Leave Type */}
         <div className="w-full mb-4">
           <label className="block mb-2 text-xl font-bold">Leave Type *</label>
-          <label className="block mb-2 text-xl font-bold">Leave Type *</label>
           <div className="flex gap-4 flex-wrap">
             {[
               "Casual Leave",
@@ -510,39 +509,39 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               />
             </LocalizationProvider>
           </div>
-          <div className="w-[30%]">
-            <label
-              className={`${
-                !toDate && classfalse !== "" ? "text-red-500" : "text-black"
-              } block mb-2 text-lg`}
-            >
-              {toDate && classfalse === "" ? (
-                <div className="font-bold">From Date</div>
-              ) : (
-                <div className="font-bold">From Date*</div>
-              )}
-            </label>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={fromDate}
-                onChange={(newValue) => {
-                  setFromDate(newValue);
-                  setToDate(newValue); // Sync 'toDate' with 'fromDate'
-                }}
-                shouldDisableDate={shouldDisableDate}
-                minDate={today}
-                maxDate={maxDate}
-                renderInput={(params) => (
-                  <input
-                    {...params.inputProps}
-                    className="w-full border rounded-md p-2 focus:outline-none focus:ring"
-                    placeholder="Select From Date"
-                  />
+            {/* <div className="w-[30%]">
+              <label
+                className={`${
+                  !toDate && classfalse !== "" ? "text-red-500" : "text-black"
+                } block mb-2 text-lg`}
+              >
+                {toDate && classfalse === "" ? (
+                  <div className="font-bold">From Date</div>
+                ) : (
+                  <div className="font-bold">From Date*</div>
                 )}
-                format="DD/MM/YYYY"
-              />
-            </LocalizationProvider>
-          </div>
+              </label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={fromDate}
+                  onChange={(newValue) => {
+                    setFromDate(newValue);
+                    setToDate(newValue); // Sync 'toDate' with 'fromDate'
+                  }}
+                  shouldDisableDate={shouldDisableDate}
+                  minDate={today}
+                  maxDate={maxDate}
+                  renderInput={(params) => (
+                    <input
+                      {...params.inputProps}
+                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+                      placeholder="Select From Date"
+                    />
+                  )}
+                  format="DD/MM/YYYY"
+                />
+              </LocalizationProvider>
+            </div> */}
 
           {/* Half/Full Day From */}
           <div className="flex gap-4 mt-7">
@@ -569,29 +568,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             </button>
           </div>
           {/* Half/Full Day From */}
-          <div className="flex gap-4 mt-7">
-            <button
-              type="button"
-              onClick={() => {
-                handleFromDayTypeChange("full");
-                setFromHalf(null); // Reset half-day selection when full day is selected
-              }}
-              className={`h-14 px-6 font-semibold rounded-md ${
-                !isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              Full Day
-            </button>
-            <button
-              type="button"
-              onClick={() => handleFromDayTypeChange("half")}
-              className={`h-14 px-6 font-semibold rounded-md ${
-                isHalfDayFrom ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              Half Day
-            </button>
-          </div>
+
 
           {/* First/Second Half From */}
           {isHalfDayFrom && (
@@ -710,7 +687,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
         {/* Leave Reason */}
         <div className="w-full mb-4">
-          <label className="block font-bold mb-2 text-lg">Leave Reason*</label>
           <label className="block font-bold mb-2 text-lg">Leave Reason*</label>
           <div className="flex gap-4 flex-wrap text-lg">
             {[
