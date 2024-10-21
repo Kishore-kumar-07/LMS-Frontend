@@ -210,7 +210,7 @@ function EmployeePopUp({ onClose, employeeId }) {
     return {
       style: {
         width: "20px",
-        backgroundColor: "red",
+        backgroundColor: "green",
         borderRadius: "100%",
         border: "none",
         color: "transparent",
