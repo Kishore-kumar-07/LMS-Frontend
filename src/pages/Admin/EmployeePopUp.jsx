@@ -305,7 +305,7 @@ function EmployeePopUp({ onClose, employeeId }) {
                   <th className="px-4 py-2 text-left text-gray-600">From Date</th>
                   <th className="px-4 py-2 text-left text-gray-600">To Date</th>
                   <th className="px-4 py-2 text-left text-gray-600">Reason</th>
-                  <th className="px-4 py-2 text-left text-gray-600">Status</th>
+                  <th className="px-4 py-2 text-left  text-gray-600">Status</th>
                 </tr>
               </thead>
               <tbody>
