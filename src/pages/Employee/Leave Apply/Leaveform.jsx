@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { CURRENT_STATUS } from "../../../statusIndicator";
 import { OrbitProgress } from "react-loading-indicators";
-
 const getMinDate = () => {
   const today = dayjs();
   const dayOfWeek = today.day(); // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
@@ -30,6 +29,8 @@ const getMinDate = () => {
 
 const Leaveform = ({ isPaternity, isAdoption }) => {
   const navigate = useNavigate();
+
+
   const [classfalse, setclassfalse] = useState("");
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -78,25 +79,29 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     "2024-10-31", // Diwali
     "2024-11-01", // Diwali (Laxmi Pooja)
     "2024-12-25", // Christmas
+    "2024-12-25", // Christmas
   ];
+
 
   const shouldDisableDate = (date) => {
     const formattedDate = date.format("YYYY-MM-DD");
+
 
     // Disable if it's a Sunday or a holiday
     return date.day() === 0 || disabledDates.includes(formattedDate);
   };
 
+
   const shouldDisableToDate = (date) => {
     if (!fromDate) return false;
 
+
     const formattedDate = date.format("YYYY-MM-DD");
+
 
     // Disable if it's a Sunday, a holiday, or not in the same month as fromDate
     return (
-      date.day() === 0 ||
-      disabledDates.includes(formattedDate) ||
-      date.month() !== fromDate.month()
+      date.day() === 0 || disabledDates.includes(formattedDate) 
     );
   };
 
@@ -109,15 +114,23 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     console.log("Cancelled!");
     setIsLOP(!isLOP);
     setLopStatus(CURRENT_STATUS.IDEAL);
+    setLopStatus(CURRENT_STATUS.IDEAL);
 
     setPopupVisible(!popupVisible);
   };
 
   const checkLeave = async () => {
+
     console.log("Check Leave");
+    if(leaveType === "privilege Leave" && totalDays<3){
+      toast.warn("privilege Leave must be minimum of 3 days");
+      return ;
+    }
     try {
       setLopStatus(CURRENT_STATUS.LOADING);
+      setLopStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
+        ` ${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
         ` ${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
         {
           empId: decodedToken.empId,
@@ -139,6 +152,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       );
 
       setLopStatus(CURRENT_STATUS.SUCCESS);
+      setLopStatus(CURRENT_STATUS.SUCCESS);
 
       if (res.status === 202) {
         toast.error("Date is Already Applied");
@@ -146,7 +160,13 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         setSummary(res.data);
         handleLOP();
       }
-    } catch (e) {
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigate("/error404");
+      }
+      if (error.response.status === 500) {
+        navigate("/error500");
+      }
       toast.error("Somthing went wrong");
     }
   };
@@ -168,7 +188,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
 
       // Check if the current day is a weekday (Monday to Friday)
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      if (dayOfWeek !== 0) {
         // Exclude Sundays (0) and Saturdays (6)
         adjustedDays++;
       }
@@ -187,6 +207,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   var totalDays = calculateLeaveDays();
 
   const handleConfirm = async () => {
+
     try {
       console.log(
         "LOP",
@@ -196,8 +217,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         toSecondHalf
       );
 
+
       setConfirmStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
+        ` ${process.env.REACT_APP_BASE_URL}/leave/apply`,
         ` ${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
           empId: decodedToken.empId,
@@ -218,8 +241,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             leaveType === "Casual Leave"
               ? summary.CL
               : leaveType === "privilege Leave"
-              ? summary.PL
-              : summary.Paternity,
+              ? summary.PL : summary.Paternity,
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: summary.LOP,
@@ -229,9 +251,16 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               : leaveType === "privilege Leave"
               ? summary.PL + summary.LOP
               : summary.Paternity + summary.LOP,
+          leaveDays:
+            leaveType === "Casual Leave"
+              ? summary.CL + summary.LOP
+              : leaveType === "privilege Leave"
+              ? summary.PL + summary.LOP
+              : summary.Paternity + summary.LOP,
         },
         {
           headers: {
+            Authorization: ` Bearer ${token}`,
             Authorization: ` Bearer ${token}`,
             "Content-Type": "application/json",
           },
@@ -258,6 +287,12 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
       // console.log("data", res.data);
     } catch (error) {
+      if (error.response.status === 400) {
+        navigate("/error404");
+      }
+      if (error.response.status === 500) {
+        navigate("/error500");
+      }
       console.error("Error Leave Apply", error);
       toast.error("Error in Applying Leave");
     } finally {
@@ -266,6 +301,12 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     }
   };
   var fromDay = !isHalfDayFrom ? "FullDay" : "Half Day";
+  var toDay =
+    formatDate(fromDate) == formatDate(toDate)
+      ? fromDay
+      : !isHalfDayTo
+      ? "FullDay"
+      : "Half day";
   var toDay =
     formatDate(fromDate) == formatDate(toDate)
       ? fromDay
@@ -293,6 +334,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             : leaveType === "privilege Leave"
             ? summary.PL + summary.LOP
             : summary.Paternity + summary.LOP
+            ? summary.CL + summary.LOP
+            : leaveType === "privilege Leave"
+            ? summary.PL + summary.LOP
+            : summary.Paternity + summary.LOP
         }
         leaveDescription={
           leaveReason === "Others" ? leaveDescription : leaveReason
@@ -302,6 +347,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
     try {
       const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/mail/send`,
         `${process.env.REACT_APP_BASE_URL}/mail/send`,
         {
           email: "mohammedashif.a2022cse@sece.ac.in",
@@ -319,11 +365,18 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         toast.success("Mail sent Successfully");
         // setTimeout(() => {
         navigate("/thank-you");
+        navigate("/thank-you");
         // }, 3000);
       } else {
         toast.error("Error in sending Email");
       }
     } catch (error) {
+      if (error.response.status === 400) {
+        navigate("/error404");
+      }
+      if (error.response.status === 500) {
+        navigate("/error500");
+      }
       console.error(
         "Error sending email:",
         error.response ? error.response.data : error.message
@@ -402,6 +455,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               decodedToken.role === "GVR" && "Privilege Leave",
               isPaternity && "Paternity Leave",
               isAdoption && "Adoption Leave",
+              isAdoption && "Adoption Leave",
             ].map(
               (type) =>
                 type && (
@@ -455,6 +509,39 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               />
             </LocalizationProvider>
           </div>
+            {/* <div className="w-[30%]">
+              <label
+                className={`${
+                  !toDate && classfalse !== "" ? "text-red-500" : "text-black"
+                } block mb-2 text-lg`}
+              >
+                {toDate && classfalse === "" ? (
+                  <div className="font-bold">From Date</div>
+                ) : (
+                  <div className="font-bold">From Date*</div>
+                )}
+              </label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={fromDate}
+                  onChange={(newValue) => {
+                    setFromDate(newValue);
+                    setToDate(newValue); // Sync 'toDate' with 'fromDate'
+                  }}
+                  shouldDisableDate={shouldDisableDate}
+                  minDate={today}
+                  maxDate={maxDate}
+                  renderInput={(params) => (
+                    <input
+                      {...params.inputProps}
+                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+                      placeholder="Select From Date"
+                    />
+                  )}
+                  format="DD/MM/YYYY"
+                />
+              </LocalizationProvider>
+            </div> */}
 
           {/* Half/Full Day From */}
           <div className="flex gap-4 mt-7">
@@ -480,6 +567,8 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               Half Day
             </button>
           </div>
+          {/* Half/Full Day From */}
+
 
           {/* First/Second Half From */}
           {isHalfDayFrom && (
@@ -494,6 +583,8 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                     onChange={() => {
                       setFromHalf(half);
                       if (half === "First Half") {
+                        handleToDayTypeChange("full");
+                        setToDate(fromDate);
                         setToHalf(null); // Reset "To Half" when "First Half" is selected
                       }
                     }}
@@ -523,7 +614,13 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 value={toDate}
-                onChange={(newValue) => setToDate(newValue)}
+                onChange={(newValue) => {
+                  if (fromHalf === "First Half") {
+                    setToDate(fromDate);
+                  } else {
+                    setToDate(newValue)
+                  };
+                }}
                 shouldDisableDate={shouldDisableToDate}
                 minDate={fromDate || today}
                 maxDate={maxDate}
@@ -552,17 +649,18 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             >
               Full Day
             </button>
-            {formatDate(toDate) !== formatDate(fromDate) && (
-              <button
-                type="button"
-                onClick={() => handleToDayTypeChange("half")}
-                className={`h-14 px-6 font-semibold rounded-md ${
-                  isHalfDayTo ? "bg-blue-500 text-white" : "bg-gray-200"
-                }`}
-              >
-                Half Day
-              </button>
-            )}
+            {formatDate(toDate) !== formatDate(fromDate) &&
+              fromHalf !== "First Half" && (
+                <button
+                  type="button"
+                  onClick={() => handleToDayTypeChange("half")}
+                  className={`h-14 px-6 font-semibold rounded-md ${
+                    isHalfDayTo ? "bg-blue-500 text-white" : "bg-gray-200"
+                  }`}
+                >
+                  Half Day
+                </button>
+              )}
           </div>
 
           {/* First/Second Half To */}
@@ -570,7 +668,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             formatDate(toDate) !== formatDate(fromDate) &&
             fromHalf !== "First Half" && (
               <div className="flex gap-4 mt-8 text-lg">
-                {["First Half", "Second Half"].map((half) => (
+                {["First Half"].map((half) => (
                   <label key={half} className="flex items-center">
                     <input
                       type="radio"
@@ -578,9 +676,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                       value={half}
                       checked={toHalf === half}
                       onChange={() => setToHalf(half)}
-                      disabled={
-                        fromHalf === "Second Half" && half === "Second Half"
-                      }
                       className="mr-2"
                     />
                     {half}
@@ -631,6 +726,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           </div>
         )}
 
+
         <button
           type="submit"
           className="w-44 bg-blue-500 text-white p-3 rounded-md text-xl font-bold shadow-lg"
@@ -653,7 +749,86 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                 X
               </button>
             </div>
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-blue-800">Leave Details</h3>
+              <button
+                className="text-red-500 text-xl font-bold hover:text-red-700 transition-colors"
+                onClick={handlePopupClose}
+              >
+                X
+              </button>
+            </div>
 
+            {lopStatus === CURRENT_STATUS.LOADING ? (
+              <div className="flex justify-center p-20">
+                <OrbitProgress
+                  variant="track-disc"
+                  color="#078ebc"
+                  size="small"
+                  text="Wait"
+                  textColor=""
+                />
+              </div>
+            ) : (
+              <div className="w-full flex justify-center items-center">
+                <table className="w-[90%] text-left text-lg border-collapse border border-gray-300">
+                  <tbody>
+                    <tr>
+                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                        Leave Type
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {leaveDetails.leaveType}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                        From Date
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {leaveDetails.fromDate}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                        To Date
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {leaveDetails.toDate}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                        Number of Days
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {leaveDetails.totalDays}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                        Leave Reason
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {leaveDetails.leaveReason}
+                      </td>
+                    </tr>
+                    {leaveDetails.leaveDescription && (
+                      <tr>
+                        <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                          Leave Description
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          {leaveDetails.leaveDescription}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {lopStatus === CURRENT_STATUS.LOADING ? (
               <div className="flex justify-center p-20">
                 <OrbitProgress
@@ -736,6 +911,19 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           </div>
         </div>
       )}
+            <div className="pt-5 flex justify-center items-center">
+              {lopStatus === CURRENT_STATUS.IDEAL && (
+                <button
+                  className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
+                  onClick={checkLeave}
+                >
+                  Confirm
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {isLOP && (
         <LeaveNotification
@@ -749,8 +937,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           }
           lopDays={summary.LOP}
           setLopStatus={setLopStatus}
+          setLopStatus={setLopStatus}
           handleCancel={handleCancel}
           handleConfirm={handleConfirm}
+          status={confirmStatus}
           status={confirmStatus}
         />
       )}
@@ -759,3 +949,4 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 };
 
 export default Leaveform;
+

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
-import * as FileSaver from 'file-saver';
-import XLSX from 'sheetjs-style';
-
-
+import * as FileSaver from "file-saver";
+import XLSX from "sheetjs-style";
+import { useNavigate } from "react-router-dom";
 const Details = () => {
+  const navigation = useNavigate();
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [subject, setSubject] = useState("");
@@ -17,17 +17,17 @@ const Details = () => {
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]); // Store all employees
 
-  const fileType ='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-  const fileExtension = '.xlsx';
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
 
-
-  const exportData = () =>{
+  const exportData = () => {
     const ws = XLSX.utils.json_to_sheet(filteredEmployees);
-    const wb = {Sheets : {'data' : ws}, SheetNames : ['data']};
-    const excelBuffer = XLSX.write(wb, { bookType : 'xlsx' , type : 'array'});
-    const data=  new Blob([excelBuffer], {type : fileType});
-    FileSaver.saveAs(data,"Report" + fileExtension);
-  }
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, "Report" + fileExtension);
+  };
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -59,7 +59,13 @@ const Details = () => {
       );
       setAllEmployees(allEmp.data); // Store all employees in state
       setFilteredEmployees(allEmp.data); // Initialize filteredEmployees with all employees
-    } catch {
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.log("error");
     }
   };
@@ -70,8 +76,7 @@ const Details = () => {
       const matchesSearchTerm = employee.empName
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-      const matchesType =
-        selectedType === "" || employee.role === selectedType;
+      const matchesType = selectedType === "" || employee.role === selectedType;
       return matchesSearchTerm && matchesType;
     });
     setFilteredEmployees(filtered);
@@ -117,11 +122,9 @@ const Details = () => {
       //   toast.error("Error in sending Circular ");
 
       // }
-
     } catch (e) {
       console.error("Error sending circular", e);
       toast.error("Error in sending Circular ");
-
     }
     setSubject("");
     setContent("");
@@ -131,27 +134,33 @@ const Details = () => {
 
   return (
     <div className="bg-white p-5 w-full h-full mx-auto flex flex-col justify-start items-start">
-            <ToastContainer />
+      <ToastContainer />
       <div className="mb-6 flex justify-between items-start space-x-4 w-full">
-        <div className = "flex gap-5"><input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full max-w-md p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
-          placeholder="Search Employee"
-        />
-        <select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-          className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
-        >
-          <option value="">All Types</option>
-          <option value="GVR">GVR</option>
-          <option value="3P">3P</option>
-        </select>
+        <div className="flex gap-5">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full max-w-md p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
+            placeholder="Search Employee"
+          />
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+            className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
+          >
+            <option value="">All Types</option>
+            <option value="GVR">GVR</option>
+            <option value="3P">3P</option>
+          </select>
         </div>
-        <div className=  "pr-5">
-        <button onClick={exportData} className="p-2 bg-green-300 text-black w-20 h-10 font-semibold rounded-lg " >Export</button>
+        <div className="pr-5">
+          <button
+            onClick={exportData}
+            className="p-2 bg-green-300 text-black w-20 h-10 font-semibold rounded-lg "
+          >
+            Export
+          </button>
         </div>
       </div>
 

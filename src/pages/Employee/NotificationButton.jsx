@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { FaBell } from "react-icons/fa";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
+import { useNavigate } from "react-router-dom";
 const NotificationButton = () => {
   const [isTooltipVisible, setTooltipVisible] = useState(false);
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -12,6 +12,9 @@ const NotificationButton = () => {
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const tooltipRef = useRef(null); // reference for the tooltip div
+
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getCircular();
@@ -29,8 +32,13 @@ const NotificationButton = () => {
         }
       );
       setCirculars(res.data);
-
-    } catch (e) {
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigate("/error404");
+      }
+      if (error.response.status === 500) {
+        navigate("/error500");
+      }
       console.log("ERROR IN CIRCULAR");
     }
   };

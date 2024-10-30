@@ -6,6 +6,7 @@ import { CURRENT_STATUS } from "../../statusIndicator";
 import LoadingPage from "../LoadingPage";
 
 const LoginTextFeild = ({ idRef }) => {
+  const navigation = useNavigate();
   const disableClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -52,6 +53,12 @@ const LoginTextFeild = ({ idRef }) => {
           setError("Incorrect password");
         }
       } catch (err) {
+        if (err.response.status === 400) {
+          navigation("/error404");
+        }
+        if (err.response.status === 500) {
+          navigation("/error500");
+        }
         console.log(err.message);
         setError("Login failed. Please try again.");
       }

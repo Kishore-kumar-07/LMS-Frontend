@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
+// import useNavigate
 import { Doughnut } from "react-chartjs-2";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,6 +17,7 @@ import {
 } from "chart.js";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 // Register the necessary chart.js components
 ChartJS.register(
@@ -32,6 +33,7 @@ ChartJS.register(
 const localizer = momentLocalizer(moment);
 
 function EmployeePopUp({ onClose, employeeId }) {
+  const navigation = useNavigate();
   const [events, setEvents] = useState([]);
   const [leaveCounts, setLeaveCounts] = useState(Array(12).fill(0));
   const [lopCounts, setLopCounts] = useState(Array(12).fill(0));
@@ -67,7 +69,6 @@ function EmployeePopUp({ onClose, employeeId }) {
     plugins: {
       legend: { display: false },
       title: { display: true, text: "Gauge Chart" },
-      
     },
   };
 
@@ -87,6 +88,12 @@ function EmployeePopUp({ onClose, employeeId }) {
       );
       setUserData(res.data[0]);
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.log(error);
     }
   };
@@ -203,7 +210,7 @@ function EmployeePopUp({ onClose, employeeId }) {
     return {
       style: {
         width: "20px",
-        backgroundColor: "red",
+        backgroundColor: "green",
         borderRadius: "100%",
         border: "none",
         color: "transparent",

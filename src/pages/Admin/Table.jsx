@@ -7,8 +7,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { BeatLoader } from "react-spinners";
+
 import accept from "../../images/accept.png";
 import decline from "../../images/cancel.png";
+
+import { useNavigate } from "react-router-dom";
+
 
 const Table = ({ cardData }) => {
   const headers = [
@@ -26,6 +30,7 @@ const Table = ({ cardData }) => {
 
   // const [isActionPopupOpen, setActionPopupOpen] = useState(false);
   const [isReasonPopupOpen, setReasonPopupOpen] = useState(false);
+  const navigation = useNavigate();
   // const [selectedLeaveId, setSelectedLeaveId] = useState(null);
   const [leaveStatus, setLeaveStatus] = useState({});
   const [editRowId, setEditRowId] = useState(null);
@@ -104,6 +109,12 @@ const Table = ({ cardData }) => {
       cardData();
       setEditRowId(null);
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error accepting leave:", error);
       toast.error("Failed to send request");
@@ -165,6 +176,12 @@ const Table = ({ cardData }) => {
       cardData();
       setEditRowId(null);
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error rejecting leave:", error);
       toast.error("Failed to send request");
@@ -195,6 +212,12 @@ const Table = ({ cardData }) => {
       const filteredData = response.data.reverse();
       setData(filteredData);
     } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
       console.error("Error fetching data:", error);
     }
   };
@@ -290,11 +313,12 @@ const Table = ({ cardData }) => {
                     <span
                       className={
                         row.status === "Pending"
-                          ? "text-yellow-500 text-md"
+
+                          ? "text-yellow-500"
                           : row.status === "Approved"
                           ? "text-green-500"
-                          : "text-red-500 text-md"
-                          
+                          : "text-red-500"
+
                       }
                     >
                       {row.status}
