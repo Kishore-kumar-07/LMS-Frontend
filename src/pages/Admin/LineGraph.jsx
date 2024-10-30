@@ -1,33 +1,48 @@
-import * as React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 
-export default function LineGraph({color}) {
+export default function LineGraph({ color }) {
+  const containerRef = useRef(null);
+  const [width, setWidth] = useState(0);
 
-  const emptySeries = {
-  series: [],
-  // margin: { top: 10, right: 10, left: 25, bottom: 25 },
-  height: 150,
-};
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (entries[0].contentRect.width !== width) {
+        setWidth(entries[0].contentRect.width);
+      }
+    });
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    return () => {
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
+    };
+  }, [width]);
 
   return (
-    <div className = "w-full border border-[#c0c0c0] rounded-lg">
+    <div
+      ref={containerRef}
+      className="w-full  rounded-lg"
+      style={{ maxWidth: '100%' }}
+    >
       <LineChart
-      
-      xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-      series={[
-        {
-          data: [2, 5.5, 2, 8.5, 1.5, 5],
-          area : true,
-          fill: 'rgba(255, 255, 255, 0.5)',
-          stroke: 'rgba(165, 121, 236, 1)',
-          strokeWidth: 2,
-          name: 'Area chart',
-          color: '#4e79a7'
-          
-        },
-      ]}
-      height={225}
-    />
+        xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+        series={[
+          {
+            data: [2, 5.5, 2, 8.5, 1.5, 5],
+            area: true,
+            fill: 'rgba(255, 255, 255, 0.5)',
+            stroke: 'rgba(165, 121, 236, 1)',
+            strokeWidth: 2,
+            name: 'Area chart',
+            color: color || '#4e79a7',
+          },
+        ]}
+        width={width}
+        height={width * 0.20} // Adjusts height based on width for responsiveness
+      />
     </div>
   );
 }
