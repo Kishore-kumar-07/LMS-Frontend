@@ -324,7 +324,7 @@ function EmployeePopUp({ onClose, employeeId }) {
         </div>
 
         {/* Bottom Section */}
-        <div className="flex gap-6">
+        <div className="flex gap-5">
           {/* Left - Calendar */}
           <div className="w-1/3 flex flex-col gap-4 justify-center items-center">
             <Calendar
