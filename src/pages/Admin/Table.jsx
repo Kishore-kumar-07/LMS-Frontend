@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Pagination from "./Pagination";
 import { MdMessage, MdClose, MdEdit } from "react-icons/md";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { BeatLoader } from "react-spinners";
+import accept from "../../images/accept.png";
+import decline from "../../images/cancel.png";
 
 const Table = ({ cardData }) => {
   const headers = [
@@ -101,13 +103,11 @@ const Table = ({ cardData }) => {
       getData();
       cardData();
       setEditRowId(null);
-
     } catch (error) {
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error accepting leave:", error);
       toast.error("Failed to send request");
       setEditRowId(null);
-
     }
   };
 
@@ -164,13 +164,11 @@ const Table = ({ cardData }) => {
       getData();
       cardData();
       setEditRowId(null);
-
     } catch (error) {
       setStatus(CURRENT_STATUS.IDEAL);
       console.error("Error rejecting leave:", error);
       toast.error("Failed to send request");
       setEditRowId(null);
-
     }
   };
 
@@ -227,7 +225,9 @@ const Table = ({ cardData }) => {
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200 text-lg"> {/* Increased row size */}
+          <tbody className="bg-white divide-y divide-gray-200 text-lg">
+            {" "}
+            {/* Increased row size */}
             {dataToDisplay.map((row, rowIndex) => (
               <tr key={rowIndex + 1} className="">
                 <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 text-center">
@@ -254,21 +254,31 @@ const Table = ({ cardData }) => {
                 <td className="px-4 py-3 whitespace-nowrap text-md font-medium  text-gray-900 cursor-pointer">
                   <MdMessage onClick={() => handleReasonClick(row.reason)} />
                 </td>
-                <td className=" text-md font-medium text-sm">
+                <td className=" text-md font-medium text-sm flex gap-2 pt-2 justify-center items-center h-full">
                   {editRowId === row._id ? (
                     <>
-                      <button
+                      <div
                         onClick={() => handleAccept(row._id, row.status)}
-                        className="ml-2 bg-green-500 text-white px-2 py-1 rounded"
+                        className="flex justify-center cursor-pointer items-center"
                       >
-                        Accept
-                      </button>
-                      <button
+                        <img
+                          src={accept}
+                          alt="approve"
+                          width={25}
+                          height={25}
+                        />
+                      </div>
+                      <div
                         onClick={() => handleReject(row._id, row.status)}
-                        className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
+                        className="flex justify-center cursor-pointer items-center"
                       >
-                        Decline
-                      </button>
+                        <img
+                          src={decline}
+                          alt="decline"
+                          width={25}
+                          height={25}
+                        />
+                      </div>
                       <button
                         onClick={handleCancelEdit}
                         className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
@@ -278,17 +288,17 @@ const Table = ({ cardData }) => {
                     </>
                   ) : (
                     <span
-  className={
-    row.status === "Pending"
-      ? "text-yellow-500"
-      : row.status === "Approved"
-      ? "text-green-500"
-      : "text-red-500"
-  }
->
-  {row.status}
-</span>
-
+                      className={
+                        row.status === "Pending"
+                          ? "text-yellow-500 text-md"
+                          : row.status === "Approved"
+                          ? "text-green-500"
+                          : "text-red-500 text-md"
+                          
+                      }
+                    >
+                      {row.status}
+                    </span>
                   )}
                 </td>
                 <td className="px-4 py-2 text-md font-medium">
