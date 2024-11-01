@@ -26,14 +26,14 @@ ChartJS.register(
 const BarChart = () => {
   const [weekData, setWeekData] = useState([]);
   const [chartData, setChartData] = useState({
-    labels: [], // To hold the days or departments
+    labels: [],
     datasets: [
       {
         label: "Leaves",
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
-        data: [], // To hold the number of leaves per day/department
+        data: [],
       },
     ],
   });
@@ -57,23 +57,17 @@ const BarChart = () => {
           },
         }
       );
-      console.log("Fetched week data:", weekDataResponse.data);
 
-      // Filter and process the leaves
       const today = new Date();
-      console.log(today);
       const lastWeek = new Date();
       lastWeek.setDate(today.getDate() - 7);
 
       const filteredLeaves = weekDataResponse.data.filter((leave) => {
         const leaveDate = new Date(leave.today);
-        console.log("leave date is ", leaveDate);
         return leaveDate >= lastWeek && leaveDate <= today;
       });
 
-      // Group leaves by date or department (for now, grouping by date)
       const leaveCountByDay = {};
-      console.log(filteredLeaves);
       filteredLeaves.forEach((leave) => {
         const leaveDateObj = new Date(leave.today);
         const leaveDate =
@@ -83,7 +77,6 @@ const BarChart = () => {
           " " +
           leaveDateObj.getFullYear();
 
-        console.log(leaveDate);
         if (leaveCountByDay[leaveDate]) {
           leaveCountByDay[leaveDate]++;
         } else {
@@ -91,13 +84,9 @@ const BarChart = () => {
         }
       });
 
-      // Prepare labels and data for the chart
       const labels = Object.keys(leaveCountByDay);
       const leaveCounts = Object.values(leaveCountByDay);
-      console.log(labels);
-      console.log(leaveCounts);
 
-      // Update the chart data
       setChartData({
         labels,
         datasets: [
@@ -118,8 +107,18 @@ const BarChart = () => {
   };
 
   return (
-    <div className="w-[40rem] h-[14rem] flex justify-center items-center p-0">
-      <Bar data={chartData} width={200} height={70} />
+    <div className="w-full h-full flex justify-center items-center">
+      <div className=" w-full h-auto flex justify-center items-center">
+        <div className="lg:w-full md:w-[60%] h-54 p-1">
+          <Bar
+            data={chartData}
+            options={{
+              maintainAspectRatio: false,
+              
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

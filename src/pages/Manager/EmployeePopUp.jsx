@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { SIZE } from "rsuite/esm/internals/constants";
 
 // Register the necessary chart.js components
 ChartJS.register(
@@ -35,6 +36,7 @@ const localizer = momentLocalizer(moment);
 function EmployeePopUp({ onClose, employeeId }) {
   const navigation = useNavigate();
   const [events, setEvents] = useState([]);
+  const [gaugeData_, setGaugeData] = useState([]);
   const [leaveCounts, setLeaveCounts] = useState(Array(12).fill(0));
   const [lopCounts, setLopCounts] = useState(Array(12).fill(0));
 
@@ -48,28 +50,36 @@ function EmployeePopUp({ onClose, employeeId }) {
   useEffect(() => {
     getUserDetails();
     getLogDetails();
+    getGaugeDetails();
   }, []);
 
-  const gaugeData = {
-    datasets: [
-      {
-        data: [60, 40],
-        backgroundColor: ["#4bc0c0", "#e0e0e0"],
-        borderWidth: 0,
-        rotation: 270,
-        circumference: 180,
-        cutout: "80%",
-      },
-    ],
-  };
 
-  const gaugeOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      title: { display: true, text: "Gauge Chart" },
-    },
+  const getGaugeDetails = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/leave/gauge`,
+        {
+          empId : empId,
+          employeeId: employeeId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(res.data)
+      setGaugeData(res.data)
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.log(error);
+    }
   };
 
   const getUserDetails = async () => {
@@ -119,6 +129,31 @@ function EmployeePopUp({ onClose, employeeId }) {
       console.log(error);
     }
   };
+
+  const gaugeData = {
+    datasets: [
+      {
+        data: [gaugeData_.emp , gaugeData_.all - gaugeData_.emp],
+        backgroundColor: ["#125B9A", "#e0e0e0"],
+        borderWidth: 0,
+        rotation: 270,
+        circumference: 180,
+        cutout: "80%",
+      },
+    ],
+  };
+
+  const gaugeOptions = {
+    
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      title: { display: true, text: "Leave Percentage" },
+      
+      
+    },
+  };
+
 
   // Function to filter and calculate leave and LOP counts per month
   const filterLeaveDataByMonth = (logs) => {
@@ -210,7 +245,7 @@ function EmployeePopUp({ onClose, employeeId }) {
     return {
       style: {
         width: "20px",
-        backgroundColor: "red",
+        backgroundColor: "green",
         borderRadius: "100%",
         border: "none",
         color: "transparent",
@@ -220,145 +255,100 @@ function EmployeePopUp({ onClose, employeeId }) {
   };
 
   return (
-    <div className="w-full h-full rounded-lg shadow-md absolute px-10 py-1 flex justify-center items-center flex-col w-full">
+    <div className="h-full rounded-lg shadow-md absolute px-4 sm:px-10 py-2 flex flex-col w-full">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 w-full to-teal-400 text-white rounded-t-lg p-4 flex justify-between items-center shadow">
+      <div className="w-full bg-gray-600 text-white rounded-t-lg p-4 flex justify-between items-center shadow">
         <h1 className="text-xl font-semibold">{userData.empName}'s Details</h1>
         <span
           onClick={() => {
             onClose();
           }}
-          className="cursor-pointer text-2xl"
+          className="cursor-pointer text-3xl text-white font-semibold"
         >
           &times;
         </span>
       </div>
-
-      {/* Content */}
-      <div className="flex flex-col gap-6 p-4 bg-gray-50 rounded-b-lg w-full">
-        {/* Info Section */}
-        <div className="flex gap-6">
-          {/* Left - Info */}
-          <div className="w-1/3 bg-white rounded-lg p-4 shadow-sm">
+  
+      <div className="flex flex-col gap-4 sm:gap-6 p-4 bg-gray-50 rounded-b-lg w-full">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+          {/* Adjust width here */}
+          <div className="flex-1 max-w-[400px] bg-white rounded-lg p-4 shadow-sm">
             <table className="table-auto w-full text-left">
               <tbody>
                 <tr>
-                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">
-                    Designation:
-                  </td>
+                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Designation:</td>
                   <td className="text-gray-600 py-1">{userData.designation}</td>
                 </tr>
                 <tr>
-                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">
-                    Phone Number:
-                  </td>
+                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Phone Number:</td>
                   <td className="text-gray-600 py-1">{userData.empPhone}</td>
                 </tr>
                 <tr>
-                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">
-                    Unit:
-                  </td>
+                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Unit:</td>
                   <td className="text-gray-600 py-1">{userData.unit}</td>
                 </tr>
                 <tr>
-                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">
-                    Department:
-                  </td>
+                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Department:</td>
                   <td className="text-gray-600 py-1">{userData.department}</td>
                 </tr>
                 <tr>
-                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">
-                    Vendor:
-                  </td>
+                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Vendor:</td>
                   <td className="text-gray-600 py-1">{userData.vendor}</td>
                 </tr>
                 <tr>
-                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">
-                    Location:
-                  </td>
-                  <td className="text-gray-600 py-1">{userData.location}</td>
+                  <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Location:</td>
+                  <td className="text-gray-600 font-semibold py-1">{userData.location}</td>
                 </tr>
               </tbody>
             </table>
           </div>
-
+  
           {/* Right - Yearly Leave Statistics */}
-          {/* Right - Yearly Leave Statistics */}
-          <div className="w-2/3 bg-white rounded-lg shadow-sm p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2 text-start">
-              Yearly Leave Statistics
-            </h2>
-            <div className="flex h-40 w-full">
-              <div className="w-3/4 h-full flex justify-center items-center">
+          <div className="flex-1 bg-white rounded-lg shadow-sm p-4">
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">Yearly Leave Statistics</h2>
+            <div className="flex h-40 w-full ">
+              <div className="flex-1 flex justify-center items-center">
                 <BarChart
-                  xAxis={[
-                    {
-                      scaleType: "band",
-                      data: [
-                        "JAN",
-                        "FEB",
-                        "MAR",
-                        "APR",
-                        "MAY",
-                        "JUN",
-                        "JUL",
-                        "AUG",
-                        "SEP",
-                        "OCT",
-                        "NOV",
-                        "DEC",
-                      ],
-                    },
-                  ]}
-                  series={[
-                    { label: "Leave", data: leaveCounts },
-                    { label: "LOP", data: lopCounts },
-                  ]}
+                  xAxis={[{ scaleType: "band", data: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"] }]}
+                  series={[{ label: "Leave", data: leaveCounts }, { label: "LOP", data: lopCounts }]}
                 />
               </div>
-              <div className="w-1/4 h-full flex justify-center items-center">
-                <Doughnut data={gaugeData} options={gaugeOptions} />
+              <div className="w-1/4 h-3/4 flex justify-center items-center">
+                <Doughnut data={gaugeData} options={gaugeOptions}/>
               </div>
+              {/* <p>{gaugeData_.emp} of {gaugeData_.all}<br></br> Total Leaves</p> */}
             </div>
           </div>
         </div>
-
+  
         {/* Bottom Section */}
-        <div className="flex gap-6">
-          {/* Left - Calendar */}
-          <div className="w-1/3 flex flex-col gap-4 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 ">
+          
+          <div className="flex-1 max-w-[400px] flex flex-col justify-center items-center bg-white rounded-lg p-2">
             <Calendar
               localizer={localizer}
               events={events}
               startAccessor="start"
               endAccessor="end"
-              style={{ height: 400, width: 400 }}
+              style={{ height: 400, width: '100%' }} // Ensure width is responsive
               defaultView="month"
               views="month"
               eventPropGetter={eventStyleGetter}
             />
           </div>
-
+  
           {/* Right - Leave Logs */}
-          <div className="w-2/3 bg-white rounded-lg shadow-sm p-4 overflow-y-auto max-h-96">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2 text-start">
-              Leave Logs
-            </h2>
+          <div className="flex-1 bg-white rounded-lg shadow-sm p-4 overflow-y-auto max-h-96">
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">Leave Logs</h2>
             <table className="min-w-full table-auto">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 text-left text-gray-600">
-                    Applied Date
-                  </th>
-                  <th className="px-4 py-2 text-left text-gray-600">
-                    Leave Type
-                  </th>
-                  <th className="px-4 py-2 text-left text-gray-600">
-                    From Date
-                  </th>
+                  <th className="px-4 py-2 text-left text-gray-600">Applied Date</th>
+                  <th className="px-4 py-2 text-left text-gray-600">Leave Type</th>
+                  <th className="px-4 py-2 text-left text-gray-600">From Date</th>
                   <th className="px-4 py-2 text-left text-gray-600">To Date</th>
                   <th className="px-4 py-2 text-left text-gray-600">Reason</th>
-                  <th className="px-4 py-2 text-left text-gray-600">Status</th>
+                  <th className="px-4 py-2 text-left  text-gray-600">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -371,7 +361,7 @@ function EmployeePopUp({ onClose, employeeId }) {
                     <td className="px-4 py-2">{log.reason}</td>
                     <td className="px-4 py-2">
                       <div
-                        className={`w-3 h-3 rounded-full inline-block`}
+                        className="w-3 h-3 rounded-full inline-block"
                         style={{
                           backgroundColor: getStatusColor(log.status),
                         }}
@@ -394,6 +384,7 @@ function EmployeePopUp({ onClose, employeeId }) {
       </div>
     </div>
   );
+  
 }
 
 export default EmployeePopUp;

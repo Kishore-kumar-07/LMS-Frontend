@@ -4,21 +4,36 @@ import { jwtDecode } from "jwt-decode"; // Corrected import
 import GVR from "../../images/GVRLogo.png";
 import userImg from "../../images/profile.png";
 import { useNavigate } from "react-router-dom";
-import NotificationButton from "./NotificationButton";
-import Candor from "../../images/Candor.png";
-import Sitics from "../../images/Sitics.png";
-import Teamlease from "../../images/Teamlease.png";
-import YSF_2 from "../../images/YSF_2.png";
+import { FaPaperPlane, FaBars, FaTimes } from "react-icons/fa";
 
-function Nav({ setOption }) {
+function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
   const navigate = useNavigate();
-
+  const [selected, setSelected] = useState("Employees");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userDetails, setUserDetails] = useState({});
-  const [logo, setLogo] = useState(); // Default logo set to GVR
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeNav, setActiveNav] = useState("Employees");
+
+  const handleClick = (section) => {
+    setSelected(section);
+    setIsMobileMenuOpen(false); 
+    if (section === "leaves") {
+      setIsRequest(true);
+      setIsPermission(false);
+      setIsEmployees(false);
+    } else if (section === "permission") {
+      setIsPermission(true);
+      setIsRequest(false);
+      setIsEmployees(false);
+    } else if (section === "Employees") {
+      setIsPermission(false);
+      setIsRequest(false);
+      setIsEmployees(true);
+    }
+  };
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -42,16 +57,7 @@ function Nav({ setOption }) {
         const userData = res.data[0];
         setUserDetails(userData);
 
-        // Dynamically set the logo based on user details or another field
-        if (userData.vendor === "Candor") {
-          setLogo(Candor);
-        } else if (userData.vendor === "Sitics") {
-          setLogo(Sitics);
-        } else if (userData.vendor === "Teamlease") {
-          setLogo(Teamlease);
-        } else if (userData.vendor === "YSF_2") {
-          setLogo(YSF_2);
-        }
+       
       } catch (error) {
         if (error.response.status === 400) {
           navigate("/error404");
@@ -86,16 +92,51 @@ function Nav({ setOption }) {
           }}
           className="w-[100%] flex justify-between items-center px-5 py-2 rounded-lg"
         >
-          {/* Dynamic Logo Rendering */}
-          <div
-            onClick={() => setOption("Home")}
-            className="text-xl font-semibold cursor-pointer pl-10"
-          >
-            <img src={logo} alt="Company Logo" width={60} height={40} />
+          <div className="text-xl font-semibold cursor-pointer pl-10">
+            <img src={GVR} alt="GVR Logo" width={120} height={80} />
+          </div>
+          <div className="block md:hidden flex justify-center items-center">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? (
+                <FaTimes className="text-2xl" />
+              ) : (
+                <FaBars className="text-2xl" />
+              )}
+            </button>
           </div>
 
-          <div className="flex w-56 justify-around items-center relative ">
-            {/* <NotificationButton /> */}
+          <div
+            className={`flex gap-5 shadow rounded-md text-black md:flex justify-center items-center ${
+              isMobileMenuOpen
+                ? "flex-col absolute bg-white z-10 p-5  w-[50%]"
+                : "hidden md:flex"
+            }`}
+          >
+            {[ "Employees" , "leaves", "permission"].map(
+              (section) => (
+                <span
+                  key={section}
+                  onClick={() => {
+                    handleClick(section);
+                    setActiveNav(
+                      section.charAt(0).toUpperCase() + section.slice(1)
+                    ); 
+                  }}
+                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
+                    activeNav ===
+                    section.charAt(0).toUpperCase() + section.slice(1)
+                      ? "text-[#015E84] border-[#015E84]"
+                      : "text-black border-transparent"
+                  }`}
+                >
+                  {section.charAt(0).toUpperCase() + section.slice(1)}{" "}
+                  
+                </span>
+              )
+            )}
+          </div>
+
+          <div className="flex justify-around items-center relative pr-10 ">
             <button
               className="flex justify-center items-center"
               onClick={handleUserClick}

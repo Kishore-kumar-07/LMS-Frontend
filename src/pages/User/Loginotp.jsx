@@ -6,7 +6,8 @@ import { CURRENT_STATUS } from "../../statusIndicator";
 import { ClockLoader } from "react-spinners";
 function Loginotp() {
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [timer, setTimer] = useState(30);
@@ -37,7 +38,7 @@ function Loginotp() {
       } else {
         setSendStatus(CURRENT_STATUS.LOADING);
       }
-      const Number = phoneNumber.toString();
+      // const Number = phoneNumber.toString();
       if (Number.length === 10) {
         const finalnumber = "+91" + Number;
         const res = await axios.post(
@@ -89,14 +90,14 @@ function Loginotp() {
     }
   };
 
-  const validateOtp = async () => {
+  const handleLogin = async () => {
     try {
       setValidateStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/otp/verify`,
+        `${process.env.REACT_APP_BASE_URL}/emp/signin`,
         {
-          number: "+91" + phoneNumber,
-          otp: otp,
+          userName: userName,
+          password: password,
         },
         {
           headers: {
@@ -119,7 +120,7 @@ function Loginotp() {
         }
       } else if (res.status === 401) {
         setValidateStatus(CURRENT_STATUS.IDEAL);
-        setErrorOtp("Incorrect OTP");
+        // setErrorOtp("Incorrect OTP");
       }
     } catch (e) {
       if (e.response.status === 400) {
@@ -129,7 +130,7 @@ function Loginotp() {
         navigate("/error500");
       }
       setValidateStatus(CURRENT_STATUS.ERROR);
-      setErrorOtp("Incorrect OTP");
+      // setErrorOtp("Incorrect OTP");
     }
   };
 
@@ -145,24 +146,39 @@ function Loginotp() {
               htmlFor="phone"
               className="block text-md font-bold pl-1 mb-4 text-gray-600"
             >
-              Phone Number
+              UserName
             </label>
             <input
-              type="number"
-              id="phone"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              type="text"
+              id="username"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 "
+              placeholder="Enter your UserName"
+               // Disable phone number field after OTP is sent
+            />
+            <label
+              htmlFor="phone"
+              className="block text-md font-bold pl-1 mb-4 text-gray-600"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 "
               placeholder="Enter your phone number"
-              disabled={isOtpSent} // Disable phone number field after OTP is sent
+               // Disable phone number field after OTP is sent
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             {sendStatus === CURRENT_STATUS.IDEAL ? (
               <button
-                onClick={sendOtp}
+                onClick={handleLogin}
                 className="bg-black hover:bg-gray-800 ml-36 mt-5 text-white font-bold py-2 px-4 rounded"
               >
-                Send OTP
+                Login
               </button>
             ) : sendStatus === CURRENT_STATUS.LOADING && !isOtpSent ? (
               <div className="w-full flex justify-center items-center mt-5">
@@ -178,7 +194,7 @@ function Loginotp() {
             )}
           </div>
 
-          {isOtpSent && (
+          {/* {isOtpSent && (
             <div>
               <label
                 htmlFor="otp"
@@ -246,7 +262,7 @@ function Loginotp() {
                 ""
               )}
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>
