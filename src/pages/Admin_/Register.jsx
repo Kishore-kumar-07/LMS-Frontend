@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
 
-function Register({setOpenRegisterModal}) {
+function Register({setOpenRegisterModal , currentEmployee}) {
   const [formData, setFormData] = useState({
     empId: "",
     userName: "",
@@ -16,16 +18,52 @@ function Register({setOpenRegisterModal}) {
     gender: "",
     manager: "",
     designation: "",
-    reportionManager: "",
+    reportingManager: "",
     dateOfJoining: "",
     function: "",
     department: "",
     level: "",
     location: "",
     unit: "",
+    isAdpt : false,
+    isPaternity : false
+
+
   });
 
+  useEffect(() => {
+    if (currentEmployee) {
+      setFormData({
+            empId: formData.empId,
+            userName: currentEmployee.userName || "" ,
+            password: currentEmployee.password || "",
+            empName: currentEmployee.empName || "",
+            empMail: currentEmployee.empMail || "",
+            empPhone: currentEmployee.empPhone || "",
+            role: currentEmployee.role || "",
+            vendor: currentEmployee.vendor || "",
+            gender: currentEmployee.gender || "",
+            manager: currentEmployee.manager || "" ,
+            designation: currentEmployee.designation || "",
+            reportingManager: currentEmployee.reportingManager || "",
+            dateOfJoining: currentEmployee.dateOfJoining || "",
+            function:currentEmployee.function || "",
+            department: currentEmployee.department || "",
+            level: currentEmployee.level || "",
+            location: currentEmployee.location || "",
+            unit: currentEmployee.unit || "",
+            
+      });
+    }
+  }, [currentEmployee]);
+
+  const token = document.cookie.split("=")[1];
+  const decodedToken = jwtDecode(token);
+  const adminId = decodedToken.empId;
+
   const [errors, setErrors] = useState({});
+  const [isAdoption, setIsAdoption] = useState(false);
+  const [isPaternity, setIsPaternity] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,12 +74,20 @@ function Register({setOpenRegisterModal}) {
     setOpenRegisterModal(false);
   }
 
+  const handlePaternityChange = () =>{
+    setIsPaternity(!isPaternity);
+  }
+
+  const handleAdoptionChange = () =>{
+    setIsAdoption(!isAdoption);
+  }
+
   const handleSubmit = async (e) => {
-    console.log(formData.empId)
+    console.log(formData)
     e.preventDefault();
     const newErrors = {};
 
-    // Check for empty fields
+    
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
         newErrors[key] = `${key} is required`;
@@ -58,6 +104,7 @@ function Register({setOpenRegisterModal}) {
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/emp/register`,
           {
+            id : adminId,
             empId: formData.empId,
             userName: formData.userName ,
             password: formData.password ,
@@ -69,16 +116,20 @@ function Register({setOpenRegisterModal}) {
             gender: formData.gender,
             manager: formData.manager ,
             designation: formData.designation,
-            reportionManager: formData.reportionManager,
+            reportingManager: formData.reportingManager,
             dateOfJoining: formData.dateOfJoining,
             function:formData.function,
             department: formData.department,
             level: formData.level,
             location: formData.location,
-            unit: formData.unit
+            unit: formData.unit,
+            isAdpt : isAdoption,
+            isPaternity : isPaternity
+
         },
           {
             headers: {
+              Authorization: `Bearer ${token}`,             
               "Content-Type": "application/json",
             },
           }
@@ -141,8 +192,9 @@ function Register({setOpenRegisterModal}) {
               <option value="">Select {key}</option>
               {key === "role" && (
                 <>
-                  <option value="admin">Admin</option>
+                  <option value="Manager">Manager</option>
                   <option value="3P">3P</option>
+                  <option value="GVR">GVR</option>
                 </>
               )}
               {key === "vendor" && (
@@ -168,6 +220,7 @@ function Register({setOpenRegisterModal}) {
                 <>
                   <option value="3P Employee">3P Employee</option>
                   <option value="Full-Time Employee">Full-Time Employee</option>
+                  <option value="GVR Employee">GVR Employee</option>
                 </>
               )}
               {key === "function" && (
@@ -201,6 +254,7 @@ function Register({setOpenRegisterModal}) {
                   <option value="STP">STP</option>
                 </>
               )}
+             
             </select>
           ) : (
             <input
@@ -234,7 +288,12 @@ function Register({setOpenRegisterModal}) {
         Submit
       </button>
       </div>
-      <div></div>
+      <div>
+        <label>adoption </label>
+        <input type="checkbox" onChange={handleAdoptionChange}></input>
+        <label>paternity </label>
+        <input type="checkbox" onChange={handlePaternityChange}></input>
+      </div>
     </form>
     <ToastContainer
       position="top-center"

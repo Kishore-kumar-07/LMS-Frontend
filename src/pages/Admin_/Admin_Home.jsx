@@ -5,8 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import Employee from './Employee';
-import Leaves from './Leaves';
-import Permission from './Permission';
+import Managers from './Managers';
 
 const ManagerHome = () => {
   const navigation = useNavigate();
@@ -14,9 +13,9 @@ const ManagerHome = () => {
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
 
-  const [isRequest, setIsRequest] = useState(false);
-  const [isPermission, setIsPermission] = useState(false);
+  
   const [isEmployees, setIsEmployees] = useState(true);
+  const [isManager, setIsManager] = useState(false);
   const [empAll, setEmpAll] = useState([]);
 
   // useEffect(()=>{
@@ -35,7 +34,7 @@ const ManagerHome = () => {
           },
         }
       );
-      console.log("in manager home ", allEmp);
+      console.log("in admin  home ", allEmp);
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -51,8 +50,7 @@ const ManagerHome = () => {
   return (
     <>
     <div className='h-screen w-screen flex flex-col'>
-        <Nav setIsRequest={setIsRequest}
-          setIsPermission={setIsPermission}
+        <Nav setIsManager={setIsManager}
           setIsEmployees={setIsEmployees} 
           />
           <div className='w-full h-full'>
@@ -60,10 +58,8 @@ const ManagerHome = () => {
             <div className="">
               <Employee />
             </div>
-          ) : isPermission ?  (
-            <Permission/>
-          ) :  (
-            <Leaves/>
+          ) :(
+            <Managers/>
           )}
 
           </div>
