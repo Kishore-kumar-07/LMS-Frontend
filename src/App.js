@@ -10,6 +10,7 @@ import Error404 from "./pages/Error/Error404";
 import Error500 from "./pages/Error/Error500"; 
 import Details from "./pages/Admin/Details";
 import Loginotp from './pages/User/Loginotp'
+import LoginEmpId from "./pages/User/LoginEmpId";
 
 function App() {
 
@@ -59,7 +60,7 @@ function App() {
     },
     {
       path:'/loginotp',
-      element:<Loginotp/>
+      element:<LoginEmpId/>
     },
     {
       path:"*",
