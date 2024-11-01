@@ -6,7 +6,7 @@ import userImg from "../../images/profile.png";
 import { useNavigate } from "react-router-dom";
 import { FaPaperPlane, FaBars, FaTimes } from "react-icons/fa";
 
-function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
+function Nav({ setIsManager, setIsEmployees }) {
   const navigate = useNavigate();
   const [selected, setSelected] = useState("Employees");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -20,19 +20,13 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
   const handleClick = (section) => {
     setSelected(section);
     setIsMobileMenuOpen(false); 
-    if (section === "leaves") {
-      setIsRequest(true);
-      setIsPermission(false);
-      setIsEmployees(false);
-    } else if (section === "permission") {
-      setIsPermission(true);
-      setIsRequest(false);
-      setIsEmployees(false);
-    } else if (section === "Employees") {
-      setIsPermission(false);
-      setIsRequest(false);
+    if (section === "Employees") {
+      setIsManager(false);
       setIsEmployees(true);
-    }
+    } else if (section === "Managers") {
+      setIsManager(true);
+      setIsEmployees(false);
+    } 
   };
 
   useEffect(() => {
@@ -112,7 +106,7 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
                 : "hidden md:flex"
             }`}
           >
-            {[ "Employees" , "leaves", "permission"].map(
+            {[ "Employees" , "Managers"].map(
               (section) => (
                 <span
                   key={section}

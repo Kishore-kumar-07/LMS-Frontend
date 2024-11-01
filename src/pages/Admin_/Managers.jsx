@@ -7,22 +7,20 @@ import Register from './Register'
 import * as XLSX from 'xlsx';
 import delete_ from "../../images/delete.png";
 import edit from "../../images/edit.png";
-import { ToastContainer } from 'react-toastify';
+import ToastContainer from 'rsuite/esm/toaster/ToastContainer';
 import { toast } from 'react-toastify';
-
-const Employee = () => {
-  const fileInputRef = useRef(null);
+const Managers = () => {
+    const fileInputRef = useRef(null);
 
   const navigation = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [allEmployees , setAllEmployees] = useState([]);
   const [openRegisterModal , setOpenRegisterModal] = useState(false);
-  const [fileData , setFileData] = useState([]);
+  const [fileData , setFileData] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [filteredData, setFilteredData] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
-  const [currentEmployee, setCurrentEmployee] = useState(null);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -36,6 +34,7 @@ const Employee = () => {
     filterData();
   }, [allEmployees, searchTerm, selectedType]);
   
+  
   const getEmployees = async () => {
     try {
       const allEmp = await axios.post(
@@ -48,7 +47,7 @@ const Employee = () => {
           },
         }
       );
-      // console.log(allEmp.data);
+      console.log(allEmp.data);
       setAllEmployees(allEmp.data); 
       
     } catch (error) {
@@ -66,75 +65,19 @@ const Employee = () => {
     setOpenRegisterModal(!openRegisterModal);
   }
 
-  useEffect(()=>{
-    console.log(fileData)
-    saveImportData();
-  },[fileData])
+  const importData = () =>{
 
-  const saveImportData = async() =>{
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/emp/import`,
-        {
-          id : adminId,
-          emp : fileData
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(res);
-       
-      
-    } catch (error) {
-      toast.error("Error in Saving imported Data")
-      console.log("error");
-    }
   }
 
-  const importData = () => {
+  const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
-  const handleEditClick = (employee) => {
-    setCurrentEmployee(employee); // Set the employee data to be edited
-    setOpenRegisterModal(true);   // Open the Register modal
+  const handleEditClick = () => {
+
   };
-  
 
-  // const handleEditClick = async(empId) => {
-  //   try {
-  //     const res = await axios.post(
-  //       `${process.env.REACT_APP_BASE_URL}/emp/update`,
-  //       { 
-  //         id : adminId,
-  //         empId : empId
-  //        },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     // console.log(res);
-  //    toast.success("Employee deleted Successfully")
-      
-  //   } catch (error) {
-  //    toast.error("Error in Deleting Employee")
-
-  //     console.log("error");
-  //   }
-  //   getEmployees();
-  //   setDeleteModal(!deleteModal);
-
-  // };
-
-  const handleDeleteClick = (id) => {
-    setDeleteId(id)
+  const handleDeleteClick = () => {
     setDeleteModal(!deleteModal);
   };
 
@@ -170,15 +113,13 @@ const Employee = () => {
   },[allEmployees])
 
   const filterData = () =>{
-    const filteredData = allEmployees.filter((row)=>row.role === "3P" || row.role === "GVR");
+    const filteredData = allEmployees.filter((row)=>row.role === "Manager");
     const filtered = filteredData.filter((row) => {
-      const matchesType =
-        selectedType === "" || row.role.toLowerCase() === selectedType.toLowerCase();
-      const matchesSearchTerm =
-        searchTerm === "" || row.empName.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesType && matchesSearchTerm;
-    });
-    setFilteredData(filtered);
+        const matchesSearchTerm =
+          searchTerm === "" || row.empName.toLowerCase().includes(searchTerm.toLowerCase());
+        return  matchesSearchTerm;
+      });
+      setFilteredData(filtered);
   }
 
   const handleFileChange = (event) => {
@@ -197,11 +138,10 @@ const Employee = () => {
     reader.readAsBinaryString(file);
   };
 
-
   return (
     <>
     <div className='w-full h-full flex flex-col '>
-      <ToastContainer/>
+        <ToastContainer/>
       <div className='w-full h-[10%] flex justify-between pr-5 pl-5 pt-2 pb-2'>
       <div className="flex gap-5">
           <input
@@ -211,15 +151,7 @@ const Employee = () => {
             className="w-full max-w-md p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
             placeholder="Search Employee"
           />
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
-          >
-            <option value="">All Types</option>
-            <option value="GVR">GVR</option>
-            <option value="3P">3P</option>
-          </select>
+          
         </div>
         <div className='w-2'>
 
@@ -233,7 +165,7 @@ const Employee = () => {
           </button>
           <div>
       <button
-        onClick={importData}
+        onClick={handleButtonClick}
         className="p-2 bg-blue-300 text-black w-20 h-10 font-semibold rounded-lg"
       >
         Import
@@ -281,7 +213,7 @@ const Employee = () => {
                 <td className="p-4 border">{employee.empPhone}</td>
                 <td className="border text-md font-medium text-sm flex gap-2 h-[100%]  p-4 ">
                     <button
-                      onClick={() => handleEditClick(employee.empId)}
+                      onClick={() => handleEditClick(employee._id)}
                       className="ml-2 text-white px-2 py-1 rounded"
                     >
                       <img src={edit} height={25} width={25}></img>
@@ -290,7 +222,7 @@ const Employee = () => {
                   </td>
                   <td className="border px-4 py-4 text-md font-medium">
                     <button
-                      onClick={() => handleDeleteClick(employee.empId)}
+                      onClick={() => handleDeleteClick(employee._id)}
                       className="ml-2  text-white px-2 py-1 rounded"
                     >
                       <img src={delete_} height={25} width={25}></img>
@@ -313,7 +245,7 @@ const Employee = () => {
       {openRegisterModal && (
 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
   <div className="bg-white p-2 rounded-lg shadow-2xl w-[95%] h-[95%] flex justify-center items-center">
-    <Register setOpenRegisterModal = {setOpenRegisterModal} currentEmployee={currentEmployee}/>
+    <Register setOpenRegisterModal = {setOpenRegisterModal}/>
   </div>
 </div>
       )}
@@ -341,19 +273,9 @@ const Employee = () => {
         </div>
         
         )}
-        {openRegisterModal && (
-  <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-white p-2 rounded-lg shadow-2xl w-[95%] h-[95%] flex justify-center items-center">
-      <Register
-        setOpenRegisterModal={setOpenRegisterModal}
-        currentEmployee={currentEmployee} // Pass the employee data
-      />
-    </div>
-  </div>
-        )}
     </div>
     </>
   )
 }
 
-export default Employee
+export default Managers
