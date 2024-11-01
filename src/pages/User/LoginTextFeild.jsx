@@ -45,8 +45,10 @@ const LoginTextFeild = ({ idRef }) => {
           console.log("decoded", decodedToken);
 
           if (decodedToken.role === "Manager") {
-            navigate("/Admin"); // Redirect to admin page
-          } else {
+            navigate("/Manager"); // Redirect to admin page
+          } else if(decodedToken.role === 'Admin') {
+            navigate(`/Admin`); // Redirect to employee page with ID
+          }else {
             navigate(`/Employee`); // Redirect to employee page with ID
           }
         } else if (res.status === 401) {

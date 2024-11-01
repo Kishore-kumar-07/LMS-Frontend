@@ -4,23 +4,23 @@ import { jwtDecode } from 'jwt-decode';
 import GVR from '../../images/GVRLogo.png';
 import userImg from '../../images/profile.png';
 import { useNavigate } from 'react-router-dom';
-import { FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane, FaBars, FaTimes } from "react-icons/fa";
 
-
-function Nav({ setIsRequest, setIsPermission , setIsEmployees }) {
+function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
   const [selected, setSelected] = useState('dashboard');
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isCircular, setIsCircular] = useState(false);
   const [userDetails, setUserDetails] = useState({});
   const token = document.cookie.split('=')[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
 
   const [activeNav, setActiveNav] = useState('Dashboard');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleClick = (section) => {
     setSelected(section);
+    setIsMobileMenuOpen(false); // Close mobile menu after selection
     if (section === 'dashboard') {
       setIsRequest(false);
       setIsPermission(false);
@@ -29,17 +29,14 @@ function Nav({ setIsRequest, setIsPermission , setIsEmployees }) {
       setIsRequest(true);
       setIsPermission(false);
       setIsEmployees(false);
-
     } else if (section === 'permission') {
       setIsPermission(true);
       setIsRequest(false);
       setIsEmployees(false);
-
     } else if (section === 'Employees') {
       setIsPermission(false);
       setIsRequest(false);
       setIsEmployees(true);
-
     }
   };
 
@@ -69,10 +66,6 @@ function Nav({ setIsRequest, setIsPermission , setIsEmployees }) {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleCircularClick = () =>{
-    setIsCircular(!isCircular);
-  }
-
   const handleLogout = () => {
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     console.log('Logged out, cookie removed');
@@ -81,80 +74,39 @@ function Nav({ setIsRequest, setIsPermission , setIsEmployees }) {
 
   return (
     <>
-      <div className="w-[100%] flex justify-center items-center">
-        <div className="w-[100%] flex justify-between items-center px-10 py-2 shadow">
+      <div className="w-full flex justify-center items-center">
+        <div className="w-full flex justify-between items-center px-10 py-2 shadow">
           <div className="text-xl font-semibold">
             <img src={GVR} alt="GVR Logo" className="h-10" />
           </div>
-          <div>
-            <ul className="flex gap-10 text-black">
-              <li className="relative">
-                <span
-                  onClick={() => {
-                    handleClick('dashboard');
-                    setActiveNav('Dashboard');
-                  }}
-                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
-                    activeNav === 'Dashboard'
-                      ? 'text-[#015E84] border-[#015E84]'
-                      : 'text-black border-transparent'
-                  }`}
-                >
-                  Dashboard
-                </span>
-              </li>
 
-              <li className="relative">
-                <span
-                  onClick={() => {
-                    handleClick('leaves');
-                    setActiveNav('Leaves');
-                  }}
-                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
-                    activeNav === 'Leaves'
-                      ? 'text-[#015E84] border-[#015E84]'
-                      : 'text-black border-transparent'
-                  }`}
-                >
-                  Leaves
-                </span>
-              </li>
-
-              <li className="relative">
-                <span
-                  onClick={() => {
-                    handleClick('permission');
-                    setActiveNav('Permissions');
-                  }}
-                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
-                    activeNav === 'Permissions'
-                      ? 'text-[#015E84] border-[#015E84]'
-                      : 'text-black border-transparent'
-                  }`}
-                >
-                  Permissions
-                </span>
-              </li>
-
-              <li className="relative">
-                <span
-                  onClick={() => {
-                    handleClick('Employees');
-                    setActiveNav('Employees');
-                  }}
-                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
-                    activeNav === 'Employees'
-                      ? 'text-[#015E84] border-[#015E84]'
-                      : 'text-black border-transparent'
-                  }`}
-                >
-                  Employees
-                </span>
-              </li>
-            </ul>
+          
+          <div className="block md:hidden">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
+            </button>
           </div>
-          <div className="flex ">
-            
+
+          <div className={`flex gap-10 text-black md:flex ${isMobileMenuOpen ? 'flex-col absolute bg-white z-10 p-5 right-0 w-full' : 'hidden md:flex'}`}>
+            {['dashboard', 'leaves', 'permission', 'Employees'].map((section) => (
+              <span
+                key={section}
+                onClick={() => {
+                  handleClick(section);
+                  setActiveNav(section.charAt(0).toUpperCase() + section.slice(1)); // Capitalize section name
+                }}
+                className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
+                  activeNav === section.charAt(0).toUpperCase() + section.slice(1)
+                    ? 'text-[#015E84] border-[#015E84]'
+                    : 'text-black border-transparent'
+                }`}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1)} {/* Display section name */}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex">
             <button
               className="flex justify-center items-center"
               onClick={handleUserClick}
@@ -206,8 +158,6 @@ function Nav({ setIsRequest, setIsPermission , setIsEmployees }) {
                 </div>
               </div>
             )}
-
-            
           </div>
         </div>
       </div>

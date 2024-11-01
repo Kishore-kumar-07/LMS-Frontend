@@ -4,12 +4,15 @@ import EmployeeHome from "./pages/Employee/EmployeeHome";
 import Login from "./pages/User/Login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Thankyou from "./pages/Thankyou/Thankyou";
-import AdminHome from './pages/Admin/AdminHome'
+
 import { useEffect } from "react";
 import Error404 from "./pages/Error/Error404";
 import Error500 from "./pages/Error/Error500"; 
-import Details from "./pages/Admin/Details";
+import Details from "./pages/Manager/Details" ;
 import Loginotp from './pages/User/Loginotp'
+import Admin_Home from './pages/Admin_/Admin_Home'
+import ManagerHome from "./pages/Manager/ManagerHome";
+
 
 function App() {
 
@@ -37,9 +40,13 @@ function App() {
       path: "/Employee/",
       element: <EmployeeHome />,
     },
-    {
+   {
       path: "/Admin/",
-      element: <AdminHome />,
+      element: <Admin_Home />,
+    },
+    {
+      path: "/Manager",
+      element: <ManagerHome />,
     },
     {
       path:'/thank-you',
