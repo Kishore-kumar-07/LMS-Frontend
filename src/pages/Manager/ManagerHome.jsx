@@ -7,11 +7,7 @@ import PermissionTable from "./PermissionTable";
 import { jwtDecode } from "jwt-decode";
 import Table from "./Table";
 import axios from "axios";
-import { FaSearch } from "react-icons/fa";
 import "./admin.css";
-import LineGraph from "./LineGraph";
-import { Gauge } from "@mui/x-charts/Gauge";
-import Circular from "./Circular";
 import Details from "./Details";
 import EmployeePopup from "./EmployeePopUp";
 import { useNavigate } from "react-router-dom";
@@ -264,13 +260,14 @@ export default AdminHome;
 // Responsive Card component
 const Card = (props) => {
   return (
-    <div className="w-full md:w-[48%] lg:w-[250px] h-[120px] flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3">
-      <div className="flex flex-row text-white">
-        <p className="text-lg md:text-xl text-black">{props.label}</p>
-      </div>
-      <div className="text-3xl md:text-4xl font-semibold text-black">
-        <p>{props.value}</p>
-      </div>
-    </div>
+    <div className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3 transition-transform transform hover:scale-105">
+  <div className="flex flex-row text-white">
+    <p className="text-lg md:text-xl text-black font-medium">{props.label}</p>
+  </div>
+  <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-black">
+    <p>{props.value}</p>
+  </div>
+</div>
+
   );
 };

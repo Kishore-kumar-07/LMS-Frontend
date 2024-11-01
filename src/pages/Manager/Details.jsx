@@ -22,7 +22,20 @@ const Details = () => {
   const fileExtension = ".xlsx";
 
   const exportData = () => {
-    const ws = XLSX.utils.json_to_sheet(filteredEmployees);
+    const exportFields = filteredEmployees.map(({ empId, empName, empMail, empPhone, role, gender, dateOfJoining, department, unit , level }) => ({
+      EmployeeID: empId,
+      EmployeeName: empName,
+      EmployeeMail: empMail,
+      EmployeePhoneNumber: empPhone,
+      Type: role,
+      Gender : gender,
+      DOJ: dateOfJoining,
+      Department : department,
+      Unit : unit, 
+      Level : level
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportFields);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });

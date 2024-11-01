@@ -210,6 +210,7 @@ const Table = ({ cardData }) => {
         }
       );
       const filteredData = response.data.reverse();
+      console.log(filteredData)
       setData(filteredData);
     } catch (error) {
       if (error.response.status === 400) {

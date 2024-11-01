@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { SIZE } from "rsuite/esm/internals/constants";
 
 // Register the necessary chart.js components
 ChartJS.register(
@@ -35,6 +36,7 @@ const localizer = momentLocalizer(moment);
 function EmployeePopUp({ onClose, employeeId }) {
   const navigation = useNavigate();
   const [events, setEvents] = useState([]);
+  const [gaugeData_, setGaugeData] = useState([]);
   const [leaveCounts, setLeaveCounts] = useState(Array(12).fill(0));
   const [lopCounts, setLopCounts] = useState(Array(12).fill(0));
 
@@ -48,28 +50,36 @@ function EmployeePopUp({ onClose, employeeId }) {
   useEffect(() => {
     getUserDetails();
     getLogDetails();
+    getGaugeDetails();
   }, []);
 
-  const gaugeData = {
-    datasets: [
-      {
-        data: [60, 40],
-        backgroundColor: ["#4bc0c0", "#e0e0e0"],
-        borderWidth: 0,
-        rotation: 270,
-        circumference: 180,
-        cutout: "80%",
-      },
-    ],
-  };
 
-  const gaugeOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      title: { display: true, text: "Gauge Chart" },
-    },
+  const getGaugeDetails = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/leave/gauge`,
+        {
+          empId : empId,
+          employeeId: employeeId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(res.data)
+      setGaugeData(res.data)
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.log(error);
+    }
   };
 
   const getUserDetails = async () => {
@@ -119,6 +129,31 @@ function EmployeePopUp({ onClose, employeeId }) {
       console.log(error);
     }
   };
+
+  const gaugeData = {
+    datasets: [
+      {
+        data: [gaugeData_.emp , gaugeData_.all - gaugeData_.emp],
+        backgroundColor: ["#125B9A", "#e0e0e0"],
+        borderWidth: 0,
+        rotation: 270,
+        circumference: 180,
+        cutout: "80%",
+      },
+    ],
+  };
+
+  const gaugeOptions = {
+    
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      title: { display: true, text: "Leave Percentage" },
+      
+      
+    },
+  };
+
 
   // Function to filter and calculate leave and LOP counts per month
   const filterLeaveDataByMonth = (logs) => {
@@ -271,16 +306,17 @@ function EmployeePopUp({ onClose, employeeId }) {
           {/* Right - Yearly Leave Statistics */}
           <div className="flex-1 bg-white rounded-lg shadow-sm p-4">
             <h2 className="text-lg font-semibold text-gray-700 mb-2">Yearly Leave Statistics</h2>
-            <div className="flex h-40 w-full">
+            <div className="flex h-40 w-full ">
               <div className="flex-1 flex justify-center items-center">
                 <BarChart
                   xAxis={[{ scaleType: "band", data: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"] }]}
                   series={[{ label: "Leave", data: leaveCounts }, { label: "LOP", data: lopCounts }]}
                 />
               </div>
-              <div className="w-1/4 h-full flex justify-center items-center">
-                <Doughnut data={gaugeData} options={gaugeOptions} />
+              <div className="w-1/4 h-3/4 flex justify-center items-center">
+                <Doughnut data={gaugeData} options={gaugeOptions}/>
               </div>
+              {/* <p>{gaugeData_.emp} of {gaugeData_.all}<br></br> Total Leaves</p> */}
             </div>
           </div>
         </div>

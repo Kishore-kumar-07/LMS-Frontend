@@ -109,12 +109,12 @@ const BarChart = () => {
   return (
     <div className="w-full h-full flex justify-center items-center">
       <div className=" w-full h-auto flex justify-center items-center">
-        <div className="lg:w-full md:w-[75%] h-54 p-1">
+        <div className="lg:w-full md:w-[60%] h-54 p-1">
           <Bar
             data={chartData}
             options={{
               maintainAspectRatio: false,
-              responsive: true,
+              
             }}
           />
         </div>
