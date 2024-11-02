@@ -24,7 +24,7 @@ const Login = () => {
   }, []);
 
   const handleLoginButton = () =>{
-    navigate('/loginotp')
+    navigate('/login')
   }
 
   return (

@@ -9,6 +9,7 @@ import delete_ from "../../images/delete.png";
 import edit from "../../images/edit.png";
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
+import EditRegister from './EditRegister';
 
 const Employee = () => {
   const fileInputRef = useRef(null);
@@ -23,6 +24,7 @@ const Employee = () => {
   const [filteredData, setFilteredData] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
   const [currentEmployee, setCurrentEmployee] = useState(null);
+  const [openEditModal, setOpenEditModal] = useState(false);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -100,8 +102,8 @@ const Employee = () => {
   };
 
   const handleEditClick = (employee) => {
-    setCurrentEmployee(employee); // Set the employee data to be edited
-    setOpenRegisterModal(true);   // Open the Register modal
+    setCurrentEmployee(employee); 
+    setOpenEditModal(true);
   };
   
 
@@ -281,7 +283,7 @@ const Employee = () => {
                 <td className="p-4 border">{employee.empPhone}</td>
                 <td className="border text-md font-medium text-sm flex gap-2 h-[100%]  p-4 ">
                     <button
-                      onClick={() => handleEditClick(employee.empId)}
+                      onClick={() => handleEditClick(employee)}
                       className="ml-2 text-white px-2 py-1 rounded"
                     >
                       <img src={edit} height={25} width={25}></img>
@@ -313,7 +315,7 @@ const Employee = () => {
       {openRegisterModal && (
 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
   <div className="bg-white p-2 rounded-lg shadow-2xl w-[95%] h-[95%] flex justify-center items-center">
-    <Register setOpenRegisterModal = {setOpenRegisterModal} currentEmployee={currentEmployee}/>
+    <Register setOpenRegisterModal = {setOpenRegisterModal} getEmployees = {getEmployees}/>
   </div>
 </div>
       )}
@@ -341,12 +343,13 @@ const Employee = () => {
         </div>
         
         )}
-        {openRegisterModal && (
+        {openEditModal && (
   <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-white p-2 rounded-lg shadow-2xl w-[95%] h-[95%] flex justify-center items-center">
-      <Register
-        setOpenRegisterModal={setOpenRegisterModal}
-        currentEmployee={currentEmployee} // Pass the employee data
+    <div className="bg-white p-2 rounded-lg shadow-2xl w-[80%] h-[80%] flex justify-center items-center">
+      <EditRegister
+        setOpenEditModal={setOpenEditModal}
+        currentEmployee={currentEmployee}
+        getEmployees = {getEmployees}
       />
     </div>
   </div>
