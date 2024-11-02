@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { ClockLoader } from "react-spinners";
+import { toast } from "react-toastify";
+
 function Loginotp() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
@@ -16,254 +18,211 @@ function Loginotp() {
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [sendStatus, setSendStatus] = useState(CURRENT_STATUS.IDEAL);
   const [validateStatus, setValidateStatus] = useState(CURRENT_STATUS.IDEAL);
-  const [resendStatus, setResendStatus] = useState(CURRENT_STATUS.IDEAL);
+  const [isForgetPassword, setIsForgetPassword] = useState(false);
+  
 
   useEffect(() => {
     let interval;
     if (isOtpSent && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
+      interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
     } else if (timer === 0 && isOtpSent) {
       clearInterval(interval);
-      setIsResendDisabled(false); // Enable the "Resend OTP" button when timer runs out
+      setIsResendDisabled(false);
     }
     return () => clearInterval(interval);
   }, [isOtpSent, timer]);
 
   const sendOtp = async () => {
     try {
-      if (isOtpSent) {
-        setResendStatus(CURRENT_STATUS.LOADING);
-      } else {
-        setSendStatus(CURRENT_STATUS.LOADING);
-      }
-      // const Number = phoneNumber.toString();
-      if (Number.length === 10) {
-        const finalnumber = "+91" + Number;
+      console.log("inside try");
+      setSendStatus(CURRENT_STATUS.LOADING);
+      if (userName.length != "" ) {
+        
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/otp/send`,
-          {
-            number: finalnumber,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+          { userName: userName },
+          { headers: { "Content-Type": "application/json" } }
         );
         if (res.status === 200) {
-          if (isOtpSent) {
-            setResendStatus(CURRENT_STATUS.SUCCESS);
-          } else {
-            setSendStatus(CURRENT_STATUS.SUCCESS);
-          }
+          setSendStatus(CURRENT_STATUS.SUCCESS);
           setError("");
           setIsOtpSent(true);
           setTimer(60);
-          setIsResendDisabled(true); // Disable resend button after OTP is sent
+          setIsResendDisabled(true);
         }
-        console.log(res);
       } else {
-        if (isOtpSent) {
-          setResendStatus(CURRENT_STATUS.IDEAL);
-        } else {
-          setSendStatus(CURRENT_STATUS.IDEAL);
-        }
-        setError("Please enter a valid 10-digit phone number");
-        console.log("error");
+        setSendStatus(CURRENT_STATUS.IDEAL);
+        setError("Please enter a valid Username");
       }
     } catch (e) {
-      if (e.response.status === 400) {
-        navigate("/error404");
-      }
-      if (e.response.status === 500) {
-        navigate("/error500");
-      }
-      if (isOtpSent) {
-        setResendStatus(CURRENT_STATUS.ERROR);
-      } else {
-        setSendStatus(CURRENT_STATUS.ERROR);
-      }
+      setSendStatus(CURRENT_STATUS.ERROR);
       setError("Failed to send OTP");
-      console.log(e);
+    }
+  };
+
+  const validateOtp = async () => {
+    
+    try {
+      console.log("otp is " , otp)
+      console.log("username is " , userName)
+      setValidateStatus(CURRENT_STATUS.LOADING);
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/otp/verify`,
+        { userName : userName,
+          otp : otp },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (res.status === 200) {
+        setValidateStatus(CURRENT_STATUS.SUCCESS);
+        setError("");
+        navigate("/reset-password");
+      } else {
+        setValidateStatus(CURRENT_STATUS.IDEAL);
+        setErrorOtp("Incorrect OTP");
+      }
+    } catch (e) {
+      setValidateStatus(CURRENT_STATUS.ERROR);
+      setErrorOtp("Failed to validate OTP");
     }
   };
 
   const handleLogin = async () => {
+    if (!userName || !password) {
+      setError("Username and password are required.");
+      return;
+    }
     try {
       setValidateStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/signin`,
-        {
-          userName: userName,
-          password: password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { userName, password },
+        { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
         setValidateStatus(CURRENT_STATUS.SUCCESS);
         document.cookie = `token=${res.data.token}`;
-        console.log(document.cookie);
-
         const decodedToken = jwtDecode(res.data.token);
-        console.log("decoded", decodedToken);
-
-        if (decodedToken.role === "Manager") {
-          navigate("/Admin"); // Redirect to admin page
-        } else {
-          navigate(`/Employee`); // Redirect to employee page with ID
-        }
-      } else if (res.status === 401) {
+        navigate(
+          decodedToken.role === "Manager"
+            ? "/Manager"
+            : decodedToken.role === "Admin"
+            ? "/Admin"
+            : "/Employee"
+        );
+      } else {
         setValidateStatus(CURRENT_STATUS.IDEAL);
-        // setErrorOtp("Incorrect OTP");
+        setError("Invalid Username or Password");
       }
     } catch (e) {
-      if (e.response.status === 400) {
-        navigate("/error404");
-      }
-      if (e.response.status === 500) {
-        navigate("/error500");
-      }
       setValidateStatus(CURRENT_STATUS.ERROR);
-      // setErrorOtp("Incorrect OTP");
+      setError("Login failed");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md luxury-border">
-        <h2 className="text-3xl font-bold text-center text-gray-800 luxury-text">
-          Login
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+          {isForgetPassword ? "Forget Password" : "Login"}
         </h2>
-        <div className="mt-6">
-          <div className="mb-4">
-            <label
-              htmlFor="phone"
-              className="block text-md font-bold pl-1 mb-4 text-gray-600"
-            >
-              UserName
+
+        {isForgetPassword ? (
+          <div className="mt-6">
+            <label className="block text-md font-bold mb-2 text-gray-600">
+              Username
             </label>
             <input
               type="text"
-              id="username"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 "
-              placeholder="Enter your UserName"
-               // Disable phone number field after OTP is sent
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              placeholder="Enter Username"
             />
-            <label
-              htmlFor="phone"
-              className="block text-md font-bold pl-1 mb-4 text-gray-600"
+            {isOtpSent && (
+              <>
+                <label className="block text-md font-bold mt-4 mb-2 text-gray-600">
+                  Enter OTP
+                </label>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Enter OTP"
+                />
+              </>
+            )}
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            {sendStatus === CURRENT_STATUS.IDEAL ? (
+              <button
+                onClick={sendOtp}
+                className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+              >
+                {isOtpSent ? "Resend OTP" : "Send OTP"}
+              </button>
+            ) : (
+              <div className="flex justify-center mt-5">
+                <ClockLoader color="#000000" size={30} />
+              </div>
+            )}
+            {isOtpSent && (
+              <button
+                onClick={validateOtp}
+                className="bg-green-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+              >
+                Validate OTP
+              </button>
+            )}
+            <button
+              onClick={() => setIsForgetPassword(false)}
+              className="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mt-4 w-[20%]"
             >
+              Back
+            </button>
+          </div>
+        ) : (
+          <div className="mt-6">
+            <label className="block text-md font-bold mb-2 text-gray-600">
+              Username
+            </label>
+            <input
+              type="text"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              placeholder="Enter your Username"
+            />
+            <label className="block text-md font-bold mt-4 mb-2 text-gray-600">
               Password
             </label>
             <input
               type="password"
-              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 "
-              placeholder="Enter your phone number"
-               // Disable phone number field after OTP is sent
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              placeholder="Enter your password"
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            {sendStatus === CURRENT_STATUS.IDEAL ? (
-              <button
-                onClick={handleLogin}
-                className="bg-black hover:bg-gray-800 ml-36 mt-5 text-white font-bold py-2 px-4 rounded"
-              >
-                Login
-              </button>
-            ) : sendStatus === CURRENT_STATUS.LOADING && !isOtpSent ? (
-              <div className="w-full flex justify-center items-center mt-5">
-                <ClockLoader
-                  color="#000000"
-                  cssOverride={{}}
-                  size={30}
-                  speedMultiplier={1}
-                />
-              </div>
-            ) : (
-              ""
-            )}
+            <button
+              onClick={handleLogin}
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+            >
+              Login
+            </button>
+            <p
+              className="cursor-pointer mt-4 text-center text-blue-500"
+              onClick={() => setIsForgetPassword(true)}
+            >
+              Forgot Password?
+            </p>
+            <button
+              onClick={() => navigate(-1)}
+              className="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mt-4 w-[20%]"
+            >
+              Back
+            </button>
           </div>
-
-          {/* {isOtpSent && (
-            <div>
-              <label
-                htmlFor="otp"
-                className="block text-md font-bold pl-1 mb-4 text-gray-600"
-              >
-                Enter OTP
-              </label>
-              <input
-                type="text"
-                id="otp"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-primary focus:border-luxury-secondary"
-                placeholder="Enter OTP"
-              />
-              <div className="mt-4 flex justify-between items-center">
-                {validateStatus === CURRENT_STATUS.IDEAL ? (
-                  <button
-                    onClick={validateOtp}
-                    className="w-36 ml-32 bg-black text-white py-2 rounded-lg hover:bg-luxury-secondary transition"
-                  >
-                    Validate OTP
-                  </button>
-                ) : validateStatus === CURRENT_STATUS.LOADING ? (
-                  <div className="w-full flex justify-center items-center mt-5">
-                    <ClockLoader
-                      color="#000000"
-                      cssOverride={{}}
-                      size={30}
-                      speedMultiplier={1}
-                    />
-                  </div>
-                ) : (
-                  ""
-                )}
-                <p className="text-sm text-gray-600 mt-2 ml-1">
-                  Time left: {timer}s
-                </p>
-              </div>
-
-              {errorotp && (
-                <p className="text-red-500 text-sm relative">{errorotp}</p>
-              )}
-
-              {timer === 0 && resendStatus === CURRENT_STATUS.IDEAL ? (
-                <button
-                  onClick={sendOtp}
-                  className={`bg-black hover:bg-gray-800 ml-36 mt-5 text-white font-bold py-2 px-4 rounded ${
-                    isResendDisabled ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  disabled={isResendDisabled}
-                >
-                  Resend OTP
-                </button>
-              ) : resendStatus === CURRENT_STATUS.LOADING && isOtpSent ? (
-                <div className="w-full flex justify-center items-center mt-5">
-                  <ClockLoader
-                    color="#000000"
-                    cssOverride={{}}
-                    size={30}
-                    speedMultiplier={1}
-                  />
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-          )} */}
-        </div>
+        )}
       </div>
     </div>
   );

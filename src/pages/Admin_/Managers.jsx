@@ -9,6 +9,8 @@ import delete_ from "../../images/delete.png";
 import edit from "../../images/edit.png";
 import ToastContainer from 'rsuite/esm/toaster/ToastContainer';
 import { toast } from 'react-toastify';
+import EditRegister from './EditRegister';
+
 const Managers = () => {
     const fileInputRef = useRef(null);
 
@@ -21,6 +23,8 @@ const Managers = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [filteredData, setFilteredData] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
+  const [currentEmployee, setCurrentEmployee] = useState(null);
+  const [openEditModal, setOpenEditModal] = useState(false);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -65,19 +69,46 @@ const Managers = () => {
     setOpenRegisterModal(!openRegisterModal);
   }
 
-  const importData = () =>{
+  useEffect(()=>{
+    console.log(fileData)
+    saveImportData();
+  },[fileData])
 
+  const saveImportData = async() =>{
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/emp/import`,
+        {
+          id : adminId,
+          emp : fileData
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(res);
+      setFileData("");
+      
+    } catch (error) {
+      toast.error("Error in Saving imported Data")
+      console.log("error");
+    }
   }
 
-  const handleButtonClick = () => {
+  const importData = () =>{
     fileInputRef.current.click();
+  }
+
+  const handleEditClick = (employee) => {
+    setCurrentEmployee(employee); 
+    setOpenEditModal(true);
   };
 
-  const handleEditClick = () => {
-
-  };
-
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (id) => {
+    setDeleteId(id)
     setDeleteModal(!deleteModal);
   };
 
@@ -165,7 +196,7 @@ const Managers = () => {
           </button>
           <div>
       <button
-        onClick={handleButtonClick}
+        onClick={importData}
         className="p-2 bg-blue-300 text-black w-20 h-10 font-semibold rounded-lg"
       >
         Import
@@ -213,7 +244,7 @@ const Managers = () => {
                 <td className="p-4 border">{employee.empPhone}</td>
                 <td className="border text-md font-medium text-sm flex gap-2 h-[100%]  p-4 ">
                     <button
-                      onClick={() => handleEditClick(employee._id)}
+                      onClick={() => handleEditClick(employee)}
                       className="ml-2 text-white px-2 py-1 rounded"
                     >
                       <img src={edit} height={25} width={25}></img>
@@ -222,7 +253,7 @@ const Managers = () => {
                   </td>
                   <td className="border px-4 py-4 text-md font-medium">
                     <button
-                      onClick={() => handleDeleteClick(employee._id)}
+                      onClick={() => handleDeleteClick(employee.empId)}
                       className="ml-2  text-white px-2 py-1 rounded"
                     >
                       <img src={delete_} height={25} width={25}></img>
@@ -245,7 +276,7 @@ const Managers = () => {
       {openRegisterModal && (
 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
   <div className="bg-white p-2 rounded-lg shadow-2xl w-[95%] h-[95%] flex justify-center items-center">
-    <Register setOpenRegisterModal = {setOpenRegisterModal}/>
+    <Register setOpenRegisterModal = {setOpenRegisterModal} getEmployees = {getEmployees}/>
   </div>
 </div>
       )}
@@ -272,6 +303,17 @@ const Managers = () => {
           </div>
         </div>
         
+        )}
+        {openEditModal && (
+  <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-2 rounded-lg shadow-2xl w-[80%] h-[80%] flex justify-center items-center">
+      <EditRegister
+        setOpenEditModal={setOpenEditModal}
+        currentEmployee={currentEmployee}
+        getEmployees = {getEmployees} // Pass the employee data
+      />
+    </div>
+  </div>
         )}
     </div>
     </>
