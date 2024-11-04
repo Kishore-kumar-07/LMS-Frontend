@@ -12,6 +12,7 @@ import Details from "./pages/Manager/Details" ;
 import Loginotp from './pages/User/Loginotp'
 import Admin_Home from './pages/Admin_/Admin_Home'
 import ManagerHome from "./pages/Manager/ManagerHome";
+import LoginEmpId from "./pages/User/LoginEmpId";
 
 
 function App() {

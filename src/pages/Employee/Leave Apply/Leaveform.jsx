@@ -120,7 +120,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   };
 
   const checkLeave = async () => {
-
     console.log("Check Leave");
     if(leaveType === "privilege Leave" && totalDays<3){
       toast.warn("privilege Leave must be minimum of 3 days");
@@ -206,9 +205,9 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
   var totalDays = calculateLeaveDays();
 
-  const handleConfirm = async () => {
-
+  const leaveApply = async () => {
     try {
+      
       console.log(
         "LOP",
         fromFirstHalf,
@@ -217,10 +216,8 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         toSecondHalf
       );
 
-
       setConfirmStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
-        ` ${process.env.REACT_APP_BASE_URL}/leave/apply`,
         ` ${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
           empId: decodedToken.empId,
@@ -251,16 +248,9 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               : leaveType === "privilege Leave"
               ? summary.PL + summary.LOP
               : summary.Paternity + summary.LOP,
-          leaveDays:
-            leaveType === "Casual Leave"
-              ? summary.CL + summary.LOP
-              : leaveType === "privilege Leave"
-              ? summary.PL + summary.LOP
-              : summary.Paternity + summary.LOP,
         },
         {
           headers: {
-            Authorization: ` Bearer ${token}`,
             Authorization: ` Bearer ${token}`,
             "Content-Type": "application/json",
           },
@@ -456,6 +446,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               isPaternity && "Paternity Leave",
               isAdoption && "Adoption Leave",
               isAdoption && "Adoption Leave",
+              "LOP"
             ].map(
               (type) =>
                 type && (
@@ -829,80 +820,11 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                 </table>
               </div>
             )}
-            {lopStatus === CURRENT_STATUS.LOADING ? (
-              <div className="flex justify-center p-20">
-                <OrbitProgress
-                  variant="track-disc"
-                  color="#078ebc"
-                  size="small"
-                  text="Wait"
-                  textColor=""
-                />
-              </div>
-            ) : (
-              <div className="w-full flex justify-center items-center">
-                <table className="w-[90%] text-left text-lg border-collapse border border-gray-300">
-                  <tbody>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Leave Type
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.leaveType}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        From Date
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.fromDate}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        To Date
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.toDate}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Number of Days
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.totalDays}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Leave Reason
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.leaveReason}
-                      </td>
-                    </tr>
-                    {leaveDetails.leaveDescription && (
-                      <tr>
-                        <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                          Leave Description
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          {leaveDetails.leaveDescription}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
             <div className="pt-5 flex justify-center items-center">
               {lopStatus === CURRENT_STATUS.IDEAL && (
                 <button
                   className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
-                  onClick={checkLeave}
+                  onClick={leaveType!=="LOP"?checkLeave:leaveApply}
                 >
                   Confirm
                 </button>
@@ -910,17 +832,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             </div>
           </div>
         </div>
-      )}
-            <div className="pt-5 flex justify-center items-center">
-              {lopStatus === CURRENT_STATUS.IDEAL && (
-                <button
-                  className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
-                  onClick={checkLeave}
-                >
-                  Confirm
-                </button>
-              )}
-            </div>
+
           </div>
         </div>
       )}
@@ -937,10 +849,8 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           }
           lopDays={summary.LOP}
           setLopStatus={setLopStatus}
-          setLopStatus={setLopStatus}
           handleCancel={handleCancel}
           handleConfirm={handleConfirm}
-          status={confirmStatus}
           status={confirmStatus}
         />
       )}
@@ -949,4 +859,3 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 };
 
 export default Leaveform;
-
