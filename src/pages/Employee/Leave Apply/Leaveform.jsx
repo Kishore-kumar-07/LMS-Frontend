@@ -30,7 +30,6 @@ const getMinDate = () => {
 const Leaveform = ({ isPaternity, isAdoption }) => {
   const navigate = useNavigate();
 
-
   const [classfalse, setclassfalse] = useState("");
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -44,7 +43,9 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   const [leaveDetails, setLeaveDetails] = useState({});
   const [leaveType, setLeaveType] = useState("Casual Leave");
   const [summary, setSummary] = useState("");
-  const [isLOP, setIsLOP] = useState(false);
+  // const [isLOP, setIsLOP] = useState(false);
+  const [isLeaveApplied,setIsLeaveApplied] = useState(CURRENT_STATUS.IDEAL);
+
   const [fromFirstHalf, setFromFirstHalf] = useState(false);
   const [toFirstHalf, setToFirstHalf] = useState(false);
   const [fromSecondHalf, setFromSecondHalf] = useState(false);
@@ -82,63 +83,69 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     "2024-12-25", // Christmas
   ];
 
-
   const shouldDisableDate = (date) => {
     const formattedDate = date.format("YYYY-MM-DD");
-
 
     // Disable if it's a Sunday or a holiday
     return date.day() === 0 || disabledDates.includes(formattedDate);
   };
 
-
   const shouldDisableToDate = (date) => {
     if (!fromDate) return false;
 
-
     const formattedDate = date.format("YYYY-MM-DD");
 
-
     // Disable if it's a Sunday, a holiday, or not in the same month as fromDate
-    return (
-      date.day() === 0 || disabledDates.includes(formattedDate) 
-    );
+    return date.day() === 0 || disabledDates.includes(formattedDate);
   };
 
-  const handleLOP = () => {
-    setIsLOP(!isLOP);
-  };
+  // const handleLOP = () => {
+  //   setIsLOP(!isLOP);
+  // };
 
   const handleCancel = (e) => {
     e.preventDefault();
     console.log("Cancelled!");
-    setIsLOP(!isLOP);
     setLopStatus(CURRENT_STATUS.IDEAL);
-    setLopStatus(CURRENT_STATUS.IDEAL);
-
     setPopupVisible(!popupVisible);
   };
 
   const checkLeave = async () => {
-    console.log("Check Leave");
-    if(leaveType === "privilege Leave" && totalDays<3){
+
+    var from1stHalf = fromHalf === "" || fromHalf === "First Half"?true:false;
+    var from2ndHalf = fromHalf === "" || fromHalf === "Second Half"?true:false;
+    var to1stHalf = toDate === fromDate?from1stHalf:toHalf === "" || toHalf === "First Half"?true:false;
+    var to2ndHalf = toDate === fromDate?from2ndHalf: toHalf === "" || toHalf === "Second Half"?true:false;
+
+    console.log("Check Leave 00000000000");
+    if (leaveType === "privilege Leave" && totalDays < 3) {
       toast.warn("privilege Leave must be minimum of 3 days");
-      return ;
+      return;
     }
     try {
-      setLopStatus(CURRENT_STATUS.LOADING);
-      setLopStatus(CURRENT_STATUS.LOADING);
+      setIsLeaveApplied(CURRENT_STATUS.LOADING);
+
+
+      console.log(`empId: ${decodedToken.empId} 
+        role: ${decodedToken.role} 
+        leaveType: ${leaveType} 
+        from: {
+          date: ${formatDate(fromDate)} 
+          firstHalf: ${from1stHalf} 
+          secondHalf: ${from2ndHalf} 
+        } 
+        numberOfDays: ${totalDays}`);
+
       const res = await axios.post(
-        ` ${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
         ` ${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
         {
           empId: decodedToken.empId,
           role: decodedToken.role,
-          leaveType: leaveType,
+          LeaveType: leaveType,
           from: {
             date: formatDate(fromDate),
-            firstHalf: fromFirstHalf,
-            secondHalf: fromSecondHalf,
+            firstHalf: from1stHalf,
+            secondHalf: from2ndHalf,
           },
           numberOfDays: totalDays,
         },
@@ -151,22 +158,34 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       );
 
       setLopStatus(CURRENT_STATUS.SUCCESS);
-      setLopStatus(CURRENT_STATUS.SUCCESS);
 
-      if (res.status === 202) {
-        toast.error("Date is Already Applied");
+      if (res.status == 200) {
+        leaveApply();
+      } else if (res.status === 202) {
+        toast.warn("Date is Already Applied");
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
+
+      } else if (res.status === 203) {
+        toast.warn("Leave Limit Exceded please try applying in LOP");
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
       } else {
         setSummary(res.data);
-        handleLOP();
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
+
+        // handleLOP();
       }
     } catch (error) {
       if (error.response.status === 400) {
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         navigate("/error404");
       }
       if (error.response.status === 500) {
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         navigate("/error500");
       }
       toast.error("Somthing went wrong");
+      setIsLeaveApplied(CURRENT_STATUS.IDEAL);
+
     }
   };
 
@@ -207,16 +226,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
   const leaveApply = async () => {
     try {
-      
-      console.log(
-        "LOP",
-        fromFirstHalf,
-        fromSecondHalf,
-        toFirstHalf,
-        toSecondHalf
-      );
-
-      setConfirmStatus(CURRENT_STATUS.LOADING);
+      var from1stHalf = fromHalf === "" || fromHalf === "First Half"?true:false;
+      var from2ndHalf = fromHalf === "" || fromHalf === "Second Half"?true:false;
+      var to1stHalf = toDate === fromDate?from1stHalf:toHalf === "" || toHalf === "First Half"?true:false;
+      var to2ndHalf = toDate === fromDate?from2ndHalf: toHalf === "" || toHalf === "Second Half"?true:false;
       const res = await axios.post(
         ` ${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
@@ -226,28 +239,19 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           leaveType: leaveType,
           from: {
             date: formatDate(fromDate),
-            firstHalf: fromFirstHalf,
-            secondHalf: fromSecondHalf,
+            firstHalf: from1stHalf,
+            secondHalf: from2ndHalf,
           },
           to: {
             date: formatDate(toDate),
-            firstHalf: toFirstHalf,
-            secondHalf: toSecondHalf,
+            firstHalf: to1stHalf,
+            secondHalf: to2ndHalf,
           },
-          numberOfDays:
-            leaveType === "Casual Leave"
-              ? summary.CL
-              : leaveType === "privilege Leave"
-              ? summary.PL : summary.Paternity,
+          numberOfDays: totalDays,
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
-          LOP: summary.LOP,
-          leaveDays:
-            leaveType === "Casual Leave"
-              ? summary.CL + summary.LOP
-              : leaveType === "privilege Leave"
-              ? summary.PL + summary.LOP
-              : summary.Paternity + summary.LOP,
+          LOP: 0,
+          leaveDays: totalDays,
         },
         {
           headers: {
@@ -257,18 +261,15 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         }
       );
 
-      setConfirmStatus(CURRENT_STATUS.SUCCESS);
-
       console.log("ksdhfgiyrsgbrwnh");
       if (res.status === 201) {
-        setIsLOP(!isLOP);
+        setIsLeaveApplied(CURRENT_STATUS.SUCCESS);
         setPopupVisible(!popupVisible);
         toast.success("Leave Appliled Successfully");
         console.log(res.data.leave._id);
         sendLeaveEmail(res.data.leave._id, summary.LOP);
       } else {
-        setConfirmStatus(CURRENT_STATUS.ERROR);
-
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         toast.error("Error in requesting Leave");
       }
 
@@ -277,17 +278,30 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
       // console.log("data", res.data);
     } catch (error) {
-      if (error.response.status === 400) {
+      console.log(error);
+      if (error.response && error.response.status === 400) {
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         navigate("/error404");
-      }
-      if (error.response.status === 500) {
+    } else {
+        // Handle other types of errors (optional)
+        navigate("/error404");
+        console.error("An unexpected error occurred:", error);
+    }
+      if (error.response && error.response.status === 500) {
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         navigate("/error500");
+      }else{
+        navigate("/error500");
+        console.error("An unexpected error occurred:", error);
       }
       console.error("Error Leave Apply", error);
+      setIsLeaveApplied(CURRENT_STATUS.IDEAL);
+
       toast.error("Error in Applying Leave");
     } finally {
       // setIsAppliedLeave(!isAppliedLeave);
       // setIsLOP(!isLOP);
+      setIsLeaveApplied(CURRENT_STATUS.IDEAL);
     }
   };
   var fromDay = !isHalfDayFrom ? "FullDay" : "Half Day";
@@ -318,17 +332,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         imageUrl="https://www.gilbarco.com/us/sites/gilbarco.com.us/files/2022-07/gilbarco_logo.png"
         leaveId={objId}
         noOfLOP={LOP}
-        totalLeave={
-          leaveType === "Casual Leave"
-            ? summary.CL + summary.LOP
-            : leaveType === "privilege Leave"
-            ? summary.PL + summary.LOP
-            : summary.Paternity + summary.LOP
-            ? summary.CL + summary.LOP
-            : leaveType === "privilege Leave"
-            ? summary.PL + summary.LOP
-            : summary.Paternity + summary.LOP
-        }
+        totalLeave={totalDays}
         leaveDescription={
           leaveReason === "Others" ? leaveDescription : leaveReason
         }
@@ -337,7 +341,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/mail/send`,
         `${process.env.REACT_APP_BASE_URL}/mail/send`,
         {
           email: "mohammedashif.a2022cse@sece.ac.in",
@@ -354,7 +357,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       if (response.status === 200) {
         toast.success("Mail sent Successfully");
         // setTimeout(() => {
-        navigate("/thank-you");
         navigate("/thank-you");
         // }, 3000);
       } else {
@@ -446,7 +448,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               isPaternity && "Paternity Leave",
               isAdoption && "Adoption Leave",
               isAdoption && "Adoption Leave",
-              "LOP"
+              "LOP",
             ].map(
               (type) =>
                 type && (
@@ -500,7 +502,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
               />
             </LocalizationProvider>
           </div>
-            {/* <div className="w-[30%]">
+          {/* <div className="w-[30%]">
               <label
                 className={`${
                   !toDate && classfalse !== "" ? "text-red-500" : "text-black"
@@ -560,7 +562,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           </div>
           {/* Half/Full Day From */}
 
-
           {/* First/Second Half From */}
           {isHalfDayFrom && (
             <div className="flex gap-4 mt-8 text-lg">
@@ -573,6 +574,34 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                     checked={fromHalf === half}
                     onChange={() => {
                       setFromHalf(half);
+                      console.log("from",half);
+                      if(fromDate == toDate){
+                        if(half == ""){
+                          setFromFirstHalf(true);
+                          setFromSecondHalf(true);
+                          setToFirstHalf(true);
+                          setToSecondHalf(true);
+                        }
+                        else if(half == "First Half"){
+                          setFromFirstHalf(true);
+                          setToFirstHalf(true);
+                        }
+                        else if(half == "Second Half"){
+                          setFromSecondHalf(true);
+                          setToSecondHalf(true);
+                        }
+                      }else{
+                        if(half == ""){
+                          setFromFirstHalf(true);
+                          setFromSecondHalf(true);
+                        }
+                        else if(half == "First Half"){
+                          setFromFirstHalf(true);
+                        }
+                        else if(half == "Second Half"){
+                          setFromSecondHalf(true);
+                        }
+                      }
                       if (half === "First Half") {
                         handleToDayTypeChange("full");
                         setToDate(fromDate);
@@ -609,8 +638,8 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                   if (fromHalf === "First Half") {
                     setToDate(fromDate);
                   } else {
-                    setToDate(newValue)
-                  };
+                    setToDate(newValue);
+                  }
                 }}
                 shouldDisableDate={shouldDisableToDate}
                 minDate={fromDate || today}
@@ -666,7 +695,37 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                       name="halfDayTo"
                       value={half}
                       checked={toHalf === half}
-                      onChange={() => setToHalf(half)}
+                      onChange={() => {
+                        setToHalf(half)
+                        console.log("TOOO:",toHalf);
+                        if(fromDate == toDate){
+                          if(fromHalf == ""){
+                            setFromFirstHalf(true);
+                            setFromSecondHalf(true);
+                            setToFirstHalf(true);
+                            setToSecondHalf(true);
+                          }
+                          else if(fromHalf == "First Half"){
+                            setFromFirstHalf(true);
+                            setToFirstHalf(true);
+                          }
+                          else if(fromHalf == "Second Half"){
+                            setFromSecondHalf(true);
+                            setToSecondHalf(true);
+                          }
+                        }else{
+                          if(half == ""){
+                            setToFirstHalf(true);
+                            setToSecondHalf(true);
+                          }
+                          else if(half == "First Half"){
+                            setToFirstHalf(true);
+                          }
+                          else if(half == "Second Half"){
+                            setToSecondHalf(true);
+                          }
+                        }
+                      }}
                       className="mr-2"
                     />
                     {half}
@@ -717,7 +776,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           </div>
         )}
 
-
         <button
           type="submit"
           className="w-44 bg-blue-500 text-white p-3 rounded-md text-xl font-bold shadow-lg"
@@ -728,7 +786,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
       {/* Popup for Leave Details */}
 
-      {popupVisible && !(lopStatus === CURRENT_STATUS.SUCCESS) && (
+      {popupVisible && !(isLeaveApplied === CURRENT_STATUS.SUCCESS) && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
             <div className="flex justify-between items-center mb-4">
@@ -740,104 +798,105 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                 X
               </button>
             </div>
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-blue-800">Leave Details</h3>
-              <button
-                className="text-red-500 text-xl font-bold hover:text-red-700 transition-colors"
-                onClick={handlePopupClose}
-              >
-                X
-              </button>
-            </div>
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg w-[40%] flex flex-col justify-center border border-gray-200">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-bold text-blue-800">
+                    Leave Details
+                  </h3>
+                  <button
+                    className="text-red-500 text-xl font-bold hover:text-red-700 transition-colors"
+                    onClick={handlePopupClose}
+                  >
+                    X
+                  </button>
+                </div>
 
-            {lopStatus === CURRENT_STATUS.LOADING ? (
-              <div className="flex justify-center p-20">
-                <OrbitProgress
-                  variant="track-disc"
-                  color="#078ebc"
-                  size="small"
-                  text="Wait"
-                  textColor=""
-                />
+                {isLeaveApplied === CURRENT_STATUS.LOADING ? (
+                  <div className="flex justify-center p-20">
+                    <OrbitProgress
+                      variant="track-disc"
+                      color="#078ebc"
+                      size="small"
+                      text="Wait"
+                      textColor=""
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full flex justify-center items-center">
+                    <table className="w-[90%] text-left text-lg border-collapse border border-gray-300">
+                      <tbody>
+                        <tr>
+                          <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                            Leave Type
+                          </td>
+                          <td className="border border-gray-300 p-2">
+                            {leaveDetails.leaveType}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                            From Date
+                          </td>
+                          <td className="border border-gray-300 p-2">
+                            {leaveDetails.fromDate}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                            To Date
+                          </td>
+                          <td className="border border-gray-300 p-2">
+                            {leaveDetails.toDate}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                            Number of Days
+                          </td>
+                          <td className="border border-gray-300 p-2">
+                            {leaveDetails.totalDays}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                            Leave Reason
+                          </td>
+                          <td className="border border-gray-300 p-2">
+                            {leaveDetails.leaveReason}
+                          </td>
+                        </tr>
+                        {leaveDetails.leaveDescription && (
+                          <tr>
+                            <td className="border border-gray-300 p-2 font-semibold text-gray-600">
+                              Leave Description
+                            </td>
+                            <td className="border border-gray-300 p-2">
+                              {leaveDetails.leaveDescription}
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                <div className="pt-5 flex justify-center items-center">
+                  {isLeaveApplied === CURRENT_STATUS.IDEAL && (
+                    <button
+                      className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
+                      onClick={checkLeave}
+                    >
+                      Confirm
+                    </button>
+                  )}
+                </div>
               </div>
-            ) : (
-              <div className="w-full flex justify-center items-center">
-                <table className="w-[90%] text-left text-lg border-collapse border border-gray-300">
-                  <tbody>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Leave Type
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.leaveType}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        From Date
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.fromDate}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        To Date
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.toDate}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Number of Days
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.totalDays}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                        Leave Reason
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {leaveDetails.leaveReason}
-                      </td>
-                    </tr>
-                    {leaveDetails.leaveDescription && (
-                      <tr>
-                        <td className="border border-gray-300 p-2 font-semibold text-gray-600">
-                          Leave Description
-                        </td>
-                        <td className="border border-gray-300 p-2">
-                          {leaveDetails.leaveDescription}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            <div className="pt-5 flex justify-center items-center">
-              {lopStatus === CURRENT_STATUS.IDEAL && (
-                <button
-                  className="bg-green-500 w-[100px] text-white font-semibold py-2 rounded-md hover:bg-green-600 transition-colors"
-                  onClick={leaveType!=="LOP"?checkLeave:leaveApply}
-                >
-                  Confirm
-                </button>
-              )}
             </div>
-          </div>
-        </div>
-
           </div>
         </div>
       )}
 
-      {isLOP && (
+      {/* {isLOP && (
         <LeaveNotification
           totalLeaveDays={totalDays}
           casualLeaveDays={
@@ -853,7 +912,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           handleConfirm={handleConfirm}
           status={confirmStatus}
         />
-      )}
+      )} */}
     </div>
   );
 };
