@@ -4,8 +4,8 @@ import Leaveform from "./Leaveform";
 
 function LeaveApply({isPaternity,isAdoption}) {
   return (
-    <div className="w-screen ">
-      <div className="w-full flex justify-evenly">
+    <div className="w-screen">
+      <div className="w-full flex justify-evenly ">
       <Leaveform isPaternity={isPaternity} isAdoption={isAdoption} />
       <LeaveDetailTable />
       </div>
