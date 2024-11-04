@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Ensure correct import for jwtDecode
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 export const Circular = () => {
   const navigation = useNavigate();
   const today = new Date().toLocaleDateString("en-GB"); // Format as DD/MM/YYYY
@@ -19,9 +20,9 @@ export const Circular = () => {
   const empId = decodedToken.empId;
 
   // Fetch circular messages
-  useEffect(() => {
-    getCircular();
-  }, []);
+  // useEffect(() => {
+  //   getCircular();
+  // }, []);
 
   // Toggle chat panel visibility
   const toggleChat = () => {
@@ -40,29 +41,6 @@ export const Circular = () => {
     setSelectedMessage(null);
   };
 
-  // Fetch circular messages
-  const getCircular = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/circular/getAll`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setMessages(res.data);
-    } catch (error) {
-      if (error.response.status === 400) {
-        navigation("/error404");
-      }
-      if (error.response.status === 500) {
-        navigation("/error500");
-      }
-      console.error("Error fetching circulars", error);
-    }
-  };
 
   // Send new circular message
   const sendCircular = async () => {
@@ -83,9 +61,13 @@ export const Circular = () => {
         }
       );
 
-      if (res.status === 201) {
+      if (res.status === 200) {
+        toast.success("Circular sent Successfully")
         toggleChat();
-        getCircular();
+        
+      }
+      else if(res.status === 404){
+
       }
     } catch (e) {
       console.error("Error sending circular", e);
@@ -94,6 +76,7 @@ export const Circular = () => {
 
   return (
     <>
+    <ToastContainer/>
       <div className="">
         <div className="w-full ">
           {messages.length === 0 ? (

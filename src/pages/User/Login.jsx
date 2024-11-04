@@ -32,7 +32,7 @@ const Login = () => {
       <div
         className="w-screen h-screen absolute flex  overflow-hidden bg-white "
         onClick={disableClick}
-        // style={{ pointerEvents: "none" }}
+        
       >
         <div className="w-full h-full">
           <div className="bg-[#e0f2fe] rounded-r-3xl h-full rounded-br-full p-5">

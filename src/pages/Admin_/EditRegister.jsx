@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {jwtDecode} from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
   const [formData, setFormData] = useState({
@@ -21,6 +22,8 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
     location: "",
     unit: "",
   });
+
+  const navigate = useNavigate();
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -124,19 +127,33 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
       if(res.status === 200){
         console.log(res);
       toast.success("User Updated Successfully");
-      getEmployees();
-      setOpenEditModal(false);
+      
+      //set timeout
+      setTimeout(() => {
+        setOpenEditModal(false);
+      }, 2000);
       }
+      getEmployees();
+      
       
     } catch (error) {
-      toast.error("Error in Updating User");
-      getEmployees();
-      console.log(error);
+      if(error.response.status === 400){
+        navigate('/error404');
+      }
+      else if(error.response.status === 404){
+        toast.error("employee not found");
+        // navigate('/error404');
+      }
+      else if(error.response.status === 500){
+        toast.error("Server Error");
+        navigate('/error500');
+      }
     }
   };
 
   return (
     <div className="w-full bg-white rounded-lg p-2 overflow-y-auto h-fit md:h-full">
+      <ToastContainer/>
       <div className="w-full mb-10 flex justify-between">
         <p></p>
         <h1 className="text-3xl font-bold text-center text-blue-700 ">
@@ -293,11 +310,11 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
           </button>
         </div>
       </form>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-center"
         autoClose={3000}
         hideProgressBar={false}
-      />
+      /> */}
     </div>
   );
 }
