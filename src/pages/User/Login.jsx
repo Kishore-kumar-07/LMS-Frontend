@@ -24,7 +24,7 @@ const Login = () => {
   }, []);
 
   const handleLoginButton = () =>{
-    navigate('/loginotp')
+    navigate('/login')
   }
 
   return (
@@ -35,13 +35,13 @@ const Login = () => {
         // style={{ pointerEvents: "none" }}
       >
         <div className="w-full h-full">
-          <div className="bg-[#00aeff9d] rounded-r-3xl h-full rounded-br-full p-5">
+          <div className="bg-[#e0f2fe] rounded-r-3xl h-full rounded-br-full p-5">
             <img src={gilbarco} className="  w-80 p-5" alt="Gilbarco" />
-            <h1 className="font-bold text-5xl ml-20 mt-20 text-white">
+            <h1 className="font-bold text-5xl ml-20 mt-20 text-[#1e303c]">
               Welcome to Gilbarco <br />
               Leave Management System
             </h1>
-            <p className="w-[70%] pt-16 pl-20 text-xl font-semibold">
+            <p className="w-[70%] pt-16 pl-20 text-xl font-semibold text-[#1e303c]">
             To log in using RFID, please scan your card. Alternatively, click 'Login' to use your phone number for authentication
             </p>
             <div className = " pt-10 pl-20">

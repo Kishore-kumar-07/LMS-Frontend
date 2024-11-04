@@ -7,19 +7,19 @@ import Register from './Register'
 import * as XLSX from 'xlsx';
 import delete_ from "../../images/delete.png";
 import edit from "../../images/edit.png";
-import { ToastContainer } from 'react-toastify';
+import ToastContainer from 'rsuite/esm/toaster/ToastContainer';
 import { toast } from 'react-toastify';
 import EditRegister from './EditRegister';
 
-const Employee = () => {
-  const fileInputRef = useRef(null);
+const Managers = () => {
+    const fileInputRef = useRef(null);
 
   const navigation = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [allEmployees , setAllEmployees] = useState([]);
   const [openRegisterModal , setOpenRegisterModal] = useState(false);
-  const [fileData , setFileData] = useState([]);
+  const [fileData , setFileData] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [filteredData, setFilteredData] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
@@ -38,6 +38,7 @@ const Employee = () => {
     filterData();
   }, [allEmployees, searchTerm, selectedType]);
   
+  
   const getEmployees = async () => {
     try {
       const allEmp = await axios.post(
@@ -50,7 +51,7 @@ const Employee = () => {
           },
         }
       );
-      // console.log(allEmp.data);
+      console.log(allEmp.data);
       setAllEmployees(allEmp.data); 
       
     } catch (error) {
@@ -89,7 +90,7 @@ const Employee = () => {
         }
       );
       console.log(res);
-       
+      setFileData("");
       
     } catch (error) {
       toast.error("Error in Saving imported Data")
@@ -97,43 +98,14 @@ const Employee = () => {
     }
   }
 
-  const importData = () => {
+  const importData = () =>{
     fileInputRef.current.click();
-  };
+  }
 
   const handleEditClick = (employee) => {
     setCurrentEmployee(employee); 
     setOpenEditModal(true);
   };
-  
-
-  // const handleEditClick = async(empId) => {
-  //   try {
-  //     const res = await axios.post(
-  //       `${process.env.REACT_APP_BASE_URL}/emp/update`,
-  //       { 
-  //         id : adminId,
-  //         empId : empId
-  //        },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     // console.log(res);
-  //    toast.success("Employee deleted Successfully")
-      
-  //   } catch (error) {
-  //    toast.error("Error in Deleting Employee")
-
-  //     console.log("error");
-  //   }
-  //   getEmployees();
-  //   setDeleteModal(!deleteModal);
-
-  // };
 
   const handleDeleteClick = (id) => {
     setDeleteId(id)
@@ -172,15 +144,13 @@ const Employee = () => {
   },[allEmployees])
 
   const filterData = () =>{
-    const filteredData = allEmployees.filter((row)=>row.role === "3P" || row.role === "GVR");
+    const filteredData = allEmployees.filter((row)=>row.role === "Manager");
     const filtered = filteredData.filter((row) => {
-      const matchesType =
-        selectedType === "" || row.role.toLowerCase() === selectedType.toLowerCase();
-      const matchesSearchTerm =
-        searchTerm === "" || row.empName.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesType && matchesSearchTerm;
-    });
-    setFilteredData(filtered);
+        const matchesSearchTerm =
+          searchTerm === "" || row.empName.toLowerCase().includes(searchTerm.toLowerCase());
+        return  matchesSearchTerm;
+      });
+      setFilteredData(filtered);
   }
 
   const handleFileChange = (event) => {
@@ -199,11 +169,10 @@ const Employee = () => {
     reader.readAsBinaryString(file);
   };
 
-
   return (
     <>
     <div className='w-full h-full flex flex-col '>
-      <ToastContainer/>
+        <ToastContainer/>
       <div className='w-full h-[10%] flex justify-between pr-5 pl-5 pt-2 pb-2'>
       <div className="flex gap-5">
           <input
@@ -213,15 +182,7 @@ const Employee = () => {
             className="w-full max-w-md p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
             placeholder="Search Employee"
           />
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
-          >
-            <option value="">All Types</option>
-            <option value="GVR">GVR</option>
-            <option value="3P">3P</option>
-          </select>
+          
         </div>
         <div className='w-2'>
 
@@ -349,7 +310,7 @@ const Employee = () => {
       <EditRegister
         setOpenEditModal={setOpenEditModal}
         currentEmployee={currentEmployee}
-        getEmployees = {getEmployees}
+        getEmployees = {getEmployees} // Pass the employee data
       />
     </div>
   </div>
@@ -359,4 +320,4 @@ const Employee = () => {
   )
 }
 
-export default Employee
+export default Managers

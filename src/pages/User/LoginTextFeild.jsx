@@ -17,7 +17,7 @@ const LoginTextFeild = ({ idRef }) => {
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault(); 
     if (RFID !== "") {
       try {
         setStatus(CURRENT_STATUS.LOADING);

@@ -12,7 +12,7 @@ import Details from "./pages/Manager/Details" ;
 import Loginotp from './pages/User/Loginotp'
 import Admin_Home from './pages/Admin_/Admin_Home'
 import ManagerHome from "./pages/Manager/ManagerHome";
-import LoginEmpId from "./pages/User/LoginEmpId";
+import ResetPassword from "./pages/User/ResetPassword";
 
 
 function App() {
@@ -66,8 +66,12 @@ function App() {
       element:<Details/>
     },
     {
-      path:'/loginotp',
-      element:<LoginEmpId/>
+      path:'/login',
+      element:<Loginotp/>
+    },
+    {
+      path:'/reset-password',
+      element:<ResetPassword/>
     },
     {
       path:"*",
