@@ -19,7 +19,7 @@ const Error404 = () => {
                 <img src = {error} width={240} height = {240}></img>
             </div>
             <div className = "font-semibold text-3xl">
-              Page Not Found
+              Employee Not Found
             </div>
             </div>
             <button className = "font-semibold text-xl border-2 border-slate-600 shadow-lg w-36 h-12 rounded-lg hover:bg-slate-100 " onClick={handleBack}>
