@@ -4,7 +4,8 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import Register from './Register'
-import * as XLSX from 'xlsx';
+import * as FileSaver from "file-saver";
+import XLSX from "sheetjs-style";
 import delete_ from "../../images/delete.png";
 import edit from "../../images/edit.png";
 import ToastContainer from 'rsuite/esm/toaster/ToastContainer';
@@ -21,6 +22,7 @@ const Managers = () => {
   const [allEmployees , setAllEmployees] = useState([]);
   const [openRegisterModal , setOpenRegisterModal] = useState(false);
   const [fileData , setFileData] = useState(null);
+  const [filterManager , setFilterManager] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false);
   const [filteredData, setFilteredData] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
@@ -38,8 +40,11 @@ const Managers = () => {
   useEffect(() => {
     filterData();
   }, [allEmployees, searchTerm, selectedType]);
-  
-  
+
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
+
   const getEmployees = async () => {
     try {
       const allEmp = await axios.post(
@@ -107,6 +112,27 @@ const Managers = () => {
     fileInputRef.current.click();
   }
 
+  const exportData = () =>{
+    const exportFields = filteredData.map(({ empId, empName, empMail, empPhone, role, gender, dateOfJoining, department, unit , level }) => ({
+      EmployeeID: empId,
+      EmployeeName: empName,
+      EmployeeMail: empMail,
+      EmployeePhoneNumber: empPhone,
+      Type: role,
+      Gender : gender,
+      DOJ: dateOfJoining,
+      Department : department,
+      Unit : unit, 
+      Level : level
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportFields);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, "Report" + fileExtension);
+  }
+
   const handleEditClick = (employee) => {
     setCurrentEmployee(employee); 
     setOpenEditModal(true);
@@ -150,6 +176,8 @@ const Managers = () => {
 
   const filterData = () =>{
     const filteredData = allEmployees.filter((row)=>row.role === "Manager");
+    const filterManager = allEmployees.filter((row)=>row.role === "Manager" || row.role === "Admin");
+    setFilterManager(filterManager);
     const filtered = filteredData.filter((row) => {
         const matchesSearchTerm =
           searchTerm === "" || row.empName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -205,6 +233,13 @@ const Managers = () => {
         className="p-2 bg-blue-300 text-black w-20 h-10 font-semibold rounded-lg"
       >
         Import
+      </button>
+
+      <button
+        onClick={exportData}
+        className="p-2 bg-green-300 text-black w-20 h-10 font-semibold rounded-lg ml-3"
+      >
+        Export
       </button>
       
       <input
@@ -281,7 +316,7 @@ const Managers = () => {
       {openRegisterModal && (
 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
   <div className="bg-white p-2 rounded-lg shadow-2xl w-[95%] h-[95%] flex justify-center items-center">
-    <Register setOpenRegisterModal = {setOpenRegisterModal} getEmployees = {getEmployees}/>
+    <Register setOpenRegisterModal = {setOpenRegisterModal} getEmployees = {getEmployees} currentEmployee = {currentEmployee} filterManager={filterManager}/>
   </div>
 </div>
       )}
@@ -315,7 +350,8 @@ const Managers = () => {
       <EditRegister
         setOpenEditModal={setOpenEditModal}
         currentEmployee={currentEmployee}
-        getEmployees = {getEmployees} // Pass the employee data
+        getEmployees = {getEmployees}
+        filterManager={filterManager} // Pass the employee data
       />
     </div>
   </div>

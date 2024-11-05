@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
+function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  filterManager }) {
   const [formData, setFormData] = useState({
     empName: "",
     empMail: "",
@@ -33,7 +33,11 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
   const [isAdoption, setIsAdoption] = useState(false);
   const [isPaternity, setIsPaternity] = useState(false);
 
+  const [manager, setManager] = useState([]);
+  const [admin, setAdmin] = useState([]);
+
   useEffect(() => {
+    
     if (currentEmployee) {
       setFormData({
         empName: currentEmployee.empName || "",
@@ -44,7 +48,6 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
         gender: currentEmployee.gender || "",
         manager: currentEmployee.manager || "",
         designation: currentEmployee.designation || "",
-        reportingManager: currentEmployee.reportingManager || "",
         function: currentEmployee.function || "",
         department: currentEmployee.department || "",
         level: currentEmployee.level || "",
@@ -55,6 +58,15 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
       setIsPaternity(currentEmployee.isPaternity || false);
     }
   }, [currentEmployee]);
+
+  useEffect(() => {
+    if(filterManager){
+    const managerList = filterManager.filter((row) => row.role === "Manager");
+    const adminList = filterManager.filter((row) => row.role === "Admin");
+    setManager(managerList);
+    setAdmin(adminList);
+    }
+  }, [filterManager]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -72,6 +84,7 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
   const handleAdoptionChange = () => {
     setIsAdoption(!isAdoption);
   };
+
 
   const handleSubmit = async (e) => {
     console.log("edit submit")
@@ -106,9 +119,8 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
             role: formData.role,
             vendor: formData.vendor,
             gender: formData.gender,
-            manager: formData.manager ,
-            designation: formData.designation,
-            reportingManager: formData.reportingManager,
+            managerId: formData.manager ,
+            
             function:formData.function,
             department: formData.department,
             level: formData.level,
@@ -128,13 +140,13 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
         console.log(res);
       toast.success("User Updated Successfully");
       
-      //set timeout
+
       setTimeout(() => {
         setOpenEditModal(false);
       }, 2000);
       }
       getEmployees();
-      
+
       
     } catch (error) {
       if(error.response.status === 400){
@@ -195,7 +207,7 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
               name={key}
               value={formData[key]}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-blue-50 placeholder-gray-500 ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent  placeholder-gray-500 ${
                 errors[key] ? "border-red-500" : ""
               }`}
             >
@@ -209,9 +221,9 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
               )}
               {key === "vendor" && (
                 <>
-                  <option value="YSF_1">YSF_1</option>
-                  <option value="YSF_2">YSF_2</option>
-                  <option value="Gilbarco">Gilbarco</option>
+                  <option value="Candor">Candor</option>
+                    <option value="Sitics">Sitics</option>
+                    <option value="Gilbarco">Gilbarco</option>
                 </>
               )}
               {key === "gender" && (
@@ -222,11 +234,20 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
                 </>
               )}
               {key === "manager" && (
-                <>
-                  <option value="Lingeshwaran">Lingeshwaran</option>
-                  <option value="Mohammed Ashif">Mohammed Ashif</option>
-                </>
-              )}
+                  <>
+                    {formData.role === "Manager"
+                      ? admin.map((admin) => (
+                          <option key={admin.empId} value={admin.userName}>
+                            {admin.empName}
+                          </option>
+                        ))
+                      : manager.map((manager) => (
+                          <option key={manager.empId} value={manager.userName}>
+                            {manager.empName}
+                          </option>
+                        ))}
+                  </>
+                )}
               {key === "designation" && (
                 <>
                   <option value="3P Employee">3P Employee</option>
@@ -235,19 +256,33 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
                 </>
               )}
               {key === "function" && (
-                <>
-                  <option value="Operations">Operations</option>
-                  <option value="Engineering">Engineering</option>
-                  {/* <option value="fi">Engineering</option> */}
-                </>
-              )}
+                  <>
+                    <option value="Operations">Operations</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Commercial">Commercial</option>
+                  </>
+                )}
               {key === "department" && (
-                <>
-                  <option value="CSE">CSE</option>
-                  <option value="ECE">ECE</option>
-                  <option value="Mechanical">Mechanical</option>
-                </>
-              )}
+                  <>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Store">Store</option>
+                    <option value="Quality">Quality</option>
+                    <option value="Manufacturing Engineering">
+                      Manufacturing Engineering
+                    </option>
+                    <option value="Facilities and Maintenance">
+                      Facilities and Maintenance
+                    </option>
+                    <option value="Sourcing">Sourcing</option>
+                    <option value="Planning">Planning</option>
+                    <option value="Human Resource">Human Resource</option>
+                    <option value="Customer Support">Customer Support</option>
+                    <option value="Finance">Finance</option>
+                    <option value="EHS">EHS</option>
+                    <option value="TACC Lab">TACC Lab</option>
+                    <option value="Engineering">Engineering</option>
+                  </>
+                )}
               {key === "level" && (
                 <>
                   <option value="Junior">Junior</option>
@@ -262,8 +297,11 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
               )}
               {key === "unit" && (
                 <>
-                  <option value="DTA">DTA</option>
-                  <option value="STP">STP</option>
+                  <>
+                    <option value="DTA">DTA</option>
+                    <option value="EOU">EOU</option>
+                    <option value="DTA/EOU">DTA/EOU</option>
+                  </>
                 </>
               )}
              
@@ -275,7 +313,7 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
               name={key}
               value={formData[key]}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-blue-50 placeholder-gray-500 ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent  placeholder-gray-500 ${
                 errors[key] ? "border-red-500" : ""
               }`}
               placeholder={`Enter ${key}`}
@@ -288,18 +326,30 @@ function EditRegister({ setOpenEditModal, currentEmployee , getEmployees }) {
             )}
           </div>
         ))}
-        <div className="flex items-end pb-3 gap-7">
-          <div className="flex gap-2 text-lg ">
-          <label>Adoption </label>
-          <input type="checkbox" checked={isAdoption} onChange={handleAdoptionChange} />
-          </div>
-          <div className="flex gap-2 text-lg ">
-          <label>Paternity </label>
-          <input type="checkbox" checked={isPaternity} onChange={handlePaternityChange} />
-          </div>
-        </div>
-        <div>
 
+        <div>
+        {formData.role === "GVR" && (
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold">
+              Paternity Leave
+            </label>
+            <input
+              type="checkbox"
+              checked={isPaternity}
+              onChange={handlePaternityChange}
+              className="mt-2"
+            />
+            <label className="text-gray-700 font-semibold">
+              Adoption Leave
+            </label>
+            <input
+              type="checkbox"
+              checked={isAdoption}
+              onChange={handleAdoptionChange}
+              className="mt-2"
+            />
+          </div>
+        )}
         </div>
         <div className="flex w-full justify-center items-center">
           <button
