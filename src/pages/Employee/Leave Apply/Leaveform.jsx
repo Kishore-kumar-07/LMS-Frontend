@@ -173,15 +173,15 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         leaveApply();
       } else if (res.status === 202) {
         toast.warn("Date is Already Applied");
-      
+
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
       } else if (res.status === 203) {
         toast.warn("Leave Limit Exceded please try applying in LOP");
-      
+
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
       } else {
         setSummary(res.data);
-      
+
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
 
         // handleLOP();
@@ -189,18 +189,18 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     } catch (error) {
       if (error.response.status === 400) {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
-      
+
         navigate("/error404");
       }
       if (error.response.status === 500) {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
-      
+
         navigate("/error500");
       }
       toast.error("Somthing went wrong");
-    
+
       setIsLeaveApplied(CURRENT_STATUS.IDEAL);
-    }finally{
+    } finally {
       handlePopupClose();
     }
   };
@@ -261,7 +261,12 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           ? true
           : false;
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/apply`,
+        `${process.env.REACT_APP_BASE_URL}/leave/apply`,  {
+          headers: {
+            Authorization: ` Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
         {
           empId: decodedToken.empId,
           empName: decodedToken.empName,
@@ -282,16 +287,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: leaveType === "LOP" ? totalDays : 0,
-        },
-        {
-          headers: {
-            Authorization: ` Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
         }
       );
 
-      console.log("ksdhfgiyrsgbrwnh");
+      console.log(" ");
       if (res.status === 201) {
         setIsLeaveApplied(CURRENT_STATUS.SUCCESS);
         setPopupVisible(!popupVisible);
@@ -682,7 +681,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                   />
                 )}
                 format="DD/MM/YYYY"
-                disabled ={fromHalf === "First Half"}
+                disabled={fromHalf === "First Half"}
               />
             </LocalizationProvider>
           </div>
