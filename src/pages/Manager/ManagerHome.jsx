@@ -38,11 +38,19 @@ const AdminHome = () => {
 
   const departments = [
     "All Departments",
-    "Computer Science",
-    "Mechanical Engineering",
-    "Electrical Engineering",
-    "Civil Engineering",
-    "Biomedical Engineering",
+    "Manufacturing",
+    "Store",
+    "Quality",
+    "Manufacturing Engineering",
+    "Facilities and Maintenance",
+    "Sourcing",
+    "Planning",
+    "Human Resource",
+    "Customer Support",
+    "Finance",
+    "EHS",
+    "TACC Lab",
+    "Engineering"
   ];
 
   const [isRequest, setIsRequest] = useState(false);
@@ -81,8 +89,10 @@ const AdminHome = () => {
 
   const getCardData = async () => {
     try {
-      const cardData = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/leave/cardData`,
+      const cardData = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/leave/getLeave`,
+        {empId}
+        ,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -104,6 +114,7 @@ const AdminHome = () => {
   };
 
   useEffect(() => {
+    // console.log(cardData.length);
     const total = cardData.length;
     const approved = cardData.filter((row) => row.status === "Approved").length;
     const pending = cardData.filter((row) => row.status === "Pending").length;
@@ -131,7 +142,7 @@ const AdminHome = () => {
 
   const handleClick = (index, id) => {
     setEmployeeId(id);
-    console.log("after clicking", index);
+    // console.log("after clicking", index);
     setSelectedEmployee(filteredEmployees[index]);
     setSelectedEmployeeIndex(index);
     setShowPopup(true);

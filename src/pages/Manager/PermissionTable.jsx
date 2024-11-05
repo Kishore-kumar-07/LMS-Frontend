@@ -4,11 +4,13 @@ import Pagination from "./Pagination";
 import { MdMessage, MdClose, MdEdit } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
-import { IoMdSearch } from "react-icons/io";
-import { MdArrowDropDown } from "react-icons/md";
+
 import { BeatLoader } from "react-spinners";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
+
+import accept from "../../images/accept.png";
+import decline from "../../images/cancel.png";
 
 const PermissionTable = () => {
   const headers = [
@@ -257,28 +259,38 @@ const PermissionTable = () => {
                 >
                   <MdMessage />
                 </td>
-                <td className=" text-md font-medium text-sm">
+                <td className="text-md font-medium text-sm flex gap-2 pt-2 justify-center items-center h-full">
                   {editRowId === row._id ? (
                     <>
-                      <button
-                        onClick={() => handleAccept(row._id, row.status)}
-                        className="ml-2 bg-green-500 text-white px-2 py-1 rounded"
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => handleReject(row._id, row.status)}
-                        className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
-                      >
-                        Decline
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </>
+                    <div
+                      onClick={() => handleAccept(row._id, row.status)}
+                      className="flex justify-center cursor-pointer items-center"
+                    >
+                      <img
+                        src={accept}
+                        alt="approve"
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                    <div
+                      onClick={() => handleReject(row._id, row.status)}
+                      className="flex justify-center cursor-pointer items-center"
+                    >
+                      <img
+                        src={decline}
+                        alt="decline"
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </>
                   ) : (
                     <span
                       className={

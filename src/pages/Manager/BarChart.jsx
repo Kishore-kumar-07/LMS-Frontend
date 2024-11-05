@@ -48,8 +48,9 @@ const BarChart = () => {
 
   const getWeekData = async () => {
     try {
-      const weekDataResponse = await axios.get(
+      const weekDataResponse = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/weekData`,
+        {empId},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,7 +65,7 @@ const BarChart = () => {
 
       const filteredLeaves = weekDataResponse.data.filter((leave) => {
         const leaveDate = new Date(leave.today);
-        return leaveDate >= lastWeek && leaveDate <= today;
+        return leaveDate >= lastWeek && leaveDate <= today && leave.status === 'Approved';
       });
 
       const leaveCountByDay = {};

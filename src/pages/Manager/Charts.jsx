@@ -29,8 +29,9 @@ const Charts = () => {
       });
 
     const leaveData = response.data;
-    const three_p = leaveData.filter((row) => row.role === "3P").length;
-    const gvr = leaveData.length - three_p;
+    console.log(response.data)
+    const three_p = leaveData.filter((row) => row.role === "3P" && row.status === "Approved").length;
+    const gvr = leaveData.filter((row) => row.role === "GVR" && row.status === "Approved").length;
 
     setGvr(gvr);
     setThree_p(three_p);
