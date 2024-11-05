@@ -4,7 +4,8 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import LoadingPage from "../LoadingPage";
-
+import ToastContainer from "rsuite/esm/toaster/ToastContainer";
+import { toast } from "react-toastify";
 const LoginTextFeild = ({ idRef }) => {
   const navigation = useNavigate();
   const disableClick = (e) => {
@@ -33,7 +34,7 @@ const LoginTextFeild = ({ idRef }) => {
             },
           }
         );
-
+      
         setStatus(CURRENT_STATUS.SUCCESS);
         console.log(res.status);
         console.log(res.data.token);
@@ -45,27 +46,30 @@ const LoginTextFeild = ({ idRef }) => {
           console.log("decoded", decodedToken);
 
           if (decodedToken.role === "Manager") {
-            navigate("/Manager"); // Redirect to admin page
+            navigate("/Manager");
           } else if(decodedToken.role === 'Admin') {
-            navigate(`/Admin`); // Redirect to employee page with ID
+            navigate(`/Admin`); 
           }else {
-            navigate(`/Employee`); // Redirect to employee page with ID
-          }
-        } else if (res.status === 401) {
-          setError("Incorrect password");
+            navigate(`/Employee`); 
+        }
         }
       } catch (err) {
-        if (err.response.status === 400) {
-          navigation("/error404");
-        }
-        if (err.response.status === 500) {
-          navigation("/error500");
+        if (err.response && err.response.status === 404) {
+    
+          navigate("/error404");
+          toast.error("Employee not found"); 
+          setTimeout(() => navigate('/'), 3000);
+        } else if (err.response && err.response.status === 500) {
+          navigate("/error500");
+          setTimeout(() => setError(""), 3000);
+        } else {
+          setError("Login failed. Please try again.");
         }
         console.log(err.message);
-        setError("Login failed. Please try again.");
+        setStatus(CURRENT_STATUS.IDEAL); // Reset status if login fails
       }
     } else {
-      setError("Fill in the credentials properly.");
+      setError("Scan Properly");
     }
   };
 
@@ -77,6 +81,7 @@ const LoginTextFeild = ({ idRef }) => {
     <LoadingPage />
   ) : (
     <div className=" flex items-center justify-center  bg-gray-100 px-4 sm:px-6 lg:px-8 ">
+      <ToastContainer/>
       <div className="bg-white rounded-lg shadow-lg flex    flex-col items-center p-6 w-full max-w-md">
         {error && <p className="error text-red-500 text-center">{error}</p>}
         <form className="w-full" onSubmit={handleLogin}>

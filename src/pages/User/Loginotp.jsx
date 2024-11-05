@@ -72,10 +72,14 @@ function Loginotp() {
       if (res.status === 200) {
         setValidateStatus(CURRENT_STATUS.SUCCESS);
         setError("");
+
         navigate(`/reset-password/${userName}`);
-      } else {
+      } else if(res.status === 401){
         setValidateStatus(CURRENT_STATUS.IDEAL);
         setErrorOtp("Incorrect OTP");
+      }
+      else{
+        setError("Failed to validate OTP");
       }
     } catch (e) {
       setValidateStatus(CURRENT_STATUS.ERROR);
@@ -106,8 +110,10 @@ function Loginotp() {
             ? "/Admin"
             : "/Employee"
         );
-      } else {
-        setLoginStatus(CURRENT_STATUS.IDEAL);
+
+      } else if(res.status === 400 || res.status === 404) {
+        setValidateStatus(CURRENT_STATUS.IDEAL);
+
         setError("Invalid Username or Password");
       }
     } catch (e) {

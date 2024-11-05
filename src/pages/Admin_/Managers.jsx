@@ -10,6 +10,7 @@ import edit from "../../images/edit.png";
 import ToastContainer from 'rsuite/esm/toaster/ToastContainer';
 import { toast } from 'react-toastify';
 import EditRegister from './EditRegister';
+import "react-toastify/dist/ReactToastify.css";
 
 const Managers = () => {
     const fileInputRef = useRef(null);
@@ -90,7 +91,11 @@ const Managers = () => {
         }
       );
       console.log(res);
-      setFileData("");
+      if(res.status === 200){
+        toast.success("Data imported successfully")
+        getEmployees();
+        setFileData([]);
+      }
       
     } catch (error) {
       toast.error("Error in Saving imported Data")

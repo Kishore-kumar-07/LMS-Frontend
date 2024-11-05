@@ -127,14 +127,14 @@ const Details = () => {
         }
       );
 
-      // if(res.status===200){
-      //   toast.success("Circular sent Successfully");
+      if(res.status===200){
+        toast.success("Circular sent Successfully");
 
-      // }
-      // else{
-      //   toast.error("Error in sending Circular ");
+      }
+      else{
+        toast.error("Error in sending Circular ");
 
-      // }
+      }
     } catch (e) {
       console.error("Error sending circular", e);
       toast.error("Error in sending Circular ");
@@ -265,7 +265,7 @@ const Details = () => {
                 onClick={handleSubmitCircular}
                 className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500 transition-colors duration-300"
               >
-                Submit
+                Send
               </button>
               <button
                 onClick={handleCloseModal}

@@ -10,6 +10,7 @@ import edit from "../../images/edit.png";
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import EditRegister from './EditRegister';
+import "react-toastify/dist/ReactToastify.css";
 
 const Employee = () => {
   const fileInputRef = useRef(null);
@@ -74,6 +75,7 @@ const Employee = () => {
   },[fileData])
 
   const saveImportData = async() =>{
+    if(fileData == "") return;
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/import`,
@@ -89,10 +91,15 @@ const Employee = () => {
         }
       );
       console.log(res);
+      if(res.status === 200){
+        toast.success("Data imported successfully")
+        getEmployees();
+        setFileData([]);
+      }
        
       
     } catch (error) {
-      toast.error("Error in Saving imported Data")
+      toast.error("Error in Importing Data")
       console.log("error");
     }
   }
@@ -105,49 +112,20 @@ const Employee = () => {
     setCurrentEmployee(employee); 
     setOpenEditModal(true);
   };
-  
-
-  // const handleEditClick = async(empId) => {
-  //   try {
-  //     const res = await axios.post(
-  //       `${process.env.REACT_APP_BASE_URL}/emp/update`,
-  //       { 
-  //         id : adminId,
-  //         empId : empId
-  //        },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     // console.log(res);
-  //    toast.success("Employee deleted Successfully")
-      
-  //   } catch (error) {
-  //    toast.error("Error in Deleting Employee")
-
-  //     console.log("error");
-  //   }
-  //   getEmployees();
-  //   setDeleteModal(!deleteModal);
-
-  // };
 
   const handleDeleteClick = (id) => {
     setDeleteId(id)
     setDeleteModal(!deleteModal);
   };
 
-  const deleteConfirm = async() => {
+  const deleteConfirm = async () => {
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/delete`,
         { 
-          id : adminId,
-          empId : deleteId
-         },
+          id: adminId,
+          empId: deleteId
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -155,17 +133,17 @@ const Employee = () => {
           },
         }
       );
-      // console.log(res);
-     toast.success("Employee deleted Successfully")
-      
+      console.log(res);
+      setDeleteModal(false);
+      toast.success("Employee deleted Successfully"); 
+      getEmployees(); 
+       
     } catch (error) {
-     toast.error("Error in Deleting Employee")
-
+      toast.error("Error in Deleting Employee"); // Error toast in case of failure
       console.log("error");
     }
-    getEmployees();
-    setDeleteModal(!deleteModal);
   };
+  
 
   useEffect(()=>{
     filterData();
