@@ -12,6 +12,8 @@ import ToastContainer from 'rsuite/esm/toaster/ToastContainer';
 import { toast } from 'react-toastify';
 import EditRegister from './EditRegister';
 import "react-toastify/dist/ReactToastify.css";
+import { CURRENT_STATUS } from '../../statusIndicator';
+import { ClockLoader } from 'react-spinners';
 
 const Managers = () => {
     const fileInputRef = useRef(null);
@@ -28,6 +30,8 @@ const Managers = () => {
   const [deleteId, setDeleteId] = useState(0);
   const [currentEmployee, setCurrentEmployee] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(false);
+
+  const [isDelete,setIsDelete] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -145,6 +149,7 @@ const Managers = () => {
 
   const deleteConfirm = async() => {
     try {
+      setIsDelete(CURRENT_STATUS.LOADING)
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/delete`,
         { 
@@ -160,9 +165,11 @@ const Managers = () => {
       );
       // console.log(res);
      toast.success("Employee deleted Successfully")
+     setIsDelete(CURRENT_STATUS.SUCCESS)
       
     } catch (error) {
      toast.error("Error in Deleting Employee")
+     setIsDelete(CURRENT_STATUS.ERROR)
 
       console.log("error");
     }
@@ -333,12 +340,14 @@ const Managers = () => {
               >
                 Cancel
               </button>
-              <button
+             {isDelete!==CURRENT_STATUS.LOADING? <button
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                 onClick={deleteConfirm}
               >
                 Confirm
-              </button>
+              </button>: <div className="flex justify-center mt-5">
+                <ClockLoader color="#000000" size={30} />
+              </div>}
             </div>
           </div>
         </div>

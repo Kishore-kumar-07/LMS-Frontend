@@ -4,6 +4,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { CURRENT_STATUS } from "../../statusIndicator";
+import { ClockLoader } from "react-spinners";
 
 function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  filterManager }) {
   const [formData, setFormData] = useState({
@@ -35,6 +37,8 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
 
   const [manager, setManager] = useState([]);
   const [admin, setAdmin] = useState([]);
+
+  const[isEdit,setIsEdit] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
     
@@ -107,7 +111,8 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
         console.log("inside try")
         console.log(formData)
         console.log(adminId);
-        console.log(currentEmployee.empId);
+        console.log(currentEmployee.manager);
+        setIsEdit(CURRENT_STATUS.LOADING);
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/update`,
         {
@@ -119,8 +124,8 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
             role: formData.role,
             vendor: formData.vendor,
             gender: formData.gender,
-            managerId: formData.manager ,
-            
+            managerId: currentEmployee.managerId  ,
+
             function:formData.function,
             department: formData.department,
             level: formData.level,
@@ -138,6 +143,8 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
       );
       if(res.status === 200){
         console.log(res);
+        setIsEdit(CURRENT_STATUS.SUCCESS);
+
       toast.success("User Updated Successfully");
       
 
@@ -160,6 +167,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
         toast.error("Server Error");
         navigate('/error500');
       }
+      setIsEdit(CURRENT_STATUS.ERROR);
     }
   };
 
@@ -352,12 +360,14 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
         )}
         </div>
         <div className="flex w-full justify-center items-center">
-          <button
+          {isEdit!==CURRENT_STATUS.LOADING?<button
             type="submit"
             className="w-[50%] bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-bold shadow-md hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-transform duration-200 col-span-1 md:col-span-3"
           >
             Submit
-          </button>
+          </button>: <div className="flex justify-center mt-5">
+                <ClockLoader color="#000000" size={30} />
+              </div>}
         </div>
       </form>
       {/* <ToastContainer

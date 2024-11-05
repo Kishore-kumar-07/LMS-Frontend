@@ -4,6 +4,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { CURRENT_STATUS } from "../../statusIndicator";
+import { ClockLoader } from "react-spinners";
 
 function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
   const [formData, setFormData] = useState({
@@ -35,6 +37,8 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
 
   const [manager, setManager] = useState([]);
   const [admin, setAdmin] = useState([]);
+
+  const [isRegister , setIsRegister] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
     console.log(filterManager);
@@ -92,6 +96,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
     }
 
     try {
+      setIsRegister(CURRENT_STATUS.LOADING);
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/register`,
         {
@@ -125,6 +130,8 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
       if (res.status === 201) {
         closeModal();
         toast.success("User Registered Successfully");
+        setIsRegister(CURRENT_STATUS.SUCCESS);
+
         getEmployees();
       } else if (res.status === 404) {
         toast.error("Employee not Found");
@@ -145,6 +152,8 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
         } else if (status === 400) {
           toast.error("Employee already exists");
         }
+        setIsRegister(CURRENT_STATUS.ERROR);
+
       }
     }
   };
@@ -363,12 +372,14 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
         )}
 
         <div className="col-span-1 md:col-span-3 flex justify-center mt-5">
-          <button
+         {isRegister!==CURRENT_STATUS.LOADING? <button
             type="submit"
             className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
             Submit
-          </button>
+          </button>: <div className="flex justify-center mt-5">
+                <ClockLoader color="#000000" size={30} />
+              </div>}
         </div>
       </form>
     </div>

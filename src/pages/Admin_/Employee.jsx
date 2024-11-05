@@ -12,6 +12,8 @@ import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import EditRegister from './EditRegister';
 import "react-toastify/dist/ReactToastify.css";
+import { CURRENT_STATUS } from '../../statusIndicator';
+import { ClockLoader } from 'react-spinners';
 
 const Employee = () => {
   const fileInputRef = useRef(null);
@@ -28,6 +30,8 @@ const Employee = () => {
   const [deleteId, setDeleteId] = useState(0);
   const [currentEmployee, setCurrentEmployee] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(false);
+
+  const [isdelete,setIsDelete] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -145,6 +149,7 @@ const Employee = () => {
 
   const deleteConfirm = async () => {
     try {
+      setIsDelete(CURRENT_STATUS.LOADING);
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/delete`,
         { 
@@ -162,10 +167,12 @@ const Employee = () => {
       setDeleteModal(false);
       toast.success("Employee deleted Successfully"); 
       getEmployees(); 
+      setIsDelete(CURRENT_STATUS.SUCCESS);  // Reset status to ideal after successful deletion
        
     } catch (error) {
       toast.error("Error in Deleting Employee"); // Error toast in case of failure
       console.log("error");
+      setIsDelete(CURRENT_STATUS.ERROR);
     }
   };
   
@@ -345,12 +352,14 @@ const Employee = () => {
               >
                 Cancel
               </button>
-              <button
+             {isdelete!==CURRENT_STATUS.LOADING? <button
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                 onClick={deleteConfirm}
               >
                 Confirm
-              </button>
+              </button>: <div className="flex justify-center mt-5">
+                <ClockLoader color="#000000" size={30} />
+              </div>}
             </div>
           </div>
         </div>
