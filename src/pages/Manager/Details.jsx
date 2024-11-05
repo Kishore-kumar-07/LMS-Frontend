@@ -31,6 +31,7 @@ const Details = () => {
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]); // Store all employees
   const [data, setData] = useState([]);
+  const [leaveData, setLeaveData] = useState([]);
 
 
   const fileType =
@@ -71,47 +72,9 @@ const Details = () => {
   };
 
   useEffect(() => {
+    getData();
     getEmployees();
-
-    const dummyData = [];
-    for (let i = 1; i <= 15; i++) {
-      dummyData.push({
-        sno: i,
-        vendor: `Vendor ${String.fromCharCode(64 + i)}`,
-        employeeCode: `E00${i}`,
-        employeeName: `Employee ${i}`,
-        department: `Department ${i % 3 + 1}`,
-        unit: `Unit ${i % 4 + 1}`,
-        function: `Function ${i % 5 + 1}`,
-        reportingManager: `Manager ${i % 2 + 1}`,
-        gender: i % 2 === 0 ? "Male" : "Female",
-        jan: getRandomLeaveDate(0),
-        feb: getRandomLeaveDate(1),
-        mar: getRandomLeaveDate(2),
-        apr: getRandomLeaveDate(3),
-        may: getRandomLeaveDate(4),
-        jun: getRandomLeaveDate(5),
-        jul: getRandomLeaveDate(6),
-        aug: getRandomLeaveDate(7),
-        sep: getRandomLeaveDate(8),
-        oct: getRandomLeaveDate(9),
-        nov: getRandomLeaveDate(10),
-        dec: getRandomLeaveDate(11),
-        janOt: getRandomOvertimeHours(),
-        febOt: getRandomOvertimeHours(),
-        marOt: getRandomOvertimeHours(),
-        aprOt: getRandomOvertimeHours(),
-        mayOt: getRandomOvertimeHours(),
-        junOt: getRandomOvertimeHours(),
-        julOt: getRandomOvertimeHours(),
-        augOt: getRandomOvertimeHours(),
-        sepOt: getRandomOvertimeHours(),
-        octOt: getRandomOvertimeHours(),
-        novOt: getRandomOvertimeHours(),
-        decOt: getRandomOvertimeHours(),
-      });
-    }
-    setData(dummyData);
+    setExcelData();
   }, []);
 
 
@@ -223,7 +186,73 @@ const Details = () => {
     });
   };
 
+  const setExcelData = () =>{
+    const dummyData = [];
+    for (let i = 1; i <= 15; i++) {
+      dummyData.push({
+        sno: i,
+        vendor: `Vendor ${String.fromCharCode(64 + i)}`,
+        employeeCode: `E00${i}`,
+        employeeName: `Employee ${i}`,
+        department: `Department ${i % 3 + 1}`,
+        unit: `Unit ${i % 4 + 1}`,
+        function: `Function ${i % 5 + 1}`,
+        reportingManager: `Manager ${i % 2 + 1}`,
+        gender: i % 2 === 0 ? "Male" : "Female",
+        jan: getRandomLeaveDate(0),
+        feb: getRandomLeaveDate(1),
+        mar: getRandomLeaveDate(2),
+        apr: getRandomLeaveDate(3),
+        may: getRandomLeaveDate(4),
+        jun: getRandomLeaveDate(5),
+        jul: getRandomLeaveDate(6),
+        aug: getRandomLeaveDate(7),
+        sep: getRandomLeaveDate(8),
+        oct: getRandomLeaveDate(9),
+        nov: getRandomLeaveDate(10),
+        dec: getRandomLeaveDate(11),
+        janOt: getRandomOvertimeHours(),
+        febOt: getRandomOvertimeHours(),
+        marOt: getRandomOvertimeHours(),
+        aprOt: getRandomOvertimeHours(),
+        mayOt: getRandomOvertimeHours(),
+        junOt: getRandomOvertimeHours(),
+        julOt: getRandomOvertimeHours(),
+        augOt: getRandomOvertimeHours(),
+        sepOt: getRandomOvertimeHours(),
+        octOt: getRandomOvertimeHours(),
+        novOt: getRandomOvertimeHours(),
+        decOt: getRandomOvertimeHours(),
+      });
+    }
+    setData(dummyData);
+  }
 
+  const getData = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/leave/getLeave`,
+        { empId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const filteredData = response.data.reverse();
+      console.log(filteredData)
+      setLeaveData(filteredData);
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const getEmployees = async () => {
     try {
