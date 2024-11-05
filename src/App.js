@@ -70,7 +70,7 @@ function App() {
       element:<Loginotp/>
     },
     {
-      path:'/reset-password',
+      path:'/reset-password/:userId',
       element:<ResetPassword/>
     },
     {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Corrected import
-import GVR from "../../images/GVRLogo.png";
+import GVR from "../../images/GVR.png";
 import userImg from "../../images/profile.png";
 import { useNavigate } from "react-router-dom";
 import NotificationButton from "./NotificationButton";
@@ -51,6 +51,9 @@ function Nav({ setOption }) {
           setLogo(Teamlease);
         } else if (userData.vendor === "YSF_2") {
           setLogo(YSF_2);
+        }
+        else{
+          setLogo(GVR);
         }
       } catch (error) {
         if (error.response.status === 400) {
