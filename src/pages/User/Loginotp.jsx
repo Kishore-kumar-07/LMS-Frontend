@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { ClockLoader } from "react-spinners";
 import { toast } from "react-toastify";
@@ -19,7 +19,7 @@ function Loginotp() {
   const [sendStatus, setSendStatus] = useState(CURRENT_STATUS.IDEAL);
   const [validateStatus, setValidateStatus] = useState(CURRENT_STATUS.IDEAL);
   const [isForgetPassword, setIsForgetPassword] = useState(false);
-  
+  const [loginStatus, setLoginStatus] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
     let interval;
@@ -36,8 +36,7 @@ function Loginotp() {
     try {
       console.log("inside try");
       setSendStatus(CURRENT_STATUS.LOADING);
-      if (userName.length != "" ) {
-        
+      if (userName.length != "") {
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/otp/send`,
           { userName: userName },
@@ -61,21 +60,19 @@ function Loginotp() {
   };
 
   const validateOtp = async () => {
-    
     try {
-      console.log("otp is " , otp)
-      console.log("username is " , userName)
+      console.log("otp is ", otp);
+      console.log("username is ", userName);
       setValidateStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/otp/verify`,
-        { userName : userName,
-          otp : otp },
+        { userName: userName, otp: otp },
         { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
         setValidateStatus(CURRENT_STATUS.SUCCESS);
         setError("");
-        navigate("/reset-password");
+        navigate(`/reset-password/${userName}`);
       } else {
         setValidateStatus(CURRENT_STATUS.IDEAL);
         setErrorOtp("Incorrect OTP");
@@ -92,14 +89,14 @@ function Loginotp() {
       return;
     }
     try {
-      setValidateStatus(CURRENT_STATUS.LOADING);
+      setLoginStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/signin`,
         { userName, password },
         { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
-        setValidateStatus(CURRENT_STATUS.SUCCESS);
+        setLoginStatus(CURRENT_STATUS.SUCCESS);
         document.cookie = `token=${res.data.token}`;
         const decodedToken = jwtDecode(res.data.token);
         navigate(
@@ -110,11 +107,11 @@ function Loginotp() {
             : "/Employee"
         );
       } else {
-        setValidateStatus(CURRENT_STATUS.IDEAL);
+        setLoginStatus(CURRENT_STATUS.IDEAL);
         setError("Invalid Username or Password");
       }
     } catch (e) {
-      setValidateStatus(CURRENT_STATUS.ERROR);
+      setLoginStatus(CURRENT_STATUS.ERROR);
       setError("Login failed");
     }
   };
@@ -153,7 +150,7 @@ function Loginotp() {
               </>
             )}
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            {sendStatus === CURRENT_STATUS.IDEAL ? (
+            {sendStatus !== CURRENT_STATUS.LOADING ? (
               <button
                 onClick={sendOtp}
                 className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
@@ -165,14 +162,19 @@ function Loginotp() {
                 <ClockLoader color="#000000" size={30} />
               </div>
             )}
-            {isOtpSent && (
-              <button
-                onClick={validateOtp}
-                className="bg-green-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
-              >
-                Validate OTP
-              </button>
-            )}
+            {isOtpSent &&
+              (validateStatus !== CURRENT_STATUS.LOADING ? (
+                <button
+                  onClick={validateOtp}
+                  className="bg-green-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+                >
+                  Validate OTP
+                </button>
+              ) : (
+                <div className="flex justify-center mt-5">
+                  <ClockLoader color="#000000" size={30} />
+                </div>
+              ))}
             <button
               onClick={() => setIsForgetPassword(false)}
               className="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mt-4 w-[20%]"
@@ -203,12 +205,18 @@ function Loginotp() {
               placeholder="Enter your password"
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            <button
-              onClick={handleLogin}
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
-            >
-              Login
-            </button>
+            {loginStatus !== CURRENT_STATUS.LOADING ? (
+              <button
+                onClick={handleLogin}
+                className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+              >
+                Login
+              </button>
+            ) : (
+              <div className="flex justify-center mt-5">
+                <ClockLoader color="#000000" size={30} />
+              </div>
+            )}
             <p
               className="cursor-pointer mt-4 text-center text-blue-500"
               onClick={() => setIsForgetPassword(true)}

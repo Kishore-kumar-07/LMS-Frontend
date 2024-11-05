@@ -44,7 +44,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   const [leaveType, setLeaveType] = useState("Casual Leave");
   const [summary, setSummary] = useState("");
   // const [isLOP, setIsLOP] = useState(false);
-  const [isLeaveApplied,setIsLeaveApplied] = useState(CURRENT_STATUS.IDEAL);
+  const [isLeaveApplied, setIsLeaveApplied] = useState(CURRENT_STATUS.IDEAL);
 
   const [fromFirstHalf, setFromFirstHalf] = useState(false);
   const [toFirstHalf, setToFirstHalf] = useState(false);
@@ -111,11 +111,22 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   };
 
   const checkLeave = async () => {
-
-    var from1stHalf = fromHalf === "" || fromHalf === "First Half"?true:false;
-    var from2ndHalf = fromHalf === "" || fromHalf === "Second Half"?true:false;
-    var to1stHalf = toDate === fromDate?from1stHalf:toHalf === "" || toHalf === "First Half"?true:false;
-    var to2ndHalf = toDate === fromDate?from2ndHalf: toHalf === "" || toHalf === "Second Half"?true:false;
+    var from1stHalf =
+      fromHalf === "" || fromHalf === "First Half" ? true : false;
+    var from2ndHalf =
+      fromHalf === "" || fromHalf === "Second Half" ? true : false;
+    var to1stHalf =
+      toDate === fromDate
+        ? from1stHalf
+        : toHalf === "" || toHalf === "First Half"
+        ? true
+        : false;
+    var to2ndHalf =
+      toDate === fromDate
+        ? from2ndHalf
+        : toHalf === "" || toHalf === "Second Half"
+        ? true
+        : false;
 
     console.log("Check Leave 00000000000");
     if (leaveType === "privilege Leave" && totalDays < 3) {
@@ -124,7 +135,6 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     }
     try {
       setIsLeaveApplied(CURRENT_STATUS.LOADING);
-
 
       console.log(`empId: ${decodedToken.empId} 
         role: ${decodedToken.role} 
@@ -163,13 +173,15 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         leaveApply();
       } else if (res.status === 202) {
         toast.warn("Date is Already Applied");
+      
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
-
       } else if (res.status === 203) {
         toast.warn("Leave Limit Exceded please try applying in LOP");
+      
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
       } else {
         setSummary(res.data);
+      
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
 
         // handleLOP();
@@ -177,15 +189,19 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     } catch (error) {
       if (error.response.status === 400) {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
+      
         navigate("/error404");
       }
       if (error.response.status === 500) {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
+      
         navigate("/error500");
       }
       toast.error("Somthing went wrong");
+    
       setIsLeaveApplied(CURRENT_STATUS.IDEAL);
-
+    }finally{
+      handlePopupClose();
     }
   };
 
@@ -226,10 +242,22 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
   const leaveApply = async () => {
     try {
-      var from1stHalf = fromHalf === "" || fromHalf === "First Half"?true:false;
-      var from2ndHalf = fromHalf === "" || fromHalf === "Second Half"?true:false;
-      var to1stHalf = toDate === fromDate?from1stHalf:toHalf === "" || toHalf === "First Half"?true:false;
-      var to2ndHalf = toDate === fromDate?from2ndHalf: toHalf === "" || toHalf === "Second Half"?true:false;
+      var from1stHalf =
+        fromHalf === "" || fromHalf === "First Half" ? true : false;
+      var from2ndHalf =
+        fromHalf === "" || fromHalf === "Second Half" ? true : false;
+      var to1stHalf =
+        toDate === fromDate
+          ? from1stHalf
+          : toHalf === "" || toHalf === "First Half"
+          ? true
+          : false;
+      var to2ndHalf =
+        toDate === fromDate
+          ? from2ndHalf
+          : toHalf === "" || toHalf === "Second Half"
+          ? true
+          : false;
       const res = await axios.post(
         ` ${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
@@ -247,10 +275,10 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             firstHalf: to1stHalf,
             secondHalf: to2ndHalf,
           },
-          numberOfDays: totalDays,
+          numberOfDays: leaveType !== "LOP" ? totalDays : 0,
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
-          LOP: 0,
+          LOP: leaveType === "LOP" ? totalDays : 0,
           leaveDays: totalDays,
         },
         {
@@ -282,15 +310,15 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       if (error.response && error.response.status === 400) {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         navigate("/error404");
-    } else {
+      } else {
         // Handle other types of errors (optional)
         navigate("/error404");
         console.error("An unexpected error occurred:", error);
-    }
+      }
       if (error.response && error.response.status === 500) {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         navigate("/error500");
-      }else{
+      } else {
         navigate("/error500");
         console.error("An unexpected error occurred:", error);
       }
@@ -301,6 +329,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     } finally {
       // setIsAppliedLeave(!isAppliedLeave);
       // setIsLOP(!isLOP);
+      handlePopupClose();
       setIsLeaveApplied(CURRENT_STATUS.IDEAL);
     }
   };
@@ -574,31 +603,30 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                     checked={fromHalf === half}
                     onChange={() => {
                       setFromHalf(half);
-                      console.log("from",half);
-                      if(fromDate == toDate){
-                        if(half == ""){
+                      console.log("from", half);
+                      if (half == "First Half") {
+                        setToDate(fromDate);
+                      }
+                      if (fromDate == toDate) {
+                        if (half == "") {
                           setFromFirstHalf(true);
                           setFromSecondHalf(true);
                           setToFirstHalf(true);
                           setToSecondHalf(true);
-                        }
-                        else if(half == "First Half"){
+                        } else if (half == "First Half") {
                           setFromFirstHalf(true);
                           setToFirstHalf(true);
-                        }
-                        else if(half == "Second Half"){
+                        } else if (half == "Second Half") {
                           setFromSecondHalf(true);
                           setToSecondHalf(true);
                         }
-                      }else{
-                        if(half == ""){
+                      } else {
+                        if (half == "") {
                           setFromFirstHalf(true);
                           setFromSecondHalf(true);
-                        }
-                        else if(half == "First Half"){
+                        } else if (half == "First Half") {
                           setFromFirstHalf(true);
-                        }
-                        else if(half == "Second Half"){
+                        } else if (half == "Second Half") {
                           setFromSecondHalf(true);
                         }
                       }
@@ -652,6 +680,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                   />
                 )}
                 format="DD/MM/YYYY"
+                disabled ={fromHalf === "First Half"}
               />
             </LocalizationProvider>
           </div>
@@ -696,32 +725,28 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                       value={half}
                       checked={toHalf === half}
                       onChange={() => {
-                        setToHalf(half)
-                        console.log("TOOO:",toHalf);
-                        if(fromDate == toDate){
-                          if(fromHalf == ""){
+                        setToHalf(half);
+                        console.log("TOOO:", toHalf);
+                        if (fromDate == toDate) {
+                          if (fromHalf == "") {
                             setFromFirstHalf(true);
                             setFromSecondHalf(true);
                             setToFirstHalf(true);
                             setToSecondHalf(true);
-                          }
-                          else if(fromHalf == "First Half"){
+                          } else if (fromHalf == "First Half") {
                             setFromFirstHalf(true);
                             setToFirstHalf(true);
-                          }
-                          else if(fromHalf == "Second Half"){
+                          } else if (fromHalf == "Second Half") {
                             setFromSecondHalf(true);
                             setToSecondHalf(true);
                           }
-                        }else{
-                          if(half == ""){
+                        } else {
+                          if (half == "") {
                             setToFirstHalf(true);
                             setToSecondHalf(true);
-                          }
-                          else if(half == "First Half"){
+                          } else if (half == "First Half") {
                             setToFirstHalf(true);
-                          }
-                          else if(half == "Second Half"){
+                          } else if (half == "Second Half") {
                             setToSecondHalf(true);
                           }
                         }
