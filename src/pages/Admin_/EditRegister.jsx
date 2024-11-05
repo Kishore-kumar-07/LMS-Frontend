@@ -51,7 +51,6 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
         vendor: currentEmployee.vendor || "",
         gender: currentEmployee.gender || "",
         manager: currentEmployee.manager || "",
-        designation: currentEmployee.designation || "",
         function: currentEmployee.function || "",
         department: currentEmployee.department || "",
         level: currentEmployee.level || "",
@@ -125,7 +124,6 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
             vendor: formData.vendor,
             gender: formData.gender,
             managerId: currentEmployee.managerId  ,
-
             function:formData.function,
             department: formData.department,
             level: formData.level,

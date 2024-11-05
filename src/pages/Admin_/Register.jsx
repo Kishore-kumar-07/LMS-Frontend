@@ -17,7 +17,6 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
     vendor: "",
     gender: "",
     manager: "",
-    designation: "",
     dateOfJoining: "",
     function: "",
     department: "",
@@ -109,7 +108,6 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
           vendor: formData.vendor,
           gender: formData.gender,
           managerId: formData.manager,
-          
           dateOfJoining: dateOfJoiningFormatted,
           function: formData.function,
           department: formData.department,

@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -50,7 +50,7 @@ const BarChart = () => {
     try {
       const weekDataResponse = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/weekData`,
-        {empId},
+        { empId },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -61,13 +61,19 @@ const BarChart = () => {
 
       const today = new Date();
       const lastWeek = new Date();
-      lastWeek.setDate(today.getDate() - 7);
+      lastWeek.setDate(today.getDate() - 7); // Calculate the date 7 days ago
 
+      // Filter leaves within the last week and with 'Approved' status
       const filteredLeaves = weekDataResponse.data.filter((leave) => {
-        const leaveDate = new Date(leave.today);
-        return leaveDate >= lastWeek && leaveDate <= today && leave.status === 'Approved';
+        const leaveDate = new Date(leave.today); // Ensure leave.today is in a parseable format
+        return (
+          leaveDate >= lastWeek &&
+          leaveDate <= today &&
+          leave.status === "Approved"
+        );
       });
 
+      // Count leaves by day
       const leaveCountByDay = {};
       filteredLeaves.forEach((leave) => {
         const leaveDateObj = new Date(leave.today);
@@ -92,7 +98,7 @@ const BarChart = () => {
         labels,
         datasets: [
           {
-            label: "Leaves per Day",
+            label: "Leaves",
             backgroundColor: "rgba(75, 192, 192, 0.6)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
@@ -115,7 +121,6 @@ const BarChart = () => {
             data={chartData}
             options={{
               maintainAspectRatio: false,
-              
             }}
           />
         </div>

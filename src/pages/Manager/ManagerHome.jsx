@@ -271,7 +271,7 @@ export default AdminHome;
 // Responsive Card component
 const Card = (props) => {
   return (
-    <div className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3 transition-transform transform hover:scale-105">
+    <div className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3 5">
   <div className="flex flex-row text-white">
     <p className="text-lg md:text-xl text-black font-medium">{props.label}</p>
   </div>

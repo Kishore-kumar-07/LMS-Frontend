@@ -82,9 +82,10 @@ const Employee = () => {
 
   const saveImportData = async() =>{
     if(fileData == "") return;
+    console.log(fileData)
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/emp/import`,
+        `https://0aa0-2401-4900-4df1-c369-127-4c5b-ac1b-db86.ngrok-free.app/emp/import`,
         {
           id : adminId,
           emp : fileData
@@ -97,7 +98,7 @@ const Employee = () => {
         }
       );
       console.log(res);
-      if(res.status === 200){
+      if(res.status === 201){
         toast.success("Data imported successfully")
         getEmployees();
         setFileData([]);
@@ -199,6 +200,7 @@ const Employee = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+    console.log(file)
     const reader = new FileReader();
 
     reader.onload = (event) => {
