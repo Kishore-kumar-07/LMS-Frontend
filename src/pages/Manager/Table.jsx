@@ -232,14 +232,14 @@ const Table = ({ cardData }) => {
   const endIndex = startIndex + rowsPerPage;
   var dataToDisplay = data.slice(startIndex, endIndex);
 
-  dataToDisplay = [
-    ...dataToDisplay,
-    ...dataToDisplay,
-    ...dataToDisplay,
-    ...dataToDisplay,
-    ...dataToDisplay,
-    ...dataToDisplay,
-  ];
+  // dataToDisplay = [
+  //   ...dataToDisplay,
+  //   ...dataToDisplay,
+  //   ...dataToDisplay,
+  //   ...dataToDisplay,
+  //   ...dataToDisplay,
+  //   ...dataToDisplay,
+  // ];
 
   return (
     <div className="w-[100%] p-3 border-slate-950 rounded-lg">
