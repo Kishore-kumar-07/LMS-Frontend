@@ -85,7 +85,7 @@ const Employee = () => {
     console.log(fileData)
     try {
       const res = await axios.post(
-        `https://0aa0-2401-4900-4df1-c369-127-4c5b-ac1b-db86.ngrok-free.app/emp/import`,
+        `${process.env.REACT_APP_BASE_URL}/emp/import`,
         {
           id : adminId,
           emp : fileData
@@ -196,7 +196,16 @@ const Employee = () => {
     setFilteredData(filtered);
   }
 
+  const excelDateToJSDate = (serial) => {
+    const utcDays = serial - 25569; 
+    const dateInfo = new Date(utcDays * 86400 * 1000); 
   
+    const day = String(dateInfo.getUTCDate()).padStart(2, '0');
+    const month = String(dateInfo.getUTCMonth() + 1).padStart(2, '0');
+    const year = dateInfo.getUTCFullYear();
+  
+    return `${month}-${day}-${year}`;
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -208,8 +217,15 @@ const Employee = () => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const sheetData = XLSX.utils.sheet_to_json(sheet);
-      console.log(sheetData);
-      setFileData(sheetData);
+      const transformedData = sheetData.map((row) => {
+        if (typeof row.dateOfJoining === 'number') {
+          row.dateOfJoining = excelDateToJSDate(row.dateOfJoining); // Convert Excel date serial to readable date
+        }
+        return row;
+      });
+  
+      console.log(transformedData);
+      setFileData(transformedData);
     };
 
     reader.readAsBinaryString(file);

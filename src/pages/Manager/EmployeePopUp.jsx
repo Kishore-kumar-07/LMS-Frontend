@@ -316,7 +316,7 @@ function EmployeePopUp({ onClose, employeeId }) {
               <div className="w-1/4 h-3/4 flex justify-center items-center">
                 <Doughnut data={gaugeData} options={gaugeOptions}/>
               </div>
-              {/* <p>{gaugeData_.emp} of {gaugeData_.all}<br></br> Total Leaves</p> */}
+              <p>{gaugeData_.emp} of {gaugeData_.all}<br></br> Total Leaves</p>
             </div>
           </div>
         </div>
