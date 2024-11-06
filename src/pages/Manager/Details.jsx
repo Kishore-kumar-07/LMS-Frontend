@@ -8,8 +8,6 @@ import XLSX from "sheetjs-style";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from "exceljs";
 
-
-
 const Details = () => {
   const navigation = useNavigate();
   const [selectedEmployees, setSelectedEmployees] = useState([]);
@@ -23,24 +21,36 @@ const Details = () => {
   const [data, setData] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
 
-
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
 
   const exportData = () => {
-    const exportFields = filteredEmployees.map(({ empId, empName, empMail, empPhone, role, gender, dateOfJoining, department, unit , level }) => ({
-      EmployeeID: empId,
-      EmployeeName: empName,
-      EmployeeMail: empMail,
-      EmployeePhoneNumber: empPhone,
-      Type: role,
-      Gender : gender,
-      DOJ: dateOfJoining,
-      Department : department,
-      Unit : unit, 
-      Level : level
-    }));
+    const exportFields = filteredEmployees.map(
+      ({
+        empId,
+        empName,
+        empMail,
+        empPhone,
+        role,
+        gender,
+        dateOfJoining,
+        department,
+        unit,
+        level,
+      }) => ({
+        EmployeeID: empId,
+        EmployeeName: empName,
+        EmployeeMail: empMail,
+        EmployeePhoneNumber: empPhone,
+        Type: role,
+        Gender: gender,
+        DOJ: dateOfJoining,
+        Department: department,
+        Unit: unit,
+        Level: level,
+      })
+    );
 
     const ws = XLSX.utils.json_to_sheet(exportFields);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
@@ -49,44 +59,46 @@ const Details = () => {
     FileSaver.saveAs(data, "Report" + fileExtension);
   };
 
-  const getLeaveDates = (month , empId) => {
+  const getLeaveDates = (month, empId) => {
     let date = "";
-    leaveData.filter((leave)=>{
-      
-      if(empId === leave.empId && leave.leaveType !== "LOP" && leave.status === "Approved"){
+    leaveData.filter((leave) => {
+      if (
+        empId === leave.empId &&
+        leave.leaveType !== "LOP" &&
+        leave.status === "Approved"
+      ) {
         const [day, month_, year] = leave.from.date.split("/");
-        if(month == month_){
-          console.log(leave.from.date)
-          date+=leave.from.date + ' , '
-          console.log(date)
+        if (month == month_) {
+          console.log(leave.from.date);
+          date += leave.from.date + " , ";
+          console.log(date);
         }
       }
-    } 
-  )
-  console.log(date)
-  return date === "" ? "00" : date
-    
+    });
+    console.log(date);
+    return date === "" ? "00" : date;
   };
 
-  const getLOPLeave = (month , empId) => {
+  const getLOPLeave = (month, empId) => {
     let count = 0;
-    leaveData.filter((leave)=>{
-      
-      if(empId === leave.empId && leave.leaveType === "LOP" && leave.status === "Approved"){
+    leaveData.filter((leave) => {
+      if (
+        empId === leave.empId &&
+        leave.leaveType === "LOP" &&
+        leave.status === "Approved"
+      ) {
         const [day, month_, year] = leave.from.date.split("/");
-        if(month == month_){
-          console.log(leave.from.date)
-          count+=1;
+        if (month == month_) {
+          console.log(leave.from.date);
+          count += 1;
           // console.log()
         }
       }
-    } 
-  )
+    });
 
-  console.log(count)
-  return count.toString()
-
-  }
+    console.log(count);
+    return count.toString();
+  };
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -103,14 +115,11 @@ const Details = () => {
   useEffect(() => {
     getData();
     getEmployees();
-    
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setExcelData();
-  },[leaveData ,filteredEmployees ])
-
-
+  }, [leaveData, filteredEmployees]);
 
   const exportExcelFile = () => {
     const workbook = new ExcelJS.Workbook();
@@ -118,8 +127,8 @@ const Details = () => {
 
     // Define columns
     sheet.columns = [
-      { header: "S.No", key: "sno", width: 10 },
-      { header: "Vendor", key: "vendor", width: 20 },
+      { header: "S.No", key: "sno", width: 10 ,bold:true},
+      { header: "Vendor", key: "vendor", width: 20,bold:true },
       { header: "Employee Code", key: "employeeCode", width: 15 },
       { header: "Employee Name", key: "employeeName", width: 25 },
       { header: "Department", key: "department", width: 20 },
@@ -127,7 +136,7 @@ const Details = () => {
       { header: "Function", key: "function", width: 20 },
       { header: "Reporting Manager", key: "reportingManager", width: 25 },
       { header: "Gender", key: "gender", width: 10 },
-      { header: "Jan", key: "jan", width: 10  },
+      { header: "Jan", key: "jan", width: 10 },
       { header: "Feb", key: "feb", width: 10 },
       { header: "Mar", key: "mar", width: 10 },
       { header: "Apr", key: "apr", width: 10 },
@@ -158,29 +167,68 @@ const Details = () => {
     sheet.getCell("J1").value = "Leave Date";
     sheet.getCell("J1").alignment = { horizontal: "center" };
     sheet.getCell("J1").font = { bold: true, color: { argb: "FFFFFF" } };
-    sheet.getCell("J1").fill = { type: "pattern", pattern: "solid", fgColor: { argb: "1F4E78" } };
+    sheet.getCell("J1").fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "1F4E78" },
+    };
 
     sheet.mergeCells("V1:AG1");
-    sheet.getCell("V1").value = "Overtime Hours";
+    sheet.getCell("V1").value = "LOP";
     sheet.getCell("V1").alignment = { horizontal: "center" };
     sheet.getCell("V1").font = { bold: true, color: { argb: "FFFFFF" } };
-    sheet.getCell("V1").fill = { type: "pattern", pattern: "solid", fgColor: { argb: "1F4E78" } };
+    sheet.getCell("V1").fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "608bc1" },
+    };
 
     // Add sub-header row
     const headerRow = sheet.getRow(2);
     headerRow.values = [
-      " ", " ", " ", " ", "", 
-      " ", " ", " ", " ", 
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", 
-      "Aug", "Sep", "Oct", "Nov", "Dec",
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", 
-      "Aug", "Sep", "Oct", "Nov", "Dec"
+      " ",
+      " ",
+      " ",
+      " ",
+      "",
+      " ",
+      " ",
+      " ",
+      " ",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
     headerRow.font = { bold: true };
     headerRow.alignment = { vertical: "middle", horizontal: "center" };
     headerRow.eachCell((cell) => {
-      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "D9EAD3" } };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "D9EAD3" },
+      };
       cell.border = {
         top: { style: "thin" },
         left: { style: "thin" },
@@ -219,51 +267,48 @@ const Details = () => {
     });
   };
 
-  
-
-  const setExcelData = () =>{
+  const setExcelData = () => {
     const dummyData = [];
-    filteredEmployees.map((employee , index) =>{
-      console.log(employee.empId)
+    filteredEmployees.map((employee, index) => {
+      console.log(employee.empId);
       dummyData.push({
-        sno: index+1,
+        sno: index + 1,
         vendor: employee.vendor,
-        employeeCode:employee.empId,
+        employeeCode: employee.empId,
         employeeName: employee.empName,
         department: employee.department,
         unit: employee.unit,
         function: employee.function,
         reportingManager: employee.reportingManager,
         gender: employee.gender,
-        jan: getLeaveDates("01" , employee.empId),
-        feb: getLeaveDates("02" , employee.empId),
-        mar: getLeaveDates("03" , employee.empId),
-        apr: getLeaveDates("04" , employee.empId),
-        may: getLeaveDates("05" , employee.empId),
-        jun: getLeaveDates("06" , employee.empId),
-        jul: getLeaveDates("07" , employee.empId),
-        aug: getLeaveDates("08" , employee.empId),
-        sep: getLeaveDates("09" , employee.empId),
-        oct: getLeaveDates("10" , employee.empId),
-        nov: getLeaveDates("11" , employee.empId),
-        dec: getLeaveDates("12" , employee.empId),
-        janOt: getLOPLeave("01" , employee.empId),
-        febOt: getLOPLeave("02" , employee.empId),
-        marOt: getLOPLeave("03" , employee.empId),
-        aprOt: getLOPLeave("04" , employee.empId),
-        mayOt: getLOPLeave("05" , employee.empId),
-        junOt: getLOPLeave("06" , employee.empId),
-        julOt: getLOPLeave("07" , employee.empId),
-        augOt: getLOPLeave("08" , employee.empId),
-        sepOt: getLOPLeave("09" , employee.empId),
-        octOt: getLOPLeave("10" , employee.empId),
-        novOt: getLOPLeave("11" , employee.empId),
-        decOt: getLOPLeave("12" , employee.empId),
+        jan: getLeaveDates("01", employee.empId),
+        feb: getLeaveDates("02", employee.empId),
+        mar: getLeaveDates("03", employee.empId),
+        apr: getLeaveDates("04", employee.empId),
+        may: getLeaveDates("05", employee.empId),
+        jun: getLeaveDates("06", employee.empId),
+        jul: getLeaveDates("07", employee.empId),
+        aug: getLeaveDates("08", employee.empId),
+        sep: getLeaveDates("09", employee.empId),
+        oct: getLeaveDates("10", employee.empId),
+        nov: getLeaveDates("11", employee.empId),
+        dec: getLeaveDates("12", employee.empId),
+        janOt: getLOPLeave("01", employee.empId),
+        febOt: getLOPLeave("02", employee.empId),
+        marOt: getLOPLeave("03", employee.empId),
+        aprOt: getLOPLeave("04", employee.empId),
+        mayOt: getLOPLeave("05", employee.empId),
+        junOt: getLOPLeave("06", employee.empId),
+        julOt: getLOPLeave("07", employee.empId),
+        augOt: getLOPLeave("08", employee.empId),
+        sepOt: getLOPLeave("09", employee.empId),
+        octOt: getLOPLeave("10", employee.empId),
+        novOt: getLOPLeave("11", employee.empId),
+        decOt: getLOPLeave("12", employee.empId),
       });
-    }
-    )
+    });
     setData(dummyData);
-  }
+  };
 
   const getData = async () => {
     try {
@@ -278,7 +323,7 @@ const Details = () => {
         }
       );
       const filteredData = response.data.reverse();
-      console.log(filteredData)
+      console.log(filteredData);
       setLeaveData(filteredData);
     } catch (error) {
       if (error.response.status === 400) {
@@ -305,7 +350,7 @@ const Details = () => {
       );
       setAllEmployees(allEmp.data); // Store all employees in state
       setFilteredEmployees(allEmp.data);
-      console.log(allEmp.data) // Initialize filteredEmployees with all employees
+      console.log(allEmp.data); // Initialize filteredEmployees with all employees
     } catch (error) {
       if (error.response.status === 400) {
         navigation("/error404");
@@ -361,13 +406,10 @@ const Details = () => {
         }
       );
 
-      if(res.status===200){
+      if (res.status === 200) {
         toast.success("Circular sent Successfully");
-
-      }
-      else{
+      } else {
         toast.error("Error in sending Circular ");
-
       }
     } catch (e) {
       console.error("Error sending circular", e);
@@ -386,7 +428,6 @@ const Details = () => {
       <ToastContainer />
       <div className="mb-6 flex justify-between items-start space-x-4 w-full">
         <div className="flex gap-5">
-        
           <input
             type="text"
             value={searchTerm}
@@ -409,9 +450,8 @@ const Details = () => {
             onClick={exportExcelFile}
             className="p-2 bg-green-300 text-black w-20 h-10 font-semibold rounded-lg "
           >
-            Export 
+            Export
           </button>
-          
         </div>
       </div>
 

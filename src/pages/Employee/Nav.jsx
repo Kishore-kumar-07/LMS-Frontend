@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Corrected import
-import GVR from "../../images/GVR.png";
+import GVR from "../../images/gvrBg.jpg";
 import userImg from "../../images/profile.png";
 import { useNavigate } from "react-router-dom";
 import NotificationButton from "./NotificationButton";
@@ -51,8 +51,7 @@ function Nav({ setOption }) {
           setLogo(Teamlease);
         } else if (userData.vendor === "YSF_2") {
           setLogo(YSF_2);
-        }
-        else{
+        } else {
           setLogo(GVR);
         }
       } catch (error) {
@@ -94,7 +93,12 @@ function Nav({ setOption }) {
             onClick={() => setOption("Home")}
             className="text-xl font-semibold cursor-pointer pl-10"
           >
-            <img src={logo} alt="Company Logo" width={60} height={40} />
+            <img
+              src={logo}
+              alt="Company Logo"
+              width={userDetails.vendor === "Gilbarco" ? 150 : 60}
+              height={userDetails.vendor === "Gilbarco" ? 80 : 40}
+            />
           </div>
 
           <div className="flex w-56 justify-around items-center relative ">

@@ -64,7 +64,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     return date ? dayjs(date).format("DD/MM/YYYY") : "";
   };
 
-  const maxDate = today.add(1, "month").endOf("month");
+  const maxDate = today.add(2, "month").endOf("month");
 
   const disabledDates = [
     "2024-01-01", // New Year
@@ -157,6 +157,11 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
             firstHalf: from1stHalf,
             secondHalf: from2ndHalf,
           },
+          to: {
+            date: formatDate(toDate),
+            firstHalf: to1stHalf,
+            secondHalf: to2ndHalf,
+          },  
           numberOfDays: totalDays,
         },
         {

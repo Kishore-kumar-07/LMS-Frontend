@@ -25,7 +25,7 @@ function EmployeeHome() {
 
   return (
     <>
-     <div className="min-h-screen w-full bg-gradient-to-l from-[#DAF0FF] from-60% to-white flex flex-col overflow-y-auto">
+      <div className="h-screen w-screen bg-gradient-to-l from-[#DAF0FF] from-60% to-white flex flex-col">
         <Nav setOption={setOption}/>
 
         {option === "Home" ? (
