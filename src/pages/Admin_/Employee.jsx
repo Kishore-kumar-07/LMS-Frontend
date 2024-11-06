@@ -85,7 +85,7 @@ const Employee = () => {
     console.log(fileData)
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/emp/import`,
+        `${process.env.REACT_APP_BASE_URL}/emp/import` ,
         {
           id : adminId,
           emp : fileData
