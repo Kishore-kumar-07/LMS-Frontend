@@ -261,12 +261,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           ? true
           : false;
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/apply`,  {
-          headers: {
-            Authorization: ` Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
+        `${process.env.REACT_APP_BASE_URL}/leave/apply`,  
         {
           empId: decodedToken.empId,
           empName: decodedToken.empName,
@@ -287,6 +282,12 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: leaveType === "LOP" ? totalDays : 0,
+        },
+        {
+          headers: {
+            Authorization: ` Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
