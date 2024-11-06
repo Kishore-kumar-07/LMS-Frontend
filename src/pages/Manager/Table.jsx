@@ -13,7 +13,6 @@ import decline from "../../images/cancel.png";
 
 import { useNavigate } from "react-router-dom";
 
-
 const Table = ({ cardData }) => {
   const headers = [
     "S.No",
@@ -45,9 +44,10 @@ const Table = ({ cardData }) => {
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
 
-  const rowsPerPage = 6;
+  const rowsPerPage = 2; // Set to show 10 records per page
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
+    
   useEffect(() => {
     getData();
   }, []);
@@ -210,7 +210,7 @@ const Table = ({ cardData }) => {
         }
       );
       const filteredData = response.data.reverse();
-      console.log(filteredData)
+      console.log(filteredData);
       setData(filteredData);
     } catch (error) {
       if (error.response.status === 400) {
@@ -228,9 +228,18 @@ const Table = ({ cardData }) => {
     setReasonPopupOpen(true);
   };
 
-  const startIndex = (currentPage - 1) * rowsPerPage;
+   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const dataToDisplay = data.slice(startIndex, endIndex);
+  var dataToDisplay = data.slice(startIndex, endIndex);
+
+  dataToDisplay = [
+    ...dataToDisplay,
+    ...dataToDisplay,
+    ...dataToDisplay,
+    ...dataToDisplay,
+    ...dataToDisplay,
+    ...dataToDisplay,
+  ];
 
   return (
     <div className="w-[100%] p-3 border-slate-950 rounded-lg">
@@ -314,12 +323,10 @@ const Table = ({ cardData }) => {
                     <span
                       className={
                         row.status === "Pending"
-
                           ? "text-yellow-500"
                           : row.status === "Approved"
                           ? "text-green-500"
                           : "text-red-500"
-
                       }
                     >
                       {row.status}
@@ -342,7 +349,7 @@ const Table = ({ cardData }) => {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        handlePageChange={handlePageChange}
+        onPageChange={handlePageChange}
       />
     </div>
   );
