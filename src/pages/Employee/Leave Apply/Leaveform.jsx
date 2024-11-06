@@ -458,7 +458,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   };
 
   return (
-    <div className="w-[70%]  md:w-[50%] py-8  border-2 rounded-lg bg-gradient-to-l from-[#DAF0FF] to-white shadow-xl flex flex-col justify-center items-center">
+    <div className="w-[70%]  md:w-[50%] py-8  border-2 rounded-lg bg-white shadow-xl flex flex-col justify-center items-center">
       <ToastContainer />
       <h2 className="text-4xl font-bold mb-4 text-center text-blue-800">
         Leave Form
