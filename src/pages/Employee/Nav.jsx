@@ -80,7 +80,7 @@ function Nav({ setOption }) {
 
   return (
     <>
-      <div className="w-screen flex  items-center mb-5">
+      <div className="w-full flex  items-center mb-5">
         <div
           style={{
             boxShadow:
