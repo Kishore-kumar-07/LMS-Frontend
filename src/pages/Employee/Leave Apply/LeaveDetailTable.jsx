@@ -60,7 +60,6 @@ function LeaveDetailTable() {
       col3: 0,
       col4: 0,
     },
-  
   ]);
 
   const token = document.cookie.split("=")[1];
@@ -68,7 +67,7 @@ function LeaveDetailTable() {
 
   useEffect(() => {
     getTableData();
-  }, []); 
+  }, []);
 
   const getTableData = async () => {
     try {
@@ -85,44 +84,32 @@ function LeaveDetailTable() {
         }
       );
       const fetchedData = res.data;
-      console.log(fetchedData)
+      console.log(fetchedData);
 
       const newData = [
         {
           col1: "Op Balance",
           col2: fetchedData.plDetails ? fetchedData.plDetails.opBalance : 0,
           col3: fetchedData.clDetails ? fetchedData.clDetails.opBalance : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.opBalance
-            : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.opBalance : 0,
         },
         {
           col1: "Eligibility",
           col2: fetchedData.plDetails ? fetchedData.plDetails.credit : 0,
           col3: fetchedData.clDetails ? fetchedData.clDetails.credit : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.credit
-            : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.credit : 0,
         },
         {
           col1: "Total Eligibility",
-          col2: fetchedData.plDetails
-            ? fetchedData.plDetails.totalEligibility
-            : 0,
-          col3: fetchedData.clDetails
-            ? fetchedData.clDetails.totalEligibility
-            : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.totalEligibility
-            : 0,
+          col2: fetchedData.plDetails ? fetchedData.plDetails.totalEligibility : 0,
+          col3: fetchedData.clDetails ? fetchedData.clDetails.totalEligibility : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.totalEligibility : 0,
         },
         {
           col1: "Availed",
           col2: fetchedData.plDetails ? fetchedData.plDetails.availed : 0,
           col3: fetchedData.clDetails ? fetchedData.clDetails.availed : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.availed
-            : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.availed : 0,
         },
         {
           col1: "LOP",
@@ -134,60 +121,28 @@ function LeaveDetailTable() {
           col1: "Leave Lapsed",
           col2: fetchedData.plDetails ? fetchedData.plDetails.leaveLapsed : 0,
           col3: fetchedData.clDetails ? fetchedData.clDetails.leaveLapsed : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.leaveLapsed
-            : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.leaveLapsed : 0,
         },
         {
           col1: "Leave Encashed",
           col2: fetchedData.plDetails ? fetchedData.plDetails.leaveEncashed : 0,
           col3: fetchedData.clDetails ? fetchedData.clDetails.leaveEncashed : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.leaveEncashed
-            : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.leaveEncashed : 0,
         },
         {
           col1: "Closing Balance",
-          col2: fetchedData.plDetails
-            ? fetchedData.plDetails.closingBalance
-            : 0,
-          col3: fetchedData.clDetails
-            ? fetchedData.clDetails.closingBalance
-            : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.closingBalance
-            : 0,
+          col2: fetchedData.plDetails ? fetchedData.plDetails.closingBalance : 0,
+          col3: fetchedData.clDetails ? fetchedData.clDetails.closingBalance : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.closingBalance : 0,
         },
         {
           col1: "Max Leave Carry Forward",
           col2: fetchedData.plDetails ? fetchedData.plDetails.carryForward : 0,
           col3: fetchedData.clDetails ? fetchedData.clDetails.carryForward : 0,
-          col4: fetchedData.paternityLeave
-            ? fetchedData.paternityLeave.carryForward
-            : 0,
+          col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.carryForward : 0,
         },
-        // {
-        //   col1: "Availed(Including future month leave availed)",
-        //   col2: fetchedData.plDetails ? fetchedData.plDetails.futureAvailed : 0,
-        //   col3: fetchedData.clDetails ? fetchedData.clDetails.futureAvailed : 0,
-        //   col4: fetchedData.paternityLeave
-        //     ? fetchedData.paternityLeave.futureAvailed
-        //     : 0,
-        // },
-        // {
-        //   col1: "Closing Balance(Including future month leave availed)",
-        //   col2: fetchedData.plDetails
-        //     ? fetchedData.plDetails.futureClosingBalance
-        //     : 0,
-        //   col3: fetchedData.clDetails
-        //     ? fetchedData.clDetails.futureClosingBalance
-        //     : 0,
-        //   col4: fetchedData.paternityLeave
-        //     ? fetchedData.paternityLeave.futureClosingBalance
-        //     : 0,
-        // },
       ];
-      console.log(newData)
+      console.log(newData);
       setTableData(newData);
     } catch (error) {
       console.error("Error fetching table data", error);
@@ -195,15 +150,15 @@ function LeaveDetailTable() {
   };
 
   return (
-    <div className="w-[40%] h-fit border-2  border-cyan-100 mr-5 rounded-lg overflow-hidden shadow-lg shadow-zinc-500">
-      <div className="bg-gradient-to-l from-[#DAF0FF] to-white">
+    <div className="w-full sm:w-[60%] lg:w-[40%] h-fit border-2 border-cyan-100 mr-5 rounded-lg overflow-hidden shadow-lg shadow-zinc-500">
+      <div className="bg-white overflow-x-auto">
         <table className="min-w-full border-collapse rounded-lg text-sm">
           <thead>
-            <tr className="text-left ">
-              <th className="py-3 px-4  text-md text-gray-800 border-b font-bold text-[2.2vh]">
+            <tr className="text-left">
+              <th className="py-3 px-4 text-md text-gray-800 border-b font-bold text-[2.2vh]">
                 Leave Type
               </th>
-              <th className="py-3 px-4  text-md text-gray-800 border-b font-bold text-[2.2vh]">
+              <th className="py-3 px-4 text-md text-gray-800 border-b font-bold text-[2.2vh]">
                 Privilege Leave
               </th>
               <th className="py-3 px-4 text-md text-gray-800 border-b font-bold text-[2.2vh]">
@@ -217,7 +172,7 @@ function LeaveDetailTable() {
           <tbody>
             {tableData.map((row, index) => (
               <tr key={index} className="hover:bg-gray-100">
-                <td className="py-3 px-4 border-b  text-gray-700 font-semibold text-[2.2vh]">
+                <td className="py-3 px-4 border-b text-gray-700 font-semibold text-[2.2vh]">
                   {row.col1}
                 </td>
                 <td className="py-3 px-4 border-b text-gray-700 text-[2.2vh]">

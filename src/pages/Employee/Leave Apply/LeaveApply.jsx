@@ -2,12 +2,12 @@ import React from "react";
 import LeaveDetailTable from "./LeaveDetailTable";
 import Leaveform from "./Leaveform";
 
-function LeaveApply({isPaternity,isAdoption}) {
+function LeaveApply({ isPaternity, isAdoption }) {
   return (
-    <div className="w-screen">
-      <div className="w-full flex justify-evenly ">
-      <Leaveform isPaternity={isPaternity} isAdoption={isAdoption} />
-      <LeaveDetailTable />
+    <div className="w-full h-full flex items-center justify-center " >
+      <div className="w-full  flex flex-col lg:flex-row justify-center items-center lg:justify-between gap-8 p-16">
+        <Leaveform isPaternity={isPaternity} isAdoption={isAdoption} />
+        <LeaveDetailTable />
       </div>
     </div>
   );

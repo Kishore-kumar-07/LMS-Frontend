@@ -50,7 +50,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   const [toFirstHalf, setToFirstHalf] = useState(false);
   const [fromSecondHalf, setFromSecondHalf] = useState(false);
   const [toSecondHalf, setToSecondHalf] = useState(false);
-  const [today, setToday] = useState(dayjs().subtract(1, "day"));
+  const [today, setToday] = useState(dayjs().subtract(1, "month"));
   const [lopStatus, setLopStatus] = useState(CURRENT_STATUS.IDEAL);
   const [confirmStatus, setConfirmStatus] = useState(CURRENT_STATUS.IDEAL);
   // const [isAppliedLeave, setIsAppliedLeave] = useState(false);
@@ -241,9 +241,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   var totalDays = calculateLeaveDays();
 
   const leaveApply = async () => {
-
     try {
-      console.log(leaveType)
       var from1stHalf =
         fromHalf === "" || fromHalf === "First Half" ? true : false;
       var from2ndHalf =
@@ -261,12 +259,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           ? true
           : false;
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/leave/apply`,  {
-          headers: {
-            Authorization: ` Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
+        `${process.env.REACT_APP_BASE_URL}/leave/apply`,
         {
           empId: decodedToken.empId,
           empName: decodedToken.empName,
@@ -287,6 +280,12 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           reasonType: leaveReason,
           reason: leaveReason === "Others" ? leaveDescription : leaveReason,
           LOP: leaveType === "LOP" ? totalDays : 0,
+        },
+        {
+          headers: {
+            Authorization: ` Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -296,7 +295,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         setPopupVisible(!popupVisible);
         toast.success("Leave Appliled Successfully");
         console.log(res.data.leave._id);
-        sendLeaveEmail(res.data.leave._id, totalDays);
+        sendLeaveEmail(res.data.leave._id, summary.LOP);
       } else {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         toast.error("Error in requesting Leave");
@@ -316,13 +315,13 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         navigate("/error404");
         console.error("An unexpected error occurred:", error);
       }
-      // if (error.response && error.response.status === 500) {
-      //   setIsLeaveApplied(CURRENT_STATUS.IDEAL);
-      //   navigate("/error500");
-      // } else {
-      //   navigate("/error500");
-      //   console.error("An unexpected error occurred:", error);
-      // }
+      if (error.response && error.response.status === 500) {
+        setIsLeaveApplied(CURRENT_STATUS.IDEAL);
+        navigate("/error500");
+      } else {
+        navigate("/error500");
+        console.error("An unexpected error occurred:", error);
+      }
       console.error("Error Leave Apply", error);
       setIsLeaveApplied(CURRENT_STATUS.IDEAL);
 
