@@ -45,11 +45,11 @@ export default function LineGraph({ color }) {
       const fromDate = moment(log.from.date, "DD/MM/YYYY");
       const monthIndex = fromDate.month();
 
-      if (log.status === "Approved") {
-        leaveCountPerMonth[monthIndex] += log.numberOfDays;
+      if (log.status === "Approved" ) {
+        leaveCountPerMonth[monthIndex] += log.leaveDays;
       }
     });
-
+    console.log(leaveCountPerMonth)
     setLeaveCounts(leaveCountPerMonth);
   };
 

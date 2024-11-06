@@ -10,16 +10,6 @@ import ExcelJS from "exceljs";
 
 
 
-const getRandomLeaveDate = (month) => {
-  const day = Math.floor(Math.random() * 28) + 1;
-  return new Date(2023, month, day).toLocaleDateString();
-};
-
-const getRandomOvertimeHours = () => {
-  return Math.floor(Math.random() * 10);
-}
-
-
 const Details = () => {
   const navigation = useNavigate();
   const [selectedEmployees, setSelectedEmployees] = useState([]);
@@ -59,6 +49,45 @@ const Details = () => {
     FileSaver.saveAs(data, "Report" + fileExtension);
   };
 
+  const getLeaveDates = (month , empId) => {
+    let date = "";
+    leaveData.filter((leave)=>{
+      
+      if(empId === leave.empId && leave.leaveType !== "LOP" && leave.status === "Approved"){
+        const [day, month_, year] = leave.from.date.split("/");
+        if(month == month_){
+          console.log(leave.from.date)
+          date+=leave.from.date + ' , '
+          console.log(date)
+        }
+      }
+    } 
+  )
+  console.log(date)
+  return date === "" ? "00" : date
+    
+  };
+
+  const getLOPLeave = (month , empId) => {
+    let count = 0;
+    leaveData.filter((leave)=>{
+      
+      if(empId === leave.empId && leave.leaveType === "LOP" && leave.status === "Approved"){
+        const [day, month_, year] = leave.from.date.split("/");
+        if(month == month_){
+          console.log(leave.from.date)
+          count+=1;
+          // console.log()
+        }
+      }
+    } 
+  )
+
+  console.log(count)
+  return count.toString()
+
+  }
+
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
@@ -74,8 +103,12 @@ const Details = () => {
   useEffect(() => {
     getData();
     getEmployees();
-    setExcelData();
+    
   }, []);
+
+  useEffect(()=>{
+    setExcelData();
+  },[leaveData ,filteredEmployees ])
 
 
 
@@ -94,7 +127,7 @@ const Details = () => {
       { header: "Function", key: "function", width: 20 },
       { header: "Reporting Manager", key: "reportingManager", width: 25 },
       { header: "Gender", key: "gender", width: 10 },
-      { header: "Jan", key: "jan", width: 10 },
+      { header: "Jan", key: "jan", width: 10  },
       { header: "Feb", key: "feb", width: 10 },
       { header: "Mar", key: "mar", width: 10 },
       { header: "Apr", key: "apr", width: 10 },
@@ -104,7 +137,7 @@ const Details = () => {
       { header: "Aug", key: "aug", width: 10 },
       { header: "Sep", key: "sep", width: 10 },
       { header: "Oct", key: "oct", width: 10 },
-      { header: "Nov", key: "nov", width: 10 },
+      { header: "Nov", key: "nov", width: 30 },
       { header: "Dec", key: "dec", width: 10 },
       { header: "Jan", key: "janOt", width: 10 },
       { header: "Feb", key: "febOt", width: 10 },
@@ -186,45 +219,49 @@ const Details = () => {
     });
   };
 
+  
+
   const setExcelData = () =>{
     const dummyData = [];
-    for (let i = 1; i <= 15; i++) {
+    filteredEmployees.map((employee , index) =>{
+      console.log(employee.empId)
       dummyData.push({
-        sno: i,
-        vendor: `Vendor ${String.fromCharCode(64 + i)}`,
-        employeeCode: `E00${i}`,
-        employeeName: `Employee ${i}`,
-        department: `Department ${i % 3 + 1}`,
-        unit: `Unit ${i % 4 + 1}`,
-        function: `Function ${i % 5 + 1}`,
-        reportingManager: `Manager ${i % 2 + 1}`,
-        gender: i % 2 === 0 ? "Male" : "Female",
-        jan: getRandomLeaveDate(0),
-        feb: getRandomLeaveDate(1),
-        mar: getRandomLeaveDate(2),
-        apr: getRandomLeaveDate(3),
-        may: getRandomLeaveDate(4),
-        jun: getRandomLeaveDate(5),
-        jul: getRandomLeaveDate(6),
-        aug: getRandomLeaveDate(7),
-        sep: getRandomLeaveDate(8),
-        oct: getRandomLeaveDate(9),
-        nov: getRandomLeaveDate(10),
-        dec: getRandomLeaveDate(11),
-        janOt: getRandomOvertimeHours(),
-        febOt: getRandomOvertimeHours(),
-        marOt: getRandomOvertimeHours(),
-        aprOt: getRandomOvertimeHours(),
-        mayOt: getRandomOvertimeHours(),
-        junOt: getRandomOvertimeHours(),
-        julOt: getRandomOvertimeHours(),
-        augOt: getRandomOvertimeHours(),
-        sepOt: getRandomOvertimeHours(),
-        octOt: getRandomOvertimeHours(),
-        novOt: getRandomOvertimeHours(),
-        decOt: getRandomOvertimeHours(),
+        sno: index+1,
+        vendor: employee.vendor,
+        employeeCode:employee.empId,
+        employeeName: employee.empName,
+        department: employee.department,
+        unit: employee.unit,
+        function: employee.function,
+        reportingManager: employee.reportingManager,
+        gender: employee.gender,
+        jan: getLeaveDates("01" , employee.empId),
+        feb: getLeaveDates("02" , employee.empId),
+        mar: getLeaveDates("03" , employee.empId),
+        apr: getLeaveDates("04" , employee.empId),
+        may: getLeaveDates("05" , employee.empId),
+        jun: getLeaveDates("06" , employee.empId),
+        jul: getLeaveDates("07" , employee.empId),
+        aug: getLeaveDates("08" , employee.empId),
+        sep: getLeaveDates("09" , employee.empId),
+        oct: getLeaveDates("10" , employee.empId),
+        nov: getLeaveDates("11" , employee.empId),
+        dec: getLeaveDates("12" , employee.empId),
+        janOt: getLOPLeave("01" , employee.empId),
+        febOt: getLOPLeave("02" , employee.empId),
+        marOt: getLOPLeave("03" , employee.empId),
+        aprOt: getLOPLeave("04" , employee.empId),
+        mayOt: getLOPLeave("05" , employee.empId),
+        junOt: getLOPLeave("06" , employee.empId),
+        julOt: getLOPLeave("07" , employee.empId),
+        augOt: getLOPLeave("08" , employee.empId),
+        sepOt: getLOPLeave("09" , employee.empId),
+        octOt: getLOPLeave("10" , employee.empId),
+        novOt: getLOPLeave("11" , employee.empId),
+        decOt: getLOPLeave("12" , employee.empId),
       });
     }
+    )
     setData(dummyData);
   }
 
@@ -267,7 +304,8 @@ const Details = () => {
         }
       );
       setAllEmployees(allEmp.data); // Store all employees in state
-      setFilteredEmployees(allEmp.data); // Initialize filteredEmployees with all employees
+      setFilteredEmployees(allEmp.data);
+      console.log(allEmp.data) // Initialize filteredEmployees with all employees
     } catch (error) {
       if (error.response.status === 400) {
         navigation("/error404");
@@ -340,6 +378,8 @@ const Details = () => {
     setIsModalOpen(false);
     setSelectedEmployees([]);
   };
+
+  console.log(data);
 
   return (
     <div className="bg-white p-5 w-full h-full mx-auto flex flex-col justify-start items-start">
