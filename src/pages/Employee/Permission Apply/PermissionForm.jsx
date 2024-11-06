@@ -20,9 +20,9 @@ import { OrbitProgress } from "react-loading-indicators";
 dayjs.extend(duration);
 
 const PermissionForm = () => {
-  const navigation = useNavigate();
+  // const navigate = useNavigate();
   const navigate = useNavigate();
-  const [toTime, setToTime] = useState(dayjs().add(1, "hour"));
+  // const [toTime, setToTime] = useState(dayjs().add(1, "hour"));
   const [permissionDate, setPermissionDate] = useState(null);
   const [permissionReason, setPermissionReason] = useState("");
   const [isPermission, setIsPermission] = useState(false);
@@ -34,13 +34,7 @@ const PermissionForm = () => {
   }); // New state for errors
   const [checkStatus, setCheckStatus] = useState(CURRENT_STATUS.IDEAL);
   const [applyStatus, setApplyStatus] = useState(CURRENT_STATUS.IDEAL);
-
-  const token = document.cookie.split("=")[1];
-
-  console.log(token);
-  const decodedToken = jwtDecode(token);
-  console.log("in", decodedToken.empId);
-
+  const [toTime, setToTime] = useState(dayjs().add(1, "hour"));
   const [fromTime, setFromTime] = useState(
     dayjs().isBetween(
       dayjs().startOf("day").hour(9),
@@ -49,6 +43,25 @@ const PermissionForm = () => {
       ? dayjs()
       : dayjs().hour(9)
   );
+  const [toTimeOptions, setToTimeOptions] = useState([
+    fromTime.add(1, "hour"),
+    fromTime.add(2, "hour"),
+  ]);
+
+  const token = document.cookie.split("=")[1];
+
+  console.log(token);
+  const decodedToken = jwtDecode(token);
+  console.log("in", decodedToken.empId);
+
+  // const [fromTime, setFromTime] = useState(
+  //   dayjs().isBetween(
+  //     dayjs().startOf("day").hour(9),
+  //     dayjs().startOf("day").hour(17)
+  //   )
+  //     ? dayjs()
+  //     : dayjs().hour(9)
+  // );
 
   const isTimeExceeding = () => {
     const timeDifference = dayjs.duration(toTime.diff(fromTime)).asHours();
@@ -58,33 +71,58 @@ const PermissionForm = () => {
 
   const shouldDisableDate = (date) => {
     const today = dayjs();
-    const dayOfWeek = today.day();
-
-    // Allow today and tomorrow
-    const isToday = date.isSame(today, "day");
-    const isTomorrow = date.isSame(today.add(1, "day"), "day");
-
-    // If today is Friday, allow Monday (two days after tomorrow)
-    const isMonday = dayOfWeek === 5 && date.isSame(today.add(3, "day"), "day"); // 3 days from Friday to Monday
-
-    // Disable weekends (Saturday and Sunday)
     const isWeekend = date.day() === 0 || date.day() === 6;
-
-    return isWeekend || !(isToday || isTomorrow || isMonday);
+    const isBeforeToday = date.isBefore(today, "day");
+    const isThisMonth = date.month() === today.month();
+    const isTomorrow = date.isSame(today.add(1, "day"), "day");
+  
+    return isWeekend || isBeforeToday || !isThisMonth || !isTomorrow;
   };
 
   // Handle fromTime change
-  const handleFromTimeChange = (newTime) => {
-    const minTime = dayjs().startOf("day").hour(9);
-    const maxTime = dayjs().startOf("day").hour(17);
+  // const handleFromTimeChange = (newTime) => {
+  //   const minTime = dayjs().startOf("day").hour(9);
+  //   const maxTime = dayjs().startOf("day").hour(17);
 
-    // Restrict fromTime to be between 9 AM and 5 PM
-    if (newTime.isBefore(minTime)) {
-      setFromTime(minTime);
-    } else if (newTime.isAfter(maxTime)) {
-      setFromTime(maxTime);
-    } else {
-      setFromTime(newTime);
+  //   // Restrict fromTime to be between 9 AM and 5 PM
+  //   if (newTime.isBefore(minTime)) {
+  //     setFromTime(minTime);
+  //   } else if (newTime.isAfter(maxTime)) {
+  //     setFromTime(maxTime);
+  //   } else {
+  //     setFromTime(newTime);
+  //   }
+  // };
+
+  const handleFromTimeChange = (newTime) => {
+    const minTime = dayjs().hour(9).minute(0);
+    const maxTime = dayjs().hour(17).minute(0);
+
+    // Restrict `fromTime` to be between 9 AM and 5 PM
+    const updatedFromTime = newTime.isBefore(minTime)
+      ? minTime
+      : newTime.isAfter(maxTime)
+      ? maxTime
+      : newTime;
+
+    setFromTime(updatedFromTime);
+
+    // Calculate valid `toTime` options: 1 hour or 2 hours after `fromTime`
+    const oneHourLater = updatedFromTime.add(1, "hour");
+    const twoHoursLater = updatedFromTime.add(2, "hour");
+
+    setToTimeOptions([oneHourLater, twoHoursLater]);
+
+    // Set `toTime` to the first valid option if it's outside the new range
+    if (!toTime.isSame(oneHourLater) && !toTime.isSame(twoHoursLater)) {
+      setToTime(oneHourLater);
+    }
+  };
+
+  // Only allow the user to select `toTime` from the predefined options
+  const handleToTimeChange = (newTime) => {
+    if (newTime.isSame(toTimeOptions[0]) || newTime.isSame(toTimeOptions[1])) {
+      setToTime(newTime);
     }
   };
 
@@ -141,10 +179,10 @@ const PermissionForm = () => {
       }
     } catch (error) {
       if (error.response.status === 400) {
-        navigation("/error404");
+        navigate("/error404");
       }
       if (error.response.status === 500) {
-        navigation("/error500");
+        navigate("/error500");
       }
       console.error("Error permission Apply", error);
       toast.error("Error is requesting Permission");
@@ -192,10 +230,10 @@ const PermissionForm = () => {
         }
       } catch (error) {
         if (error.response.status === 400) {
-          navigation("/error404");
+          navigate("/error404");
         }
         if (error.response.status === 500) {
-          navigation("/error500");
+          navigate("/error500");
         }
         toast.error("Something went wrong");
       }
@@ -254,10 +292,10 @@ const PermissionForm = () => {
       }
     } catch (error) {
       if (error.response.status === 400) {
-        navigation("/error404");
+        navigate("/error404");
       }
       if (error.response.status === 500) {
-        navigation("/error500");
+        navigate("/error500");
       }
       console.error(
         "Error sending email:",
@@ -317,29 +355,38 @@ const PermissionForm = () => {
             />
           </LocalizationProvider>
         </div>
-
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <div className="flex w-full gap-10 ">
-            <MobileTimePicker
-              label="From Time"
-              value={fromTime}
-              onChange={(newValue) => {
-                setFromTime(newValue);
-                const amOrPm = newValue.format("A");
-                setAmPm(amOrPm);
-              }}
-              minTime={dayjs().set("hour", 9).set("minute", 0)}
-              maxTime={dayjs().set("hour", 17).set("minute", 0)}
-              renderInput={(params) => <TextField {...params} />}
-            />
-            <MobileTimePicker
-              label="To Time"
-              value={toTime}
-              minTime={fromTime.add(1, "hour")}
-              maxTime={fromTime.add(2, "hour")}
-              onChange={(newValue) => setToTime(newValue)}
-              renderInput={(params) => <TextField {...params} />}
-            />
+          <ToastContainer />
+          <div >
+      
+
+            <div className="flex w-full gap-10">
+              <MobileTimePicker
+                label="From Time"
+                value={fromTime}
+                onChange={handleFromTimeChange}
+                minTime={dayjs().set("hour", 9).set("minute", 0)}
+                maxTime={dayjs().set("hour", 17).set("minute", 0)}
+                renderInput={(params) => <TextField {...params} />}
+              />
+              <MobileTimePicker
+                label="To Time"
+                value={toTime}
+                onChange={handleToTimeChange}
+                shouldDisableTime={(timeValue, clockType) => {
+                  if (clockType === "minutes") {
+                    return timeValue !== 0; // Limit to whole hours only
+                  }
+                  return (
+                    !timeValue.isSame(toTimeOptions[0], "hour") &&
+                    !timeValue.isSame(toTimeOptions[1], "hour")
+                  );
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </div>
+
+            {/* Rest of your form fields and components here */}
           </div>
         </LocalizationProvider>
 
