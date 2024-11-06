@@ -30,31 +30,21 @@ const Table = ({ cardData }) => {
   // const [isActionPopupOpen, setActionPopupOpen] = useState(false);
   const [isReasonPopupOpen, setReasonPopupOpen] = useState(false);
   const navigation = useNavigate();
-  // const [selectedLeaveId, setSelectedLeaveId] = useState(null);
-  const [leaveStatus, setLeaveStatus] = useState({});
+  const [isPopupOpen, setPopupOpen] = useState(false);
+
   const [editRowId, setEditRowId] = useState(null);
-  const [isRejecting, setIsRejecting] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+    const [data, setData] = useState([]);
   const [selectedReason, setSelectedReason] = useState(null);
   const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
-
-  const rowsPerPage = 2; // Set to show 10 records per page
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-
     
   useEffect(() => {
     getData();
   }, []);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
 
   const handleAccept = async (id, status) => {
     try {
@@ -225,12 +215,12 @@ const Table = ({ cardData }) => {
 
   const handleReasonClick = (reason) => {
     setSelectedReason(reason);
-    setReasonPopupOpen(true);
+    setPopupOpen(true);
   };
 
-   const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  var dataToDisplay = data.slice(startIndex, endIndex);
+  //  const startIndex = (currentPage - 1) * rowsPerPage;
+  // const endIndex = startIndex + rowsPerPage;
+  // var dataToDisplay = data.slice(startIndex, endIndex);
 
   // dataToDisplay = [
   //   ...dataToDisplay,
@@ -243,114 +233,143 @@ const Table = ({ cardData }) => {
 
   return (
     <div className="w-[100%] p-3 border-slate-950 rounded-lg">
-      <ToastContainer />
-      <div className="w-[100%] overflow-x-auto">
-        <table className="divide-y divide-gray-200 bg-white w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              {headers.map((header, index) => (
-                <th
-                  key={index}
-                  className="px-5 py-3 text-left font-bold text-sm text-gray-500 uppercase tracking-wider"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200 text-lg">
-            {" "}
-            {/* Increased row size */}
-            {dataToDisplay.map((row, rowIndex) => (
-              <tr key={rowIndex + 1} className="">
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 text-center">
-                  {rowIndex + 1}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
-                  {row.empName}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
-                  {row.role}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
-                  {row.leaveType}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
-                  {row.from.date}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
-                  {row.to.date}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium  text-gray-900 justify-center items-center">
-                  {row.leaveDays}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap text-md font-medium  text-gray-900 cursor-pointer">
-                  <MdMessage onClick={() => handleReasonClick(row.reason)} />
-                </td>
-                <td className=" text-md font-medium text-sm flex gap-2 pt-2 justify-center items-center h-full">
-                  {editRowId === row._id ? (
-                    <>
-                      <div
-                        onClick={() => handleAccept(row._id, row.status)}
-                        className="flex justify-center cursor-pointer items-center"
-                      >
-                        <img
-                          src={accept}
-                          alt="approve"
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <div
-                        onClick={() => handleReject(row._id, row.status)}
-                        className="flex justify-center cursor-pointer items-center"
-                      >
-                        <img
-                          src={decline}
-                          alt="decline"
-                          width={25}
-                          height={25}
-                        />
-                      </div>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <span
-                      className={
-                        row.status === "Pending"
-                          ? "text-yellow-500"
-                          : row.status === "Approved"
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }
-                    >
-                      {row.status}
-                    </span>
-                  )}
-                </td>
-                <td className="px-4 py-2 text-md font-medium">
-                  <button
-                    onClick={() => handleEditClick(row._id)}
-                    className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
-                  >
-                    <MdEdit />
-                  </button>
-                </td>
-              </tr>
+  <ToastContainer />
+  <div className="w-[100%] overflow-x-auto">
+    <div className="max-h-[400px] overflow-y-auto"> {/* Add this div for vertical scrolling */}
+      <table className="divide-y divide-gray-200 bg-white w-full">
+        <thead className="bg-gray-50">
+          <tr>
+            {headers.map((header, index) => (
+              <th
+                key={index}
+                className="px-5 py-3 text-left font-bold text-sm text-gray-500 uppercase tracking-wider"
+              >
+                {header}
+              </th>
             ))}
-          </tbody>
-        </table>
-      </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200 text-lg">
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex + 1}>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                {rowIndex + 1}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                {row.empName}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                {row.role}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                {row.leaveType}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                {row.from.date}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                {row.to.date}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                {row.leaveDays}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-md font-medium text-gray-900 cursor-pointer">
+                <MdMessage onClick={() => handleReasonClick(row.reason)} />
+              </td>
+              <td className="text-md font-medium text-sm flex gap-2 pt-2 justify-center items-center h-full">
+                {editRowId === row._id ? (
+                  <>
+                    <div
+                      onClick={() => handleAccept(row._id, row.status)}
+                      className="flex justify-center cursor-pointer items-center"
+                    >
+                      <img
+                        src={accept}
+                        alt="approve"
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                    <div
+                      onClick={() => handleReject(row._id, row.status)}
+                      className="flex justify-center cursor-pointer items-center"
+                    >
+                      <img
+                        src={decline}
+                        alt="decline"
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <span
+                    className={
+                      row.status === "Pending"
+                        ? "text-yellow-500"
+                        : row.status === "Approved"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }
+                  >
+                    {row.status}
+                  </span>
+                )}
+              </td>
+              <td className="px-4 py-2 text-md font-medium">
+                <button
+                  onClick={() => handleEditClick(row._id)}
+                  className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                >
+                  <MdEdit />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <Popup
+        isOpen={isPopupOpen}
+        onClose={() => setPopupOpen(false)}
+        content={selectedReason}
       />
+</div>
+
+  );
+};
+
+const Popup = ({ isOpen, onClose, content }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="absolute inset-0 bg-black opacity-50"></div>
+
+      <div className="bg-white text-black p-6 rounded-lg shadow-lg z-10 max-w-lg w-full">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-gray-900">Details</h2>
+          <button onClick={onClose} className="text-black hover:text-gray-500">
+            <MdClose size={24} />
+          </button>
+        </div>
+        <div className="text-black">{content}</div>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={onClose}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

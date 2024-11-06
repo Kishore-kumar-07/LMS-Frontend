@@ -335,7 +335,8 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
 
         <div>
         {formData.role === "GVR" && (
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-3 justify-center items-end ">
+            <div className="flex gap-2">
             <label className="text-gray-700 font-semibold">
               Paternity Leave
             </label>
@@ -345,6 +346,8 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
               onChange={handlePaternityChange}
               className="mt-2"
             />
+            </div>
+            <div className="flex gap-2">
             <label className="text-gray-700 font-semibold">
               Adoption Leave
             </label>
@@ -354,13 +357,14 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
               onChange={handleAdoptionChange}
               className="mt-2"
             />
+            </div>
           </div>
         )}
         </div>
         <div className="flex w-full justify-center items-center">
           {isEdit!==CURRENT_STATUS.LOADING?<button
             type="submit"
-            className="w-[50%] bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-bold shadow-md hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-transform duration-200 col-span-1 md:col-span-3"
+            className="w-[30%] bg-blue-500 text-white py-3 rounded-lg font-bold shadow-md hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-transform duration-200 col-span-1 md:col-span-3"
           >
             Submit
           </button>: <div className="flex justify-center mt-5">

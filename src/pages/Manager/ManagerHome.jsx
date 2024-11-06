@@ -157,21 +157,21 @@ const AdminHome = () => {
 
   return (
     <>
-      <div className="flex flex-col w-screen h-screen">
+      <div className="flex flex-col w-screen h-screen ">
         <Nav
           setIsRequest={setIsRequest}
           setIsPermission={setIsPermission}
           setIsEmployees={setIsEmployees}
         />
 
-        <div className="w-full h-full p-3 overflow-y-auto">
+        <div className="w-full h-full p-3 overflow-y-auto 0">
           {isEmployees ? (
             <div className="pt-5">
               <Details />
             </div>
           ) : (
             <div className="w-full h-full flex flex-col lg:flex-row lg:justify-between lg:items-start">
-              <div className="w-full lg:w-[75%] p-3">
+              <div className="w-full lg:w-[75%] flex flex-col p-3 gap-3">
                 <div className="w-full flex justify-between gap-3 pb-5">
                   <div className="w-full lg:w-[30%]">
                     <select className="w-full border rounded-md p-2 focus:outline-none focus:ring">
