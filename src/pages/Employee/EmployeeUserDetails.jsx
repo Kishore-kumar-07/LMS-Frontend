@@ -65,7 +65,7 @@ function EmployeeUserDetails({ setIsPaternity, setIsAdoption }) {
           <tbody>
             <tr className="">
               <td className="font-bold text-lg py-2 pr-6">Designation:</td>
-              <td className="text-lg py-2">{userDetails.designation}</td>
+              <td className="text-lg py-2">{userDetails.role}</td>
             </tr>
             <tr className="">
               <td className="font-bold text-lg py-2 pr-6">

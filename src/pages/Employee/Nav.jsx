@@ -121,7 +121,7 @@ function Nav({ setOption }) {
                       <tr>
                         <td className="font-semibold w-32">Designation:</td>
                         <td className="break-words">
-                          {userDetails.designation || "N/A"}
+                          {userDetails.role || "N/A"}
                         </td>
                       </tr>
                       <tr>
