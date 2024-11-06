@@ -125,7 +125,7 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
                       </tr>
                       <tr>
                         <td className="font-semibold">Reporting Manager:</td>
-                        <td>{userDetails.reportionManager}</td>
+                        <td>{userDetails.reportingManager}</td>
                       </tr>
                       <tr>
                         <td className="font-semibold">DOJ:</td>

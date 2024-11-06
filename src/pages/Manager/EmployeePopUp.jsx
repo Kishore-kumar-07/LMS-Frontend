@@ -277,7 +277,7 @@ function EmployeePopUp({ onClose, employeeId }) {
               <tbody>
                 <tr>
                   <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Designation:</td>
-                  <td className="text-gray-600 py-1">{userData.designation}</td>
+                  <td className="text-gray-600 py-1">{userData.role}</td>
                 </tr>
                 <tr>
                   <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Phone Number:</td>
