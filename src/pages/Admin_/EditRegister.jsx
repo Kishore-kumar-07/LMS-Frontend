@@ -43,6 +43,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
   useEffect(() => {
     
     if (currentEmployee) {
+      console.log(currentEmployee.manager )
       setFormData({
         empName: currentEmployee.empName || "",
         empMail: currentEmployee.empMail || "",

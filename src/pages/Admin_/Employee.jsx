@@ -401,7 +401,7 @@ const Employee = () => {
     )}
     {openEditModal && (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white p-2 rounded-lg shadow-2xl w-[80%] h-[80%] flex justify-center items-center">
+        <div className="bg-white p-2 rounded-lg shadow-2xl w-[70%] h-[70%] flex justify-center items-center">
           <EditRegister
             setOpenEditModal={setOpenEditModal}
             currentEmployee={currentEmployee}
