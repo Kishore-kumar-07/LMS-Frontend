@@ -114,7 +114,7 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
               <img src={userImg} alt="User" className="h-10" />
             </button>
             {isDropdownOpen && (
-              <div className="absolute right-0 w-fit bg-white shadow-lg rounded-lg p-4 z-50">
+              <div className="absolute right-2 top-14 w-fit bg-gray-100 shadow-lg shadow-left-bottom  shadow-gray border-black border-2 rounded-lg p-4 z-50">
                 <div className="flex flex-col justify-center items-center">
                   <h1 className="text-xl font-bold">{userDetails.empName}</h1>
                   <table className="text-left text-gray-700 mt-2">
@@ -163,7 +163,7 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
       </div>
       {isDropdownOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50"
+          className="fixed inset-0 "
           onClick={() => setIsDropdownOpen(false)}
         />
       )}
