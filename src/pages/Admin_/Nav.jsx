@@ -139,7 +139,7 @@ function Nav({ setIsManager, setIsEmployees }) {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute w-96 top-12 right-0 bg-white shadow-lg rounded-lg p-4 z-50">
+              <div className="absolute w-96 top-12 right-0 bg-gray-100 border-black border-2 shadow-lg rounded-lg p-4 z-20">
                 <div className="flex flex-col">
                   <h1 className="text-xl font-bold">
                     {userDetails.empName || "Unknown User"}
@@ -212,7 +212,7 @@ function Nav({ setIsManager, setIsEmployees }) {
       {/* Dark background when dropdown is open */}
       {isDropdownOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50"
+          className="fixed inset-0 "
           onClick={() => setIsDropdownOpen(false)}
         />
       )}
