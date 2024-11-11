@@ -25,39 +25,39 @@ const Details = () => {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
 
-  const exportData = () => {
-    const exportFields = filteredEmployees.map(
-      ({
-        empId,
-        empName,
-        empMail,
-        empPhone,
-        role,
-        gender,
-        dateOfJoining,
-        department,
-        unit,
-        level,
-      }) => ({
-        EmployeeID: empId,
-        EmployeeName: empName,
-        EmployeeMail: empMail,
-        EmployeePhoneNumber: empPhone,
-        Type: role,
-        Gender: gender,
-        DOJ: dateOfJoining,
-        Department: department,
-        Unit: unit,
-        Level: level,
-      })
-    );
+  // const exportData = () => {
+  //   const exportFields = filteredEmployees.map(
+  //     ({
+  //       empId,
+  //       empName,
+  //       empMail,
+  //       empPhone,
+  //       role,
+  //       gender,
+  //       dateOfJoining,
+  //       department,
+  //       unit,
+  //       level,
+  //     }) => ({
+  //       EmployeeID: empId,
+  //       EmployeeName: empName,
+  //       EmployeeMail: empMail,
+  //       EmployeePhoneNumber: empPhone,
+  //       Type: role,
+  //       Gender: gender,
+  //       DOJ: dateOfJoining,
+  //       Department: department,
+  //       Unit: unit,
+  //       Level: level,
+  //     })
+  //   );
 
-    const ws = XLSX.utils.json_to_sheet(exportFields);
-    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, "Report" + fileExtension);
-  };
+  //   const ws = XLSX.utils.json_to_sheet(exportFields);
+  //   const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+  //   const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  //   const data = new Blob([excelBuffer], { type: fileType });
+  //   FileSaver.saveAs(data, "Report" + fileExtension);
+  // };
 
   const getLeaveDates = (month, empId) => {
     let date = "";

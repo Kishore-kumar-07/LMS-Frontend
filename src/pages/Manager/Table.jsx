@@ -13,7 +13,7 @@ import decline from "../../images/cancel.png";
 
 import { useNavigate } from "react-router-dom";
 
-const Table = ({ cardData }) => {
+const Table = ({ leaveCardData , permissionCardData }) => {
   const headers = [
     "S.No",
     "Name",
@@ -96,7 +96,8 @@ const Table = ({ cardData }) => {
       }
 
       getData();
-      cardData();
+      leaveCardData();
+      permissionCardData();
       setEditRowId(null);
     } catch (error) {
       if (error.response.status === 400) {
@@ -163,7 +164,8 @@ const Table = ({ cardData }) => {
       }
 
       getData();
-      cardData();
+      leaveCardData();
+      permissionCardData();
       setEditRowId(null);
     } catch (error) {
       if (error.response.status === 400) {

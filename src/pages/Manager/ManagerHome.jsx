@@ -30,11 +30,16 @@ const AdminHome = () => {
   ];
 
   const [empAll, setEmpAll] = useState([]);
-  const [cardData, setCardData] = useState([]);
-  const [TotalRequests, setTotalRequests] = useState(0);
-  const [pending, setpending] = useState(0);
-  const [approved, setApproved] = useState(0);
-  const [denied, setDenied] = useState(0);
+  const [leaveCardData, setLeaveCardData] = useState([]);
+  const [permissionCardData, setPermissionCardData] = useState([]);
+  const [totalLeaveRequests, setTotalLeaveRequests] = useState(0);
+  const [leavesPending, setLeavesPending] = useState(0);
+  const [leavesApproved, setLeavesApproved] = useState(0);
+  const [leavesDenied, setLeavesDenied] = useState(0);
+  const [totalPermissionRequests, setTotalPermissionRequests] = useState(0);
+  const [permissionPending, setPermissionPending] = useState(0);
+  const [permissionApproved, setPermissionApproved] = useState(0);
+  const [permissionDenied, setPermissionDenied] = useState(0);
 
   const departments = [
     "All Departments",
@@ -59,7 +64,8 @@ const AdminHome = () => {
 
   useEffect(() => {
     getAllEmployee();
-    getCardData();
+    getLeaveCardData();
+    getPermissionCardData();
   }, []);
 
   const getAllEmployee = async () => {
@@ -87,7 +93,7 @@ const AdminHome = () => {
     }
   };
 
-  const getCardData = async () => {
+  const getLeaveCardData = async () => {
     try {
       const cardData = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/getLeave`,
@@ -100,8 +106,34 @@ const AdminHome = () => {
           },
         }
       );
-      console.log("in admin home ", cardData.data);
-      setCardData(cardData.data);
+      console.log("in manager home ", cardData.data.length);
+      setLeaveCardData(cardData.data);
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.log("error");
+    }
+  };
+
+  const getPermissionCardData = async () => {
+    try {
+      const cardData = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/permission/getPermission`,
+        {empId}
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("in manager home ", cardData.data.length);
+      setPermissionCardData(cardData.data);
     } catch (error) {
       if (error.response.status === 400) {
         navigation("/error404");
@@ -114,23 +146,33 @@ const AdminHome = () => {
   };
 
   useEffect(() => {
-    // console.log(cardData.length);
-    const total = cardData.length;
-    const approved = cardData.filter((row) => row.status === "Approved").length;
-    const pending = cardData.filter((row) => row.status === "Pending").length;
-    const denied = total - approved - pending;
-    setTotalRequests(total);
-    setApproved(approved);
-    setDenied(denied);
-    setpending(pending);
-  }, [cardData]);
+    
+    const totalLeave = leaveCardData.length;
+    console.log(totalLeave)
+    const leavePending = leaveCardData.filter((row) => row.status === "Pending").length;
+    const leaveApproved = leaveCardData.filter((row) => row.status === "Approved").length;
+    const leaveDenied = totalLeave - leaveApproved-leavePending
+    setTotalLeaveRequests(totalLeave);
+    setLeavesPending(leavePending);
+    setLeavesApproved(leaveApproved);
+    setLeavesDenied(leaveDenied);
 
-  // Function to handle search query change
+    const totalPermission = permissionCardData.length;
+    console.log(totalPermission)
+    const permissionPending = permissionCardData.filter((row) => row.status === "Pending").length;
+    const permissionApproved = permissionCardData.filter((row) => row.status === "Approved").length;
+    setTotalPermissionRequests(totalPermission);
+    setPermissionPending(permissionPending);   
+    setPermissionApproved(permissionApproved);
+    setPermissionDenied(totalPermission - permissionApproved - permissionPending);
+  }, [leaveCardData , permissionCardData]);
+
+  
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Filter employees based on the search query
+ 
   const filteredEmployees = empAll.filter((employee) =>
     employee.empName.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -164,7 +206,7 @@ const AdminHome = () => {
           setIsEmployees={setIsEmployees}
         />
 
-        <div className="w-full h-full p-3 overflow-y-auto 0">
+        <div className="w-full h-full p-2 overflow-y-auto 0">
           {isEmployees ? (
             <div className="pt-5">
               <Details />
@@ -182,34 +224,67 @@ const AdminHome = () => {
                   </div>
                 </div>
 
-                <div className="w-full h-fit p-3 rounded-lg">
-                  <div className="flex flex-wrap justify-between gap-3">
-                    <Card
-                      label="Leaves Requested"
-                      value={TotalRequests}
-                      image="gmail"
-                    />
-                    <Card label="Pending" value={pending} image="gmail" />
-                    <Card
-                      label="Leaves Granted"
-                      value={approved}
-                      image="accept"
-                    />
-                    <Card label="Leaves Denied" value={denied} image="cancel" />
-                  </div>
-                </div>
+                
 
                 <div className="flex flex-col mb-4">
                   {isRequest ? (
                     <div>
-                      <Table cardData={getCardData} />
+                      <div className="w-full h-fit p-3 rounded-lg">
+                  <div className="flex flex-wrap justify-between gap-3">
+                    <Card
+                      label="Leaves Requested"
+                      value={totalLeaveRequests}
+                      
+                    />
+                    <Card label="Leaves Pending" value={leavesPending} />
+                    <Card
+                      label="Leave Approved"
+                      value={leavesApproved}
+                      
+                    />
+                    <Card label="Leave Denied" value={leavesDenied}  />
+                  </div>
+                </div>
+                      <Table leaveCardData={getLeaveCardData} permissionCardData = {getPermissionCardData}/>
                     </div>
                   ) : isPermission ? (
                     <div>
+                      <div className="w-full h-fit p-3 rounded-lg">
+                  <div className="flex flex-wrap justify-between gap-3">
+                    <Card
+                      label="Permission Requested"
+                      value={totalPermissionRequests}
+                      
+                    />
+                    <Card label="Permission Pending" value={permissionPending}/>
+                    <Card
+                      label="Permission Approved"
+                      value={permissionApproved}
+                      
+                    />
+                    <Card label="Permission Denied" value={permissionDenied}/>
+                  </div>
+                </div>
                       <PermissionTable />
                     </div>
                   ) : (
                     <div>
+                      <div className="w-full h-fit p-3 rounded-lg">
+                  <div className="flex flex-wrap justify-between gap-3">
+                    <Card
+                      label="Leaves Requested"
+                      value={totalLeaveRequests}
+                     
+                    />
+                    <Card label="Leaves Pending" value={leavesPending}  />
+                    <Card
+                      label="Permission Requested"
+                      value={totalPermissionRequests}
+                     
+                    />
+                    <Card label="Permission Pending" value={permissionPending} />
+                  </div>
+                </div>
                       <Charts />
                     </div>
                   )}

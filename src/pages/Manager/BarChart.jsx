@@ -58,7 +58,7 @@ const BarChart = () => {
           },
         }
       );
-
+      console.log(weekDataResponse)
       const today = new Date();
       const lastWeek = new Date();
       lastWeek.setDate(today.getDate() - 7); // Calculate the date 7 days ago
@@ -114,7 +114,8 @@ const BarChart = () => {
   };
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full flex-col flex justify-center items-center">
+      <p>Filter</p>
       <div className=" w-full h-auto flex justify-center items-center">
         <div className="lg:w-full md:w-[60%] h-54 p-1">
           <Bar
@@ -125,6 +126,7 @@ const BarChart = () => {
           />
         </div>
       </div>
+      <p>Last Week Data</p>
     </div>
   );
 };
