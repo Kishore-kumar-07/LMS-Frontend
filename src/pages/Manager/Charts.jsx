@@ -40,7 +40,7 @@ const Charts = () => {
 
   return (
     <div className="">
-      <div className="w-full h-fit p-4 rounded-lg mb-3 border border-[#c0c0c0] bg-white">
+      <div className="w-full h-fit p-2 rounded-lg mb-3 border border-[#c0c0c0] bg-white">
         <div className="flex md:flex-col lg:flex-row flex-wrap">
           <div className="flex-1 flex justify-center items-center">
             <BarChart />

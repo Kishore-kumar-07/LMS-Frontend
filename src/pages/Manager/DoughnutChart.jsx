@@ -22,8 +22,8 @@ const DoughnutChart = ({ three_p, gvr }) => {
   };
 
   return (
-    <div className="flex justify-center items-center p-4 w-full max-w-md h-auto ">
-      <Doughnut data={data} options={{ maintainAspectRatio: false }} />
+    <div className="flex justify-center items-center p-4 w-full max-w-md">
+      <Doughnut data={data} options={{ maintainAspectRatio: false }}  />
     </div>
   );
 };
