@@ -234,15 +234,17 @@ const AdminHome = () => {
                     <Card
                       label="Leaves Requested"
                       value={totalLeaveRequests}
+                      color = "#C6E7FF"
                       
                     />
-                    <Card label="Leaves Pending" value={leavesPending} />
+                    <Card label="Leaves Pending" value={leavesPending} color = "#FEEFAD"/>
                     <Card
                       label="Leave Approved"
                       value={leavesApproved}
+                      color = "#BFF6C3"
                       
                     />
-                    <Card label="Leave Denied" value={leavesDenied}  />
+                    <Card label="Leave Denied" value={leavesDenied} color = "#FFB0B0" />
                   </div>
                 </div>
                       <Table leaveCardData={getLeaveCardData} permissionCardData = {getPermissionCardData}/>
@@ -254,35 +256,39 @@ const AdminHome = () => {
                     <Card
                       label="Permission Requested"
                       value={totalPermissionRequests}
+                       color = "#C6E7FF"
                       
                     />
-                    <Card label="Permission Pending" value={permissionPending}/>
+                    <Card label="Permission Pending" value={permissionPending} color = "#FEEFAD"/>
                     <Card
                       label="Permission Approved"
                       value={permissionApproved}
+                      color = "#BFF6C3"
                       
                     />
-                    <Card label="Permission Denied" value={permissionDenied}/>
+                    <Card label="Permission Denied" value={permissionDenied} color = "#FFB0B0" />
                   </div>
                 </div>
                       <PermissionTable />
                     </div>
                   ) : (
                     <div>
-                      <div className="w-full h-fit p-3 rounded-lg">
+                      <div className="w-full h-fit p-3 mb-5 rounded-lg">
                   <div className="flex flex-wrap justify-between gap-3">
                     <Card
                       label="Leaves Requested"
                       value={totalLeaveRequests}
+                       color = "#C6E7FF"
                      
                     />
-                    <Card label="Leaves Pending" value={leavesPending}  />
+                    <Card label="Leaves Pending" value={leavesPending}  color = "#FEEFAD"/>
                     <Card
                       label="Permission Requested"
                       value={totalPermissionRequests}
+                       color = "#C6E7FF"
                      
                     />
-                    <Card label="Permission Pending" value={permissionPending} />
+                    <Card label="Permission Pending" value={permissionPending} color = "#FEEFAD"   />
                   </div>
                 </div>
                       <Charts />
@@ -346,7 +352,7 @@ export default AdminHome;
 // Responsive Card component
 const Card = (props) => {
   return (
-    <div className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 bg-[#f7f8f9] rounded-xl p-3 5">
+    <div className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 rounded-xl p-3 bg-opacity-50 " style={{backgroundColor : props.color }}>
   <div className="flex flex-row text-white">
     <p className="text-lg md:text-xl text-black font-medium">{props.label}</p>
   </div>
