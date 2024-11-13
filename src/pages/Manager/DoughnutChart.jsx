@@ -2,12 +2,14 @@ import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend, Title } from "chart.js";
 
+
 const DoughnutChart = ({ three_p, gvr }) => {
   Chart.register(ArcElement, Tooltip, Legend, Title);
   Chart.defaults.plugins.tooltip.backgroundColor = "";
   Chart.defaults.plugins.legend.position = "right";
   Chart.defaults.plugins.legend.title.display = true;
   Chart.defaults.plugins.legend.title.font = "Helvetica Neue";
+
 
   const data = {
     labels: ["GVR", "3P"],
@@ -21,9 +23,19 @@ const DoughnutChart = ({ three_p, gvr }) => {
     ],
   };
 
+  const todayYear = new Date().getFullYear();
+
   return (
-    <div className="flex justify-center items-center p-4 w-full max-w-md">
+    
+    <div className="flex flex-col  justify-center items-center p-1 w-full h-full max-w-md">
+      
+      <div className="w-full flex justify-end items-center">
+      
+      </div>
+      
+      <div className="h-fit">
       <Doughnut data={data} options={{ maintainAspectRatio: false }}  />
+      </div>
     </div>
   );
 };

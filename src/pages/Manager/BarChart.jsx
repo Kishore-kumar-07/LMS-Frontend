@@ -115,7 +115,7 @@ const BarChart = () => {
 
   return (
     <div className="w-full h-full flex-col flex justify-center items-center">
-      <p>Filter</p>
+      
       <div className=" w-full h-auto flex justify-center items-center">
         <div className="lg:w-full md:w-[60%] h-54 p-1">
           <Bar
