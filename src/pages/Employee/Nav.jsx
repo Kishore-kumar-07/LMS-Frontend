@@ -78,6 +78,9 @@ function Nav({ setOption }) {
     navigate("/");
   };
 
+  const handleChange = () => {
+    navigate("/ChangePassword");
+  };
   return (
     <>
       <div className="w-full flex  items-center mb-5">
@@ -111,12 +114,12 @@ function Nav({ setOption }) {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute w-96 top-12 right-0 bg-white shadow-lg rounded-lg p-4 z-50">
-                <div className="flex flex-col">
+              <div className="absolute w-96 top-12 right-0 shadow-lg rounded-lg p-4 z-50 border border-black bg-gray-100">
+                <div className="flex flex-col  items-center">
                   <h1 className="text-xl font-bold">
                     {userDetails.empName || "Unknown User"}
                   </h1>
-                  <table className="text-gray-700 mt-2 w-full break-words">
+                  <table className="text-gray-700 mt-2 w-full break-words flex justify-center">
                     <tbody>
                       <tr>
                         <td className="font-semibold w-32">Designation:</td>
@@ -168,12 +171,21 @@ function Nav({ setOption }) {
                       </tr>
                     </tbody>
                   </table>
-                  <button
-                    className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
+                  <div className="w-full flex justify-around gap-2">
+                    <button
+                      className="w-[50%] mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+
+                    <button
+                      className="w-[50%] mt-4 text-blue-500  px-4 py-2 rounded-lg"
+                      onClick={handleChange}
+                    >
+                      <u>Change Password</u>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -184,7 +196,7 @@ function Nav({ setOption }) {
       {/* Dark background when dropdown is open */}
       {isDropdownOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50"
+          className="fixed inset-0 "
           onClick={() => setIsDropdownOpen(false)}
         />
       )}

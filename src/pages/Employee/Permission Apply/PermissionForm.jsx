@@ -75,7 +75,7 @@ const PermissionForm = () => {
     const isBeforeToday = date.isBefore(today, "day");
     const isThisMonth = date.month() === today.month();
     const isTomorrow = date.isSame(today.add(1, "day"), "day");
-  
+
     return isWeekend || isBeforeToday || !isThisMonth || !isTomorrow;
   };
 
@@ -187,61 +187,62 @@ const PermissionForm = () => {
       console.error("Error permission Apply", error);
       toast.error("Error is requesting Permission");
     } finally {
-      console.log("per end");
-      setIsPermission(!isPermission);
+      console.log("perend");
+      // setIsPermission(!isPermission);
     }
   };
 
-  const checkPermission = async () => {
-    if (!validateFields()) {
-      toast.error("Please fill in all required fields.");
-      return;
-    }
-
-    if (fromTime && toTime && permissionDate) {
-      setclassfalse("");
-      try {
-        setCheckStatus(CURRENT_STATUS.LOADING);
-        const res = await axios.post(
-          `${process.env.REACT_APP_BASE_URL}/permission/checkPermission`,
-          {
-            empId: decodedToken.empId,
-            date: formatDate(permissionDate),
-            hrs: dayjs.duration(toTime.diff(fromTime)).asHours(),
-            session: {
-              firstHalf: amPm === "AM" ? true : false,
-              secondHalf: amPm === "PM" ? true : false,
-            },
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setCheckStatus(CURRENT_STATUS.SUCCESS);
-        if (res.status === 202) {
-          toast.error("The Permission Time is Already Applied");
-        } else if (res.status === 203) {
-          toast.warning("The Permission Time is Already Applied");
-        } else {
-          setIsPermission(!isPermission);
-        }
-      } catch (error) {
-        if (error.response.status === 400) {
-          navigate("/error404");
-        }
-        if (error.response.status === 500) {
-          navigate("/error500");
-        }
-        toast.error("Something went wrong");
+    const checkPermission = async () => {
+      if (!validateFields()) {
+        toast.error("Please fill in all required fields.");
+        return;
       }
-    } else {
-      setclassfalse("false");
-      setIsPermission(false);
-    }
-  };
+      if (fromTime && toTime && permissionDate) {
+        setclassfalse("");
+        try {
+          setCheckStatus(CURRENT_STATUS.LOADING);
+          const res = await axios.post(
+            `${process.env.REACT_APP_BASE_URL}/permission/checkPermission`,
+            {
+              empId: decodedToken.empId,
+              date: formatDate(permissionDate),
+              hrs: dayjs.duration(toTime.diff(fromTime)).asHours(),
+              session: {
+                firstHalf: amPm === "AM" ? true : false,
+                secondHalf: amPm === "PM" ? true : false,
+              },
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          setCheckStatus(CURRENT_STATUS.SUCCESS);
+          if (res.status === 202) {
+            toast.warn("Already permission or Leave had applied in the same day");
+            console.log("res:");
+            console.log(res);
+          } else if (res.status === 203) {
+            toast.warn("Permission Limit exceeded");
+          } else {
+            setIsPermission(!isPermission);
+          }
+        } catch (error) {
+          if (error.response.status === 400) {
+            navigate("/error404");
+          }
+          if (error.response.status === 500) {
+            navigate("/error500");
+          }
+          toast.error("Something went wrong");
+        }
+      } else {
+        setclassfalse("false");
+        setIsPermission(false);
+      }
+    };
 
   const validateFields = () => {
     const newErrors = {
@@ -356,10 +357,7 @@ const PermissionForm = () => {
           </LocalizationProvider>
         </div>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <ToastContainer />
-          <div >
-      
-
+          <div>
             <div className="flex w-full gap-10">
               <MobileTimePicker
                 label="From Time"

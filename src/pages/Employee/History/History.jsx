@@ -11,7 +11,7 @@ function History() {
   const [leaveLogs, setLeaveLogs] = useState([]);
   const [permissionLogs, setPermissionLogs] = useState([]);
   const [activeTab, setActiveTab] = useState("leave");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     getEmployeeLeaveLogs();
@@ -30,10 +30,12 @@ function History() {
           },
         }
       );
+      console.log("Leave Logs");
+      console.log(res.data);
 
       setLeaveLogs(res.data);
     } catch (error) {
-      handleErrorResponse(error.response.status); 
+      handleErrorResponse(error.response.status);
     }
   };
 
@@ -58,9 +60,9 @@ function History() {
 
   const handleErrorResponse = (statusCode) => {
     if (statusCode === 400) {
-      navigate("/error404"); 
+      navigate("/error404");
     } else if (statusCode === 500) {
-      navigate("/error500"); 
+      navigate("/error500");
     }
   };
 

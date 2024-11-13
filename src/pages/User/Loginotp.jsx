@@ -128,7 +128,6 @@ function Loginotp() {
         <h2 className="text-3xl font-bold text-center text-gray-800">
           {isForgetPassword ? "Forget Password" : "Login"}
         </h2>
-
         {isForgetPassword ? (
           <div className="mt-6">
             <label className="block text-md font-bold mb-2 text-gray-600">

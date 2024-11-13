@@ -13,6 +13,7 @@ import Loginotp from './pages/User/Loginotp'
 import Admin_Home from './pages/Admin_/Admin_Home'
 import ManagerHome from "./pages/Manager/ManagerHome";
 import ResetPassword from "./pages/User/ResetPassword";
+import ChangePassword from "./pages/User/ChangePassword";
 
 
 function App() {
@@ -72,6 +73,10 @@ function App() {
     {
       path:'/reset-password/:userId',
       element:<ResetPassword/>
+    },
+    {
+      path:'/ChangePassword',
+      element:<ChangePassword/>
     },
     {
       path:"*",

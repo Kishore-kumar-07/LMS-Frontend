@@ -377,7 +377,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/mail/send`,
         {
-          email: "mohammedashif.a2022cse@sece.ac.in",
+          email: decodedToken.managerMail,
           html: emailContent,
         },
         {

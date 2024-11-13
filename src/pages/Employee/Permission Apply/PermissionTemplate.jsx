@@ -7,7 +7,7 @@ const PermissionEmailTemplate = ({ date, fromTime, toTime, permissionReason, use
       <Img src={imageUrl} alt="Company Logo" style={{ width: '100px', marginBottom: '20px' }} />
       <h1 style={{ color: '#333', fontSize: '24px' }}>Permission Request from {userName}</h1>
       <Text style={{ color: '#555', fontSize: '16px', marginBottom: '20px' }}>
-        Hi Manager,
+        Hi Manager, 
       </Text>
       <Text style={{ color: '#555', fontSize: '16px', marginBottom: '20px' }}>
         You have received a new permission request. Please find the details below:
