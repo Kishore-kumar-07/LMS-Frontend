@@ -20,6 +20,8 @@ const Details = () => {
   const [allEmployees, setAllEmployees] = useState([]); // Store all employees
   const [data, setData] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
+  // const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
@@ -104,14 +106,6 @@ const Details = () => {
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
 
-  const handleCheckboxChange = (id) => {
-    setSelectedEmployees((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((empId) => empId !== id)
-        : [...prevSelected, id]
-    );
-  };
-
   useEffect(() => {
     getData();
     getEmployees();
@@ -127,8 +121,8 @@ const Details = () => {
 
     // Define columns
     sheet.columns = [
-      { header: "S.No", key: "sno", width: 10 ,bold:true},
-      { header: "Vendor", key: "vendor", width: 20,bold:true },
+      { header: "S.No", key: "sno", width: 10, bold: true },
+      { header: "Vendor", key: "vendor", width: 20, bold: true },
       { header: "Employee Code", key: "employeeCode", width: 15 },
       { header: "Employee Name", key: "employeeName", width: 25 },
       { header: "Department", key: "department", width: 20 },
@@ -422,10 +416,31 @@ const Details = () => {
   };
 
   console.log(data);
+  const handleCheckboxChange = (empId) => {
+    setSelectedEmployees((prevSelected) =>
+      prevSelected.includes(empId)
+        ? prevSelected.filter((id) => id !== empId)
+        : [...prevSelected, empId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedEmployees(filteredEmployees.map((employee) => employee.empId)); // Select all employees
+    } else {
+      setSelectedEmployees([]); // Deselect all employees
+    }
+  };
+
+  // useEffect to watch selectAll and filteredEmployees changes
+  useEffect(() => {
+    handleSelectAll();
+  }, [filteredEmployees, selectAll]);
 
   return (
     <div className="bg-white p-5 w-full h-full mx-auto flex flex-col justify-start items-start">
       <ToastContainer />
+      <button onClick={() => setSelectAll(!selectAll)}>select All</button>
       <div className="mb-6 flex justify-between items-start space-x-4 w-full">
         <div className="flex gap-5">
           <input
@@ -445,7 +460,8 @@ const Details = () => {
             <option value="3P">3P</option>
           </select>
         </div>
-        <div className="pr-5">
+        <div className="pr-5 ">
+          <div></div>
           <button
             onClick={exportExcelFile}
             className="p-2 bg-green-300 text-black w-20 h-10 font-semibold rounded-lg "
@@ -480,8 +496,8 @@ const Details = () => {
                 <td className="p-4 border">
                   <input
                     type="checkbox"
-                    checked={selectedEmployees.includes(employee.empPhone)}
-                    onChange={() => handleCheckboxChange(employee.empPhone)}
+                    checked={selectedEmployees.includes(employee.empId)}
+                    onChange={() => handleCheckboxChange(employee.empId)}
                     className="w-5 h-5 text-gray-600"
                   />
                 </td>
