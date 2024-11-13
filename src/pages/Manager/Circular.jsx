@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Ensure correct import for jwtDecode
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-
+import { ToastContainer } from "react-toastify";
 export const Circular = () => {
   const navigation = useNavigate();
   const today = new Date().toLocaleDateString("en-GB"); // Format as DD/MM/YYYY
@@ -16,11 +14,15 @@ export const Circular = () => {
   const [selectedMessage, setSelectedMessage] = useState(null); // Store selected message for popup
   const [subject, setSubject] = useState(""); // For the subject input
   const [content, setContent] = useState(""); // For the content input
-  const [allSelected, setAllSelected] = useState(false); // State to control "Select All"
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
+
+  // Fetch circular messages
+  // useEffect(() => {
+  //   getCircular();
+  // }, []);
 
   // Toggle chat panel visibility
   const toggleChat = () => {
@@ -38,6 +40,7 @@ export const Circular = () => {
     setIsPopupOpen(false);
     setSelectedMessage(null);
   };
+
 
   // Send new circular message
   const sendCircular = async () => {
@@ -59,36 +62,33 @@ export const Circular = () => {
       );
 
       if (res.status === 200) {
-        toast.success("Circular sent Successfully");
+        toast.success("Circular sent Successfully")
         toggleChat();
-      } else if (res.status === 404) {
-        toast.error("Error: Unable to send circular");
+        
+      }
+      else if(res.status === 404){
+
       }
     } catch (e) {
       console.error("Error sending circular", e);
     }
   };
 
-  // Toggle all messages selection
-  const toggleSelectAll = () => {
-    setAllSelected(!allSelected);
-  };
-
   return (
     <>
-      <ToastContainer />
+    <ToastContainer/>
       <div className="">
-        <div className="w-full">
+        <div className="w-full ">
           {messages.length === 0 ? (
-            <p className="text-gray-600">No messages yet. Start a conversation!</p>
+            <p className="text-gray-600">
+              No messages yet. Start a conversation!
+            </p>
           ) : (
             <ul className="w-full flex flex-col gap-1 overflow-y-hidden">
               {messages.map((msg, index) => (
                 <li
                   key={index}
-                  className={`border border-[#c0c0c0] p-2 rounded-md m-2 cursor-pointer ${
-                    allSelected ? "bg-blue-100" : ""
-                  }`}
+                  className="border border-[#c0c0c0] p-2 rounded-md m-2 cursor-pointer"
                   onClick={() => handleMessageClick(msg)}
                 >
                   <div className="flex flex-col gap-3">
@@ -99,16 +99,6 @@ export const Circular = () => {
               ))}
             </ul>
           )}
-        </div>
-
-        {/* Select All Button */}
-        <div className="flex justify-center mt-4">
-          <button
-            className="bg-blue-500 text-white p-2 rounded-md shadow-lg"
-            onClick={toggleSelectAll}
-          >
-            {allSelected ? "Deselect All" : "Select All"}
-          </button>
         </div>
 
         {/* Toggle Button */}
@@ -123,7 +113,7 @@ export const Circular = () => {
 
         {/* Chat Panel */}
         <div
-          className={`fixed bottom-10 right-4 w-80 h-72 bg-white shadow-xl rounded-lg transform transition-transform duration-300 ease-in-out ${
+          className={`fixed bottom-10 right-4 w-80 h-72  bg-white shadow-xl rounded-lg transform transition-transform duration-300 ease-in-out ${
             isOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
           }`}
         >
@@ -140,7 +130,7 @@ export const Circular = () => {
 
           {/* Chat Body */}
           {/* Chat Footer */}
-          <div className="p-4 border-t flex flex-col gap-3">
+          <div className="p-4  border-t flex flex-col gap-3">
             <input
               type="text"
               placeholder="Subject"
@@ -170,7 +160,9 @@ export const Circular = () => {
           <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 transition-opacity duration-300">
             <div className="bg-white p-4 rounded-md w-1/3 text-center shadow-lg transition-transform duration-300 transform scale-100">
               <h1 className="font-bold text-lg">Date: {formattedDate}</h1>
-              <h1 className="font-bold mt-2">Subject: {selectedMessage.subject}</h1>
+              <h1 className="font-bold mt-2">
+                Subject: {selectedMessage.subject}
+              </h1>
               <p className="mt-4">Content: {selectedMessage.message}</p>
               <button
                 className="mt-6 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
