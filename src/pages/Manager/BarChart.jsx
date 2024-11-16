@@ -85,9 +85,9 @@ const BarChart = () => {
           leaveDateObj.getFullYear();
 
         if (leaveCountByDay[leaveDate]) {
-          leaveCountByDay[leaveDate]++;
+          leaveCountByDay[leaveDate]+= leave.leaveDays;
         } else {
-          leaveCountByDay[leaveDate] = 1;
+          leaveCountByDay[leaveDate] = leave.leaveDays;
         }
       });
 

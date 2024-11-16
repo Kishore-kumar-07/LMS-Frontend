@@ -68,6 +68,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
     const managerList = filterManager.filter((row) => row.role === "Manager");
     const adminList = filterManager.filter((row) => row.role === "Admin");
     setManager(managerList);
+    console.log(managerList)
     setAdmin(adminList);
     }
   }, [filterManager]);
@@ -201,7 +202,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
             "role",
             "vendor",
             "gender",
-            "manager",
+            
             "designation",
             "function",
             "department",
@@ -240,7 +241,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
                   <option value="Other">Other</option>
                 </>
               )}
-              {key === "manager" && (
+              {/* {key === "manager" && (
                   <>
                     {formData.role === "Manager"
                       ? admin.map((admin) => (
@@ -253,8 +254,9 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
                             {manager.empName}
                           </option>
                         ))}
+                        <input>{currentEmployee.manager}</input>
                   </>
-                )}
+                )} */}
               {key === "designation" && (
                 <>
                   <option value="3P Employee">3P Employee</option>

@@ -83,12 +83,19 @@ const Employee = () => {
     if (fileData == "") return;
     console.log(fileData);
 
+    const chunks = [];
+    for (let i = 0; i < fileData.length; i += 25) {
+      const chunk = fileData.slice(i, i + 25);
+      chunks.push(chunk);
+    }
+
+    for(let i = 0 ; i< chunks.length ; i+=1){
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/import`,
         {
           id: adminId,
-          emp: fileData,
+          emp: chunks[i], 
         },
         {
           headers: {
@@ -107,6 +114,7 @@ const Employee = () => {
       toast.error("Error in Importing Data");
       console.log("error");
     }
+  }
   };
 
   const fileType =
@@ -301,58 +309,61 @@ const Employee = () => {
       </div>
     </div>
     <div className="w-full pl-5 pr-5 pt-2 pb-2 h-fit">
-      <div className="w-full h-full overflow-y-auto p-5">
-        <table className="table-auto w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-200 text-black sticky top-0 z-10">
-              <th className="p-2 border">Employee ID</th>
-              <th className="p-2 border">Employee Name</th>
-              <th className="p-2 border">Type</th>
-              <th className="p-2 border">Reporting Manager</th>
-              <th className="p-2 border">DOJ</th>
-              <th className="p-2 border">Phone Number</th>
-              <th className="p-2 border">Edit</th>
-              <th className="p-2 border">Delete</th>
+    <div className="w-full h-full p-5">
+  <div className="w-full h-[570px] overflow-y-auto">
+    <table className="table-auto w-full border-collapse">
+      <thead>
+        <tr className="bg-gray-200 text-black sticky top-0 z-10">
+          <th className="p-2 border">Employee ID</th>
+          <th className="p-2 border">Employee Name</th>
+          <th className="p-2 border">Type</th>
+          <th className="p-2 border">Reporting Manager</th>
+          <th className="p-2 border">DOJ</th>
+          <th className="p-2 border">Phone Number</th>
+          <th className="p-2 border">Edit</th>
+          <th className="p-2 border">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredData.length > 0 ? (
+          filteredData.map((employee) => (
+            <tr key={employee.empId} className="table-row w-full">
+              <td className="p-4 border">{employee.empId}</td>
+              <td className="p-4 border">{employee.empName}</td>
+              <td className="p-4 border">{employee.role}</td>
+              <td className="p-4 border">{employee.manager}</td>
+              <td className="p-4 border">{employee.dateOfJoining}</td>
+              <td className="p-4 border">{employee.empPhone}</td>
+              <td className="border text-md font-medium text-sm flex gap-2 h-[100%] p-4">
+                <button
+                  onClick={() => handleEditClick(employee)}
+                  className="ml-2 text-white px-2 py-1 rounded"
+                >
+                  <img src={edit} height={25} width={25} alt="edit" />
+                </button>
+              </td>
+              <td className="border px-4 py-4 text-md font-medium">
+                <button
+                  onClick={() => handleDeleteClick(employee.empId)}
+                  className="ml-2 text-white px-2 py-1 rounded"
+                >
+                  <img src={delete_} height={25} width={25} alt="delete" />
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody className="h-96 overflow-y-auto  w-full h-full">
-            {filteredData.length > 0 ? (
-              filteredData.map((employee) => (
-                <tr key={employee.empId} className="table-row w-full">
-                  <td className="p-4 border">{employee.empId}</td>
-                  <td className="p-4 border">{employee.empName}</td>
-                  <td className="p-4 border">{employee.role}</td>
-                  <td className="p-4 border">{employee.manager}</td>
-                  <td className="p-4 border">{employee.dateOfJoining}</td>
-                  <td className="p-4 border">{employee.empPhone}</td>
-                  <td className="border text-md font-medium text-sm flex gap-2 h-[100%] p-4">
-                    <button
-                      onClick={() => handleEditClick(employee)}
-                      className="ml-2 text-white px-2 py-1 rounded"
-                    >
-                      <img src={edit} height={25} width={25} alt="edit" />
-                    </button>
-                  </td>
-                  <td className="border px-4 py-4 text-md font-medium">
-                    <button
-                      onClick={() => handleDeleteClick(employee.empId)}
-                      className="ml-2 text-white px-2 py-1 rounded"
-                    >
-                      <img src={delete_} height={25} width={25} alt="delete" />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8" className="p-4 text-center text-gray-500 w-full">
-                  No employees found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="8" className="p-4 text-center text-gray-500 w-full">
+              No employees found.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+
     </div>
     {openRegisterModal && (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">

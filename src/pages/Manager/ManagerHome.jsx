@@ -147,7 +147,7 @@ const AdminHome = () => {
 
   useEffect(() => {
     
-    const totalLeave = leaveCardData.length;
+    const totalLeave = leaveCardData.filter((row) => row.status !== "Withdrawn").length;
     console.log(totalLeave)
     const leavePending = leaveCardData.filter((row) => row.status === "Pending").length;
     const leaveApproved = leaveCardData.filter((row) => row.status === "Approved").length;
