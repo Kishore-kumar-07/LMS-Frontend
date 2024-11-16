@@ -72,7 +72,7 @@ const Details = () => {
         const [day, month_, year] = leave.from.date.split("/");
         if (month == month_) {
           console.log(leave.from.date);
-          date += leave.from.date + " , ";
+          date += leave.from.date + " - " + leave.to.date + " , ";
           console.log(date);
         }
       }
@@ -440,7 +440,7 @@ const Details = () => {
   return (
     <div className="bg-white p-5 w-full h-full mx-auto flex flex-col justify-start items-start">
       <ToastContainer />
-      <button onClick={() => setSelectAll(!selectAll)}>select All</button>
+
       <div className="mb-6 flex justify-between items-start space-x-4 w-full">
         <div className="flex gap-5">
           <input
@@ -470,7 +470,7 @@ const Details = () => {
           </button>
         </div>
       </div>
-
+      <button onClick={() => setSelectAll(!selectAll)} className="p-1 border border-black rounded-lg mb-1 ">select All</button>
       <table className="table-auto w-full border-collapse">
         <thead>
           <tr className="bg-gray-300 text-black">

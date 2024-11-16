@@ -202,8 +202,9 @@ const Table = ({ leaveCardData , permissionCardData }) => {
         }
       );
       const filteredData = response.data.reverse();
+      const filteredData_ = filteredData.filter((row) => row.status != "Withdrawn")
       console.log(filteredData);
-      setData(filteredData);
+      setData(filteredData_);
     } catch (error) {
       if (error.response.status === 400) {
         navigation("/error404");
