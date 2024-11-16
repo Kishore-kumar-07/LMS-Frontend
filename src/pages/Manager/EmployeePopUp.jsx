@@ -122,7 +122,8 @@ function EmployeePopUp({ onClose, employeeId }) {
           },
         }
       );
-      setLogData(res.data.reverse());
+      const correctData = res.data.filter((row) => row.status !== "Withdrawn");
+      setLogData(correctData.reverse());
       console.log(res.data);
       filterLeaveDataByMonth(res.data); // Filter and calculate leave data by month
     } catch (error) {
