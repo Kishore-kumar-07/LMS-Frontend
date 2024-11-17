@@ -11,12 +11,13 @@ function History() {
   const [leaveLogs, setLeaveLogs] = useState([]);
   const [permissionLogs, setPermissionLogs] = useState([]);
   const [activeTab, setActiveTab] = useState("leave");
+  const [reload, setReload] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     getEmployeeLeaveLogs();
     getEmployeePermissionsLogs();
-  }, []);
+  }, [reload]);
 
   const getEmployeeLeaveLogs = async () => {
     try {
@@ -94,7 +95,11 @@ function History() {
 
       <div className="w-[100%] flex justify-center items-start p-4">
         {activeTab === "leave" ? (
-          <LeaveHistoryTable LeaveLogs={leaveLogs} />
+          <LeaveHistoryTable
+            LeaveLogs={leaveLogs}
+            setReload={setReload}
+            reload={reload}
+          />
         ) : (
           <PermissionHistoryTable PermissionLogs={permissionLogs} />
         )}

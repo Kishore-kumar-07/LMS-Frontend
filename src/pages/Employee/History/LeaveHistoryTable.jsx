@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Pagination from "./Pagination";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const LeaveHistoryTable = (props) => {
+const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
   const tableHead = [
     "S.No",
     "Leave Type",
@@ -17,20 +17,19 @@ const LeaveHistoryTable = (props) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 7;
+  const totalPages = Math.ceil(LeaveLogs.length / rowsPerPage);
 
-  const totalPages = Math.ceil(props.LeaveLogs.length / rowsPerPage);
-
-  const currentData = props.LeaveLogs.slice(
+  const currentData = LeaveLogs.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
 
-  const [stauts, setStatus] = useState("");
-
-  useEffect(() => {}, [stauts]);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState(null);
 
   const withDrawStatus = async (leaveId) => {
     try {
@@ -44,15 +43,35 @@ const LeaveHistoryTable = (props) => {
           },
         }
       );
-
       console.log(res);
-    } catch (error) {}
+      setReload(!reload);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleWithdrawClick = (leave) => {
+    setSelectedLeave(leave);
+    setPopupVisible(true);
+  };
+
+  const handleWithdrawConfirm = () => {
+    if (selectedLeave) {
+      console.log(selectedLeave._id);
+
+      withDrawStatus(selectedLeave._id);
+    }
+    setPopupVisible(false);
+  };
+
+  const handleWithdrawCancel = () => {
+    setPopupVisible(false);
   };
 
   return (
     <>
-      <div className="w-full h-full p-5  rounded-lg">
-        <div className="w-full bg-">
+      <div className="w-full h-full p-5 rounded-lg">
+        <div className="w-full">
           <h1 className="text-xl font-semibold mb-2">Leave Log</h1>
         </div>
         <div className="flex flex-wrap flex-col w-full">
@@ -71,7 +90,6 @@ const LeaveHistoryTable = (props) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {currentData.map((val, index) => {
-                // Determine background color based on status
                 const statusBgColor =
                   val.status === "Approved"
                     ? "bg-green-100"
@@ -86,7 +104,6 @@ const LeaveHistoryTable = (props) => {
                     <td className="px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900">
                       {index + 1}
                     </td>
-                    {/* <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.empName}</td> */}
                     <td className="px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900">
                       {val.leaveType}
                     </td>
@@ -99,7 +116,6 @@ const LeaveHistoryTable = (props) => {
                     <td className="px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900">
                       {val.leaveDays}
                     </td>
-                    {/* <td className='px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900'>{val.reasonType}</td> */}
                     <td className="px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900">
                       {val.reason}
                     </td>
@@ -107,19 +123,23 @@ const LeaveHistoryTable = (props) => {
                       className={`px-3 py-5 whitespace-nowrap text-sm font-medium text-center text-gray-900`}
                     >
                       {val.status !== "Pending" ? (
-                        <span  className={`w-full border rounded-md py-2 px-5 focus:outline-none focus:ring ${statusBgColor}`}>{val.status}</span>
-                      ) : (
-                        <select
-                          onChange={(e) => {
-                            setStatus(e.target.value);
-                            withDrawStatus(val._id);
-                          }}
-                          className={` border rounded-md py-2 px-2 focus:outline-none focus:ring ${statusBgColor}`}
+                        <span
+                          className={`w-full border rounded-md py-2 px-5 focus:outline-none focus:ring ${statusBgColor}`}
                         >
-                          {["Pending", "Withdraw"].map((optionVal) => (
-                            <option key={optionVal}>{optionVal}</option>
-                          ))}
-                        </select>
+                          {val.status}
+                        </span>
+                      ) : (
+                        <span
+                          className={`w-full border rounded-md py-2 px-5 focus:outline-none focus:ring ${statusBgColor}`}
+                        >
+                          {val.status}{" "}
+                          <button
+                            className="rounded-full bg-slate-700 text-white px-2 py-1"
+                            onClick={() => handleWithdrawClick(val)}
+                          >
+                            W
+                          </button>
+                        </span>
                       )}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900">
@@ -137,6 +157,31 @@ const LeaveHistoryTable = (props) => {
           />
         </div>
       </div>
+
+      {popupVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-5 rounded-md shadow-md">
+            <h2 className="text-lg font-semibold mb-3">
+              Do you want to withdraw this leave on{" "}
+              <span className="text-blue-500">{selectedLeave?.from.date}</span>?
+            </h2>
+            <div className="flex justify-end space-x-3">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-md"
+                onClick={handleWithdrawCancel}
+              >
+                No
+              </button>
+              <button
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
+                onClick={handleWithdrawConfirm}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
