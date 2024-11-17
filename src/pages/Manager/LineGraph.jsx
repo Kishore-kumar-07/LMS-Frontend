@@ -117,6 +117,15 @@ export default function LineGraph({ color }) {
         borderJoinStyle: 'round',
         tension: 0.3
       },
+      {
+        label: "Threshold (y = 5)",
+        data: Array(12).fill(5), // Creates a horizontal line at y = 5
+        borderColor: "rgb(0, 0, 0)", // Color of the line
+        borderWidth: 1, // Thickness of the line
+        borderDash: [5, 5], // Dashed line style (optional)
+        pointRadius: 0, // Remove points for this dataset
+        fill: false, // No fill under the line
+      },
     ],
   };
 
@@ -139,6 +148,7 @@ export default function LineGraph({ color }) {
         beginAtZero: true,
         max : overAll+1
       },
+      
     },
   };
 

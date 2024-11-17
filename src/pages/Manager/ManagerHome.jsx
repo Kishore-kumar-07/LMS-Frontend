@@ -40,6 +40,7 @@ const AdminHome = () => {
   const [permissionPending, setPermissionPending] = useState(0);
   const [permissionApproved, setPermissionApproved] = useState(0);
   const [permissionDenied, setPermissionDenied] = useState(0);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
 
   const departments = [
     "All Departments",
@@ -174,8 +175,10 @@ const AdminHome = () => {
 
  
   const filteredEmployees = empAll.filter((employee) =>
-    employee.empName.toLowerCase().includes(searchTerm.toLowerCase())
+    employee.empName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (selectedDepartment === "" || employee.department === selectedDepartment)
   );
+  
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedEmployeeIndex, setSelectedEmployeeIndex] = useState(null);
@@ -315,9 +318,33 @@ const AdminHome = () => {
                     type="text"
                     value={searchTerm}
                     onChange={handleSearchChange}
-                    className="w-full p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600 text-sm md:text-base"
+                    className="w-full p-1 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600 text-sm md:text-base"
                     placeholder="Search Employee"
                   />
+                  <select
+            value={selectedDepartment}
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+            className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600 w-[100%]"
+          >
+            <option value="">All Department</option>
+            <option value="Manufacturing">Manufacturing</option>
+                   <option value="Store">Store</option>
+                   <option value="Quality">Quality</option>
+                   <option value="Manufacturing Engineering">
+                     Manufacturing Engineering
+                   </option>
+                   <option value="Facilities and Maintenance">
+                     Facilities and Maintenance
+                   </option>
+                   <option value="Sourcing">Sourcing</option>
+                   <option value="Planning">Planning</option>
+                   <option value="Human Resource">Human Resource</option>
+                   <option value="Customer Support">Customer Support</option>
+                   <option value="Finance">Finance</option>
+                   <option value="EHS">EHS</option>
+                   <option value="TACC Lab">TACC Lab</option>
+                   <option value="Engineering">Engineering</option>
+          </select>
                 </div>
 
                 <div className="overflow-y-auto h-[400px] sm:h-[500px] md:h-[600px]">

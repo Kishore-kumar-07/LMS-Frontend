@@ -16,6 +16,7 @@ const Details = () => {
   const [content, setContent] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState(""); // State to store selected type
+  const [selectedDepartment, setSelectedDepartment] = useState(""); 
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]); // Store all employees
   const [data, setData] = useState([]);
@@ -363,7 +364,8 @@ const Details = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
       const matchesType = selectedType === "" || employee.role === selectedType;
-      return matchesSearchTerm && matchesType;
+      const matchesDepartment = selectedDepartment === "" || employee.department === selectedDepartment;
+      return matchesSearchTerm && matchesType && matchesDepartment;
     });
     setFilteredEmployees(filtered);
   };
@@ -371,7 +373,7 @@ const Details = () => {
   // Trigger filtering every time searchTerm or selectedType changes
   useEffect(() => {
     filterEmployees();
-  }, [searchTerm, selectedType]);
+  }, [searchTerm, selectedType , selectedDepartment]);
 
   const handleSendCircular = () => {
     setIsModalOpen(true);
@@ -458,6 +460,30 @@ const Details = () => {
             <option value="">All Types</option>
             <option value="GVR">GVR</option>
             <option value="3P">3P</option>
+          </select>
+          <select
+            value={selectedDepartment}
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+            className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
+          >
+            <option value="">All Department</option>
+            <option value="Manufacturing">Manufacturing</option>
+                   <option value="Store">Store</option>
+                   <option value="Quality">Quality</option>
+                   <option value="Manufacturing Engineering">
+                     Manufacturing Engineering
+                   </option>
+                   <option value="Facilities and Maintenance">
+                     Facilities and Maintenance
+                   </option>
+                   <option value="Sourcing">Sourcing</option>
+                   <option value="Planning">Planning</option>
+                   <option value="Human Resource">Human Resource</option>
+                   <option value="Customer Support">Customer Support</option>
+                   <option value="Finance">Finance</option>
+                   <option value="EHS">EHS</option>
+                   <option value="TACC Lab">TACC Lab</option>
+                   <option value="Engineering">Engineering</option>
           </select>
         </div>
         <div className="pr-5 ">
