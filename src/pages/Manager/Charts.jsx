@@ -3,9 +3,12 @@ import BarChart from './BarChart';
 import DoughnutChart from './DoughnutChart';
 import LineGraph from './LineGraph';
 import {jwtDecode} from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
-const Charts = () => {
+const Charts = ({department_ , changeInDept}) => {
+
+  const navigation = useNavigate();
 
   const newDate = new Date().getFullYear();
   const currentDate = new Date();
@@ -17,6 +20,8 @@ const Charts = () => {
   const [three_p, setThree_p] = useState(0);
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedMonth, setSelectedMonth] = useState(month);
+  const [empAll, setEmpAll] = useState([]);
+
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -26,16 +31,42 @@ const Charts = () => {
 
   useEffect(() => {
     getData();
+    getAllEmployee();
   }, []);
 
   // Re-run the filter when selectedYear or data changes
   useEffect(() => {
     filterDataByYear(selectedYear, data);
-  }, [selectedYear, data]);
+  }, [selectedYear, data , changeInDept]);
 
   useEffect(()=>{
     filterDataByMonth(selectedMonth, data);
-  },[data ,selectedMonth ])
+  },[data ,selectedMonth , changeInDept])
+
+  const getAllEmployee = async () => {
+    try {
+      const allEmp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/emp/getAll`,
+        { empId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("in admin home ", allEmp);
+      setEmpAll(allEmp.data);
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.log("error");
+    }
+  };
 
   const getData = async () => {
     const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/leave/getLeave`,
@@ -60,18 +91,43 @@ const Charts = () => {
 
   const filterDataByYear = (year, data) => {
     console.log(year, data);
+    console.log(department_)
     const filteredData = data.filter(row => {
       const [day, month, yearStr] = row.from.date.split("/"); // Split "DD/MM/YYYY"
       return parseInt(yearStr) === parseInt(year) && parseInt(month) === parseInt(selectedMonth);
     });
     console.log(filteredData)
     const three_p = filteredData
-      .filter((row) => row.role === "3P" && row.status === "Approved")
-      .reduce((sum, row) => sum + row.leaveDays, 0);
+  .filter((row) => {
+    // Find the corresponding employee object based on the employee ID (or another key)
+    const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
+    return (
+      (department_ === "All Departments" || employee.department === department_) &&
+      row.role === "3P" &&
+      row.status === "Approved"
+    );
+  })
+  .reduce((sum, row) => sum + row.leaveDays, 0);
 
-    const gvr = filteredData
-      .filter((row) => row.role === "GVR" && row.status === "Approved")
-      .reduce((sum, row) => sum + row.leaveDays, 0);
+const gvr = filteredData
+  .filter((row) => {
+    // Find the corresponding employee object based on the employee ID (or another key)
+    const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
+    return (
+      (department_ === "All Departments" || employee.department === department_) &&
+      row.role === "GVR" &&
+      row.status === "Approved"
+    );
+  })
+  .reduce((sum, row) => sum + row.leaveDays, 0);
+
+console.log("3P Leave Days (Department Filtered): ", three_p);
+console.log("GVR Leave Days (Department Filtered): ", gvr);
+
+
+console.log("3P Leave Days (Department Filtered): ", three_p);
+console.log("GVR Leave Days (Department Filtered): ", gvr);
+
 
     setGvr(gvr);
     setThree_p(three_p);
@@ -85,12 +141,36 @@ const Charts = () => {
     });
     console.log(filteredData)
     const three_p = filteredData
-      .filter((row) => row.role === "3P" && row.status === "Approved")
-      .reduce((sum, row) => sum + row.leaveDays, 0);
+  .filter((row) => {
+    // Find the corresponding employee object based on the employee ID (or another key)
+    const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
+    return (
+      (department_ === "All Departments" || employee.department === department_) &&
+      row.role === "3P" &&
+      row.status === "Approved"
+    );
+  })
+  .reduce((sum, row) => sum + row.leaveDays, 0);
 
-    const gvr = filteredData
-      .filter((row) => row.role === "GVR" && row.status === "Approved")
-      .reduce((sum, row) => sum + row.leaveDays, 0);
+const gvr = filteredData
+  .filter((row) => {
+    // Find the corresponding employee object based on the employee ID (or another key)
+    const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
+    return (
+      (department_ === "All Departments" || employee.department === department_) &&
+      row.role === "GVR" &&
+      row.status === "Approved"
+    );
+  })
+  .reduce((sum, row) => sum + row.leaveDays, 0);
+
+console.log("3P Leave Days (Department Filtered): ", three_p);
+console.log("GVR Leave Days (Department Filtered): ", gvr);
+
+
+console.log("3P Leave Days (Department Filtered): ", three_p);
+console.log("GVR Leave Days (Department Filtered): ", gvr);
+
 
     setGvr(gvr);
     setThree_p(three_p);
@@ -101,7 +181,7 @@ const Charts = () => {
       <div className="w-full h-fit rounded-lg mb-3 border border-[#c0c0c0] bg-white">
         <div className="flex md:flex-col lg:flex-row flex-wrap">
           <div className="flex-1 flex justify-center items-center">
-            <BarChart />
+            <BarChart department_ = {department_} changeInDept = {changeInDept}/>
           </div>
           <div className="border border-black-300"></div>
 
@@ -141,7 +221,7 @@ const Charts = () => {
       </div>
 
       <div className="w-full rounded-lg mt-4 h-full bg-white p-2 border border-[#c0c0c0]">
-        <LineGraph />
+        <LineGraph department_ = {department_} changeInDept = {changeInDept}/>
       </div>
     </div>
   );

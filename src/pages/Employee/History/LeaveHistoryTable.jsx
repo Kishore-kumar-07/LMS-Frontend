@@ -146,6 +146,7 @@ const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
                       {val.LOP}
                     </td>
                   </tr>
+                  
                 );
               })}
             </tbody>
