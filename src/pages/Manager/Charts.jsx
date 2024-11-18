@@ -48,7 +48,7 @@ const Charts = () => {
       });
 
     const leaveData = response.data;
-    setData(leaveData); // Set data and let the filter handle the calculation
+    setData(leaveData); 
   };
 
   const handleChangeYear = (e) => {

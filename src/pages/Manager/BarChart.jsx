@@ -58,56 +58,42 @@ const BarChart = () => {
           },
         }
       );
-      console.log(weekDataResponse)
+      console.log(weekDataResponse.data)
       const today = new Date();
-      const lastWeek = new Date();
-      lastWeek.setDate(today.getDate() - 7); // Calculate the date 7 days ago
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(today.getDate() - i);
 
-      // Filter leaves within the last week and with 'Approved' status
-      const filteredLeaves = weekDataResponse.data.filter((leave) => {
-        const leaveDate = new Date(leave.today); // Ensure leave.today is in a parseable format
-        return (
-          leaveDate >= lastWeek &&
-          leaveDate <= today &&
-          leave.status === "Approved"
-        );
+      
+      const formattedDate = date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       });
+      dates.unshift(formattedDate); 
+    }
 
       // Count leaves by day
-      const leaveCountByDay = {};
-      filteredLeaves.forEach((leave) => {
-        const leaveDateObj = new Date(leave.today);
-        const leaveDate =
-          leaveDateObj.toLocaleString("en-US", { month: "short" }) +
-          " " +
-          leaveDateObj.getDate() +
-          " " +
-          leaveDateObj.getFullYear();
+      const leaveCounts = weekDataResponse.data.weekData.reverse(); 
+      console.log(dates)
+      console.log(leaveCounts.weekData)
 
-        if (leaveCountByDay[leaveDate]) {
-          leaveCountByDay[leaveDate]+= leave.leaveDays;
-        } else {
-          leaveCountByDay[leaveDate] = leave.leaveDays;
-        }
-      });
+    // Update the chartData state
+    setChartData({
+      labels: dates, 
+      datasets: [
+        {
+          label: "Leaves",
+          backgroundColor: "rgba(75, 192, 192, 0.6)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+          data: leaveCounts, 
+        },
+      ],
+    });
 
-      const labels = Object.keys(leaveCountByDay);
-      const leaveCounts = Object.values(leaveCountByDay);
-
-      setChartData({
-        labels,
-        datasets: [
-          {
-            label: "Leaves",
-            backgroundColor: "rgba(75, 192, 192, 0.6)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-            data: leaveCounts,
-          },
-        ],
-      });
-
-      setWeekData(filteredLeaves);
+      setWeekData(weekDataResponse);
     } catch (error) {
       console.log("Error fetching week data", error);
     }

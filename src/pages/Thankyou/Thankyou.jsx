@@ -38,7 +38,7 @@ const Thankyou = () => {
           <h1 className="text-5xl font-bold text-gray-800 mb-10">Thank You!</h1>
           <p className="text-lg text-gray-700">
             Your Request has been sent to the reporting Manager and will be
-            updated within EOD
+            updated soon. 
           </p>
         </div>
       </main>
