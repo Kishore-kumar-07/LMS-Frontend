@@ -23,7 +23,7 @@ ChartJS.register(
   BarController
 );
 
-const BarChart = () => {
+const BarChart = ({department_ , changeInDept}) => {
   const [weekData, setWeekData] = useState([]);
   const [chartData, setChartData] = useState({
     labels: [],
@@ -44,13 +44,15 @@ const BarChart = () => {
 
   useEffect(() => {
     getWeekData();
-  }, []);
+  }, [changeInDept]);
 
   const getWeekData = async () => {
     try {
       const weekDataResponse = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/weekData`,
-        { empId },
+        { empId : empId ,
+          department : department_
+         },
         {
           headers: {
             Authorization: `Bearer ${token}`,

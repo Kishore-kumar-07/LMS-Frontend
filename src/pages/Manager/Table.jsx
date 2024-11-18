@@ -13,7 +13,9 @@ import decline from "../../images/cancel.png";
 
 import { useNavigate } from "react-router-dom";
 
-const Table = ({ leaveCardData, permissionCardData }) => {
+
+const Table = ({ leaveCardData , permissionCardData , department_}) => {
+
   const headers = [
     "S.No",
     "Name",
@@ -35,6 +37,8 @@ const Table = ({ leaveCardData, permissionCardData }) => {
   const [editRowId, setEditRowId] = useState(null);
   const [data, setData] = useState([]);
   const [selectedReason, setSelectedReason] = useState(null);
+  const [empAll, setEmpAll] = useState([]);
+
   const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
@@ -188,6 +192,31 @@ const Table = ({ leaveCardData, permissionCardData }) => {
     setEditRowId(null);
   };
 
+  const getAllEmployee = async () => {
+    try {
+      const allEmp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/emp/getAll`,
+        { empId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("in admin home ", allEmp);
+      setEmpAll(allEmp.data);
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.log("error");
+    }
+  };
+
   const getData = async () => {
     try {
       const response = await axios.post(
@@ -201,11 +230,22 @@ const Table = ({ leaveCardData, permissionCardData }) => {
         }
       );
       const filteredData = response.data.reverse();
-      const filteredData_ = filteredData.filter(
-        (row) => row.status != "Withdrawn"
-      );
-      console.log(filteredData);
+
+      const filteredData_ = filteredData.filter((row) => {
+        // Find the employee matching the current row's empId
+        const employee = empAll.find((emp) => emp.empId === row.empId);
+      
+        // Filter rows where status is not "Withdrawn" and department matches the chosen department
+        return (
+          row.status !== "Withdrawn" &&
+          (department_ === "All Departments" || employee.department === department_)
+        );
+      });
+      
+      console.log(filteredData_);
+
       setData(filteredData_);
+      
     } catch (error) {
       if (error.response.status === 400) {
         navigation("/error404");
@@ -222,18 +262,6 @@ const Table = ({ leaveCardData, permissionCardData }) => {
     setPopupOpen(true);
   };
 
-  //  const startIndex = (currentPage - 1) * rowsPerPage;
-  // const endIndex = startIndex + rowsPerPage;
-  // var dataToDisplay = data.slice(startIndex, endIndex);
-
-  // dataToDisplay = [
-  //   ...dataToDisplay,
-  //   ...dataToDisplay,
-  //   ...dataToDisplay,
-  //   ...dataToDisplay,
-  //   ...dataToDisplay,
-  //   ...dataToDisplay,
-  // ];
 
   return (
     <div className="w-[100%] p-3 border-slate-950 rounded-lg">

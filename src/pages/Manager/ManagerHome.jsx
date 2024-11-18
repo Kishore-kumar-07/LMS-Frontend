@@ -41,6 +41,8 @@ const AdminHome = () => {
   const [permissionApproved, setPermissionApproved] = useState(0);
   const [permissionDenied, setPermissionDenied] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedDepartmentMain , setSelectedDepartmentMain] = useState("All Departments");
+  const [changeInDept , setChangeInDept] = useState(false);
 
   const departments = [
     "All Departments",
@@ -148,29 +150,108 @@ const AdminHome = () => {
 
   useEffect(() => {
     
-    const totalLeave = leaveCardData.filter((row) => row.status !== "Withdrawn").length;
-    console.log(totalLeave)
-    const leavePending = leaveCardData.filter((row) => row.status === "Pending").length;
-    const leaveApproved = leaveCardData.filter((row) => row.status === "Approved").length;
-    const leaveDenied = totalLeave - leaveApproved-leavePending
+    const totalLeave = leaveCardData.filter((row) => {
+      // Find the employee object from empAll based on employeeId
+      const employee = empAll.find(emp => emp.empId === row.empId);
+    
+      return (
+        row.status !== "Withdrawn" &&
+        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+      );
+    }).length;
+    
+    const leavePending = leaveCardData.filter((row) => {
+      // Find the employee object from empAll based on employeeId
+      const employee = empAll.find(emp => emp.empId === row.empId);
+    
+      return (
+        row.status === "Pending" &&
+        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+      );
+    }).length;
+    
+    const leaveApproved = leaveCardData.filter((row) => {
+      // Find the employee object from empAll based on employeeId
+      const employee = empAll.find(emp => emp.empId === row.empId);
+    
+      return (
+        row.status === "Approved" &&
+        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+      );
+    }).length;
+    
+    const leaveDenied = leaveCardData.filter((row) => {
+      // Find the employee object from empAll based on employeeId
+      const employee = empAll.find(emp => emp.empId === row.empId);
+    
+      return (
+        row.status === "Denied" &&
+        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+      );
+    }).length;
+    
     setTotalLeaveRequests(totalLeave);
     setLeavesPending(leavePending);
     setLeavesApproved(leaveApproved);
     setLeavesDenied(leaveDenied);
 
-    const totalPermission = permissionCardData.length;
-    console.log(totalPermission)
-    const permissionPending = permissionCardData.filter((row) => row.status === "Pending").length;
-    const permissionApproved = permissionCardData.filter((row) => row.status === "Approved").length;
+    const totalPermission = permissionCardData.filter((row) => {
+      // Find the employee object from empAll based on employeeId
+      const employee = empAll.find(emp => emp.id === row.employeeId);
+    
+      return (
+        selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain)
+      );
+    }).length;
+    
+    console.log(totalPermission);
+    
+    const permissionPending = permissionCardData.filter((row) => {
+      // Find the employee object from empAll based on employeeId
+      const employee = empAll.find(emp => emp.id === row.employeeId);
+    
+      return (
+        row.status === "Pending" &&
+        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+      );
+    }).length;
+    
+    const permissionApproved = permissionCardData.filter((row) => {
+      // Find the employee object from empAll based on employeeId
+      const employee = empAll.find(emp => emp.id === row.employeeId);
+    
+      return (
+        row.status === "Approved" &&
+        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+      );
+    }).length;
+    
+    // const permissionDenied = permissionCardData.filter((row) => {
+    //   // Find the employee object from empAll based on employeeId
+    //   const employee = empAll.find(emp => emp.id === row.employeeId);
+    
+    //   return (
+    //     row.status === "Rejected" &&
+    //     (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+    //   );
+    // }).length;
+    
+    console.log(permissionPending, permissionApproved);
+    
     setTotalPermissionRequests(totalPermission);
     setPermissionPending(permissionPending);   
     setPermissionApproved(permissionApproved);
     setPermissionDenied(totalPermission - permissionApproved - permissionPending);
-  }, [leaveCardData , permissionCardData]);
+  }, [leaveCardData , permissionCardData ,selectedDepartmentMain]);
 
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleChange = (event) => {
+    setSelectedDepartmentMain(event.target.value); // Update state when an option is selected
+    setChangeInDept(!changeInDept); // Update state when an option changes
   };
 
  
@@ -219,7 +300,8 @@ const AdminHome = () => {
               <div className="w-full lg:w-[75%] flex flex-col p-3 gap-3">
                 <div className="w-full flex justify-between gap-3 pb-5">
                   <div className="w-full lg:w-[30%]">
-                    <select className="w-full border rounded-md p-2 focus:outline-none focus:ring">
+                    <select className="w-full border rounded-md p-2 focus:outline-none focus:ring" value={selectedDepartmentMain} // Bind the state to the select value
+        onChange={handleChange}>
                       {departments.map((row) => (
                         <option key={row}>{row}</option>
                       ))}
@@ -250,9 +332,9 @@ const AdminHome = () => {
                     <Card label="Leave Denied" value={leavesDenied} color = "#FFB0B0" />
                   </div>
                 </div>
-                      <Table leaveCardData={getLeaveCardData} permissionCardData = {getPermissionCardData}/>
+                      <Table leaveCardData={getLeaveCardData} permissionCardData = {getPermissionCardData} department_ = {selectedDepartmentMain} changeInDept = {changeInDept}/>
                     </div>
-                  ) : isPermission ? (
+                  ) : isPermission ? ( 
                     <div>
                       <div className="w-full h-fit p-3 rounded-lg">
                   <div className="flex flex-wrap justify-between gap-3">
@@ -294,7 +376,7 @@ const AdminHome = () => {
                     <Card label="Permission Pending" value={permissionPending} color = "#FEEFAD"   />
                   </div>
                 </div>
-                      <Charts />
+                      <Charts department_ = {selectedDepartmentMain} changeInDept = {changeInDept}/>
                     </div>
                   )}
                 </div>
