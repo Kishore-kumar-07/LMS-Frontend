@@ -4,7 +4,9 @@ import { jwtDecode } from "jwt-decode";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { ClockLoader } from "react-spinners";
 import "react-toastify/dist/ReactToastify.css";
+import { CURRENT_STATUS } from "../../statusIndicator";
 
 function ChangePassword() {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ function ChangePassword() {
   const [showReOldPass, setShowReOldPass] = useState(false);
   const [isOtp, setIsOtp] = useState(false);
   const [otp, setOtp] = useState("");
+  const [isLoading, setIsLoading] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -33,6 +36,8 @@ function ChangePassword() {
       return;
     }
     try {
+      setIsLoading(CURRENT_STATUS.LOADING);
+
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/checkPassword`,
         { empId: decodedToken.empId, password: oldPass },
@@ -45,13 +50,17 @@ function ChangePassword() {
       );
       toast.success("Verified");
       if (res.status === 200) {
+        setIsLoading(CURRENT_STATUS.SUCCESS);
+
         sendOtp();
       }
     } catch (e) {
       console.log(e);
       console.log(decodedToken.empId);
+      setIsLoading(CURRENT_STATUS.ERROR);
 
-      toast.error("Wrong");
+
+      toast.error("Somthing Went Wrong");
     }
   };
 
@@ -59,16 +68,22 @@ function ChangePassword() {
     try {
       console.log("inside try");
 
+      setIsLoading(CURRENT_STATUS.LOADING);
+
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/otp/send`,
         { userName: "24Gilbarco003" },
         { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
+        setIsLoading(CURRENT_STATUS.IDEAL);
+
         setIsOtp(!isOtp);
         toast.success("Otp Sent");
       }
     } catch (e) {
+      setIsLoading(CURRENT_STATUS.ERROR);
+
       console.log(e);
       toast.error("Wrong Opt");
     }
@@ -77,17 +92,21 @@ function ChangePassword() {
   const validateOtp = async () => {
     try {
       console.log("otp is ", otp);
+      setIsLoading(CURRENT_STATUS.LOADING);
+
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/otp/verify`,
         { userName: "24Gilbarco003", otp: otp },
         { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
+        setIsLoading(CURRENT_STATUS.IDEAL);
         toast.success("Otp Is valid");
         navigate(`/reset-password/24Gilbarco003`);
       }
     } catch (e) {
       toast.error("Otp Is Not Valid");
+      setIsLoading(CURRENT_STATUS.ERROR);
     }
   };
 
@@ -155,12 +174,18 @@ function ChangePassword() {
             />
           )}
 
-          <button
-            className=" bg-blue-500 text-white font-bold py-2 px-4 rounded w-[30%] hover:bg-blue-600 transition duration-200"
-            onClick={isOtp ? validateOtp : verifyPass}
-          >
-            {isOtp ? "Validate Otp" : "Verify"}
-          </button>
+          {isLoading !== CURRENT_STATUS.LOADING ? (
+            <button
+              className=" bg-blue-500 text-white font-bold py-2 px-4 rounded w-[30%] hover:bg-blue-600 transition duration-200"
+              onClick={isOtp ? validateOtp : verifyPass}
+            >
+              {isOtp ? "Validate Otp" : "Verify"}
+            </button>
+          ) : (
+            <div className="flex justify-center items-center mt-5">
+              <ClockLoader color="#000000" size={30} />
+            </div>
+          )}
           <button
             className="self-start bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mt-4 w-[20%]"
             onClick={() => navigate(-1)}

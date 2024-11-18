@@ -12,7 +12,7 @@ const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
     "No of Days",
     "Reason of Leave",
     "Status",
-    "LOP",
+    // "LOP",
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +58,6 @@ const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
   const handleWithdrawConfirm = () => {
     if (selectedLeave) {
       console.log(selectedLeave._id);
-
       withDrawStatus(selectedLeave._id);
     }
     setPopupVisible(false);
@@ -81,7 +80,7 @@ const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
                 {tableHead.map((val, index) => (
                   <th
                     key={index}
-                    className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-widest"
+                    className="px-6 py-5  text-xs font-medium text-gray-500 uppercase tracking-widest"
                   >
                     {val}
                   </th>
@@ -129,22 +128,24 @@ const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
                           {val.status}
                         </span>
                       ) : (
-                        <span
-                          className={`w-full border rounded-md py-2 px-5 focus:outline-none focus:ring ${statusBgColor}`}
-                        >
-                          {val.status}{" "}
+                        <div className="flex gap-2 w-full justify-center items-center" >
+                          <span
+                            className={`ml-5 border rounded-md py-2 px-5 focus:outline-none focus:ring ${statusBgColor}`}
+                          >
+                            {val.status}{" "}
+                          </span>
                           <button
-                            className="rounded-full bg-slate-700 text-white px-2 py-1"
+                            className="rounded-full bg-[#f5f6f7] shadow-md  text-slate-500 px-2 py-1"
                             onClick={() => handleWithdrawClick(val)}
                           >
-                            W
+                            ✎
                           </button>
-                        </span>
+                        </div>
                       )}
                     </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900">
+                    {/* <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-center text-gray-900">
                       {val.LOP}
-                    </td>
+                    </td> */}
                   </tr>
                 );
               })}

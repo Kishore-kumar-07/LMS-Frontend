@@ -13,7 +13,7 @@ import decline from "../../images/cancel.png";
 
 import { useNavigate } from "react-router-dom";
 
-const Table = ({ leaveCardData , permissionCardData }) => {
+const Table = ({ leaveCardData, permissionCardData }) => {
   const headers = [
     "S.No",
     "Name",
@@ -33,18 +33,17 @@ const Table = ({ leaveCardData , permissionCardData }) => {
   const [isPopupOpen, setPopupOpen] = useState(false);
 
   const [editRowId, setEditRowId] = useState(null);
-    const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
   const [selectedReason, setSelectedReason] = useState(null);
   const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
-    
+
   useEffect(() => {
     getData();
   }, []);
-
 
   const handleAccept = async (id, status) => {
     try {
@@ -202,7 +201,9 @@ const Table = ({ leaveCardData , permissionCardData }) => {
         }
       );
       const filteredData = response.data.reverse();
-      const filteredData_ = filteredData.filter((row) => row.status != "Withdrawn")
+      const filteredData_ = filteredData.filter(
+        (row) => row.status != "Withdrawn"
+      );
       console.log(filteredData);
       setData(filteredData_);
     } catch (error) {
@@ -236,116 +237,123 @@ const Table = ({ leaveCardData , permissionCardData }) => {
 
   return (
     <div className="w-[100%] p-3 border-slate-950 rounded-lg">
-  <ToastContainer />
-  <div className="w-[100%] overflow-x-auto">
-    <div className="max-h-[400px] overflow-y-auto"> {/* Add this div for vertical scrolling */}
-      <table className="divide-y divide-gray-200 bg-white w-full">
-        <thead className="bg-gray-50">
-          <tr>
-            {headers.map((header, index) => (
-              <th
-                key={index}
-                className="px-5 py-3 text-left font-bold text-sm text-gray-500 uppercase tracking-wider"
-              >
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200 text-lg">
-          {data.map((row, rowIndex) => (
-            <tr key={rowIndex + 1}>
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                {rowIndex + 1}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
-                {row.empName}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
-                {row.role}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
-                {row.leaveType}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
-                {row.from.date}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
-                {row.to.date}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
-                {row.leaveDays}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-md font-medium text-gray-900 cursor-pointer">
-                <MdMessage onClick={() => handleReasonClick(row.reason)} />
-              </td>
-              <td className="text-md font-medium text-sm flex gap-2 pt-2 justify-center items-center h-full">
-                {editRowId === row._id ? (
-                  <>
-                    <div
-                      onClick={() => handleAccept(row._id, row.status)}
-                      className="flex justify-center cursor-pointer items-center"
-                    >
-                      <img
-                        src={accept}
-                        alt="approve"
-                        width={25}
-                        height={25}
-                      />
-                    </div>
-                    <div
-                      onClick={() => handleReject(row._id, row.status)}
-                      className="flex justify-center cursor-pointer items-center"
-                    >
-                      <img
-                        src={decline}
-                        alt="decline"
-                        width={25}
-                        height={25}
-                      />
-                    </div>
+      <ToastContainer />
+      <div className="w-[100%] overflow-x-auto">
+        <div className="max-h-[400px] overflow-y-auto">
+          {" "}
+          {/* Add this div for vertical scrolling */}
+          <table className="divide-y divide-gray-200 bg-white w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                {headers.map((header, index) => (
+                  <th
+                    key={index}
+                    className="px-5 py-3 text-left font-bold text-sm text-gray-500 uppercase tracking-wider"
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200 text-lg">
+              {data.map((row, rowIndex) => (
+                <tr key={rowIndex + 1}>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                    {rowIndex + 1}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                    {row.empName}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                    {row.role}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                    {row.leaveType}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                    {row.from.date}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                    {row.to.date}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 justify-center items-center">
+                    {row.leaveDays}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-md font-medium text-gray-900 cursor-pointer">
+                    <MdMessage onClick={() => handleReasonClick(row.reason)} />
+                  </td>
+                  <td className="text-md font-medium text-sm flex gap-2 pt-2 justify-center items-center h-full">
+                    {editRowId === row._id ? (
+                      <>
+                        {status != CURRENT_STATUS.LOADING  ? (
+                          <>
+                            <div
+                              onClick={() => handleAccept(row._id, row.status)}
+                              className="flex justify-center cursor-pointer items-center"
+                            >
+                              <img
+                                src={accept}
+                                alt="approve"
+                                width={25}
+                                height={25}
+                              />
+                            </div>
+                            <div
+                              onClick={() => handleReject(row._id, row.status)}
+                              className="flex justify-center cursor-pointer items-center"
+                            >
+                              <img
+                                src={decline}
+                                alt="decline"
+                                width={25}
+                                height={25}
+                              />
+                            </div>
+                            <button
+                              onClick={handleCancelEdit}
+                              className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <BeatLoader />
+                        )}
+                      </>
+                    ) : (
+                      <span
+                        className={
+                          row.status === "Pending"
+                            ? "text-yellow-500"
+                            : row.status === "Approved"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
+                      >
+                        {row.status}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2 text-md font-medium">
                     <button
-                      onClick={handleCancelEdit}
+                      onClick={() => handleEditClick(row._id)}
                       className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
                     >
-                      Cancel
+                      <MdEdit />
                     </button>
-                  </>
-                ) : (
-                  <span
-                    className={
-                      row.status === "Pending"
-                        ? "text-yellow-500"
-                        : row.status === "Approved"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }
-                  >
-                    {row.status}
-                  </span>
-                )}
-              </td>
-              <td className="px-4 py-2 text-md font-medium">
-                <button
-                  onClick={() => handleEditClick(row._id)}
-                  className="ml-2 bg-gray-500 text-white px-2 py-1 rounded"
-                >
-                  <MdEdit />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <Popup
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <Popup
         isOpen={isPopupOpen}
         onClose={() => setPopupOpen(false)}
         content={selectedReason}
       />
-</div>
-
+    </div>
   );
 };
 

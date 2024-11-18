@@ -19,14 +19,18 @@ function Nav({ setIsManager, setIsEmployees }) {
 
   const handleClick = (section) => {
     setSelected(section);
-    setIsMobileMenuOpen(false); 
+    setIsMobileMenuOpen(false);
     if (section === "Employees") {
       setIsManager(false);
       setIsEmployees(true);
     } else if (section === "Managers") {
       setIsManager(true);
       setIsEmployees(false);
-    } 
+    }
+  };
+
+  const handleChange = () => {
+    navigate("/ChangePassword");
   };
 
   useEffect(() => {
@@ -50,8 +54,6 @@ function Nav({ setIsManager, setIsEmployees }) {
 
         const userData = res.data[0];
         setUserDetails(userData);
-
-       
       } catch (error) {
         if (error.response.status === 400) {
           navigate("/error404");
@@ -89,7 +91,7 @@ function Nav({ setIsManager, setIsEmployees }) {
           <div className="text-xl font-semibold cursor-pointer pl-10">
             <img src={GVR} alt="GVR Logo" width={120} height={80} />
           </div>
-          <div className="block md:hidden flex justify-center items-center">
+          <div className=" md:hidden flex justify-center items-center">
             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? (
                 <FaTimes className="text-2xl" />
@@ -106,28 +108,25 @@ function Nav({ setIsManager, setIsEmployees }) {
                 : "hidden md:flex"
             }`}
           >
-            {[ "Employees" , "Managers"].map(
-              (section) => (
-                <span
-                  key={section}
-                  onClick={() => {
-                    handleClick(section);
-                    setActiveNav(
-                      section.charAt(0).toUpperCase() + section.slice(1)
-                    ); 
-                  }}
-                  className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
-                    activeNav ===
+            {["Employees", "Managers"].map((section) => (
+              <span
+                key={section}
+                onClick={() => {
+                  handleClick(section);
+                  setActiveNav(
                     section.charAt(0).toUpperCase() + section.slice(1)
-                      ? "text-[#015E84] border-[#015E84]"
-                      : "text-black border-transparent"
-                  }`}
-                >
-                  {section.charAt(0).toUpperCase() + section.slice(1)}{" "}
-                  
-                </span>
-              )
-            )}
+                  );
+                }}
+                className={`px-4 py-2 cursor-pointer font-semibold text-lg transition-all duration-300 ease-in-out border-b-2 ${
+                  activeNav ===
+                  section.charAt(0).toUpperCase() + section.slice(1)
+                    ? "text-[#015E84] border-[#015E84]"
+                    : "text-black border-transparent"
+                }`}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1)}{" "}
+              </span>
+            ))}
           </div>
 
           <div className="flex justify-around items-center relative pr-10 ">
@@ -196,12 +195,22 @@ function Nav({ setIsManager, setIsEmployees }) {
                       </tr>
                     </tbody>
                   </table>
-                  <button
-                    className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
+
+                  <div className="w-full flex justify-around gap-2">
+                    <button
+                      className="w-[50%] mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+
+                    <button
+                      className="w-[50%] mt-4 text-blue-500  px-4 py-2 rounded-lg"
+                      onClick={handleChange}
+                    >
+                      <u>Change Password</u>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
