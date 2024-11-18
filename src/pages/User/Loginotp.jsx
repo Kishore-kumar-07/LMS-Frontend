@@ -229,7 +229,7 @@ function Loginotp() {
               Forgot Password?
             </p>
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/')}
               className="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mt-4 w-[20%]"
             >
               Back
