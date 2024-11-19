@@ -354,7 +354,7 @@ const AdminHome = () => {
                     <Card label="Permission Denied" value={permissionDenied} color = "#FFB0B0" />
                   </div>
                 </div>
-                      <PermissionTable />
+                      <PermissionTable permissionCardData = {getPermissionCardData} changeInDept = {changeInDept} department_ = {selectedDepartmentMain}/>
                     </div>
                   ) : (
                     <div>

@@ -12,7 +12,10 @@ import { CURRENT_STATUS } from "../../statusIndicator";
 import accept from "../../images/accept.png";
 import decline from "../../images/cancel.png";
 
-const PermissionTable = () => {
+import { useNavigate } from "react-router-dom";
+
+
+const PermissionTable = ({permissionCardData ,  changeInDept , department_}) => {
   const headers = [
     "S.No",
     "Name",
@@ -29,7 +32,10 @@ const PermissionTable = () => {
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
 
+  const navigation = useNavigate();
+
   const [data, setData] = useState([]);
+  const [empAll, setEmpAll] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReason, setSelectedReason] = useState(null);
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -87,7 +93,7 @@ const PermissionTable = () => {
             },
           }
         );
-
+        permissionCardData();
         setStatus(CURRENT_STATUS.IDEAL);
 
         if (response.status === 200) {
@@ -148,7 +154,7 @@ const PermissionTable = () => {
             },
           }
         );
-
+        permissionCardData();
         setStatus(CURRENT_STATUS.IDEAL);
 
         if (response.status === 200) {
@@ -178,7 +184,37 @@ const PermissionTable = () => {
 
   useEffect(() => {
     getData();
+    getAllEmployee();
   }, []);
+
+  useEffect(() => {
+    changeTableData();
+  }, [changeInDept , data]);
+
+  const getAllEmployee = async () => {
+    try {
+      const allEmp = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/emp/getAll`,
+        { empId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("in admin home ", allEmp);
+      setEmpAll(allEmp.data);
+    } catch (error) {
+      if (error.response.status === 400) {
+        navigation("/error404");
+      }
+      if (error.response.status === 500) {
+        navigation("/error500");
+      }
+      console.log("error");
+    }
+  };
 
   const getData = async () => {
     try {
@@ -195,11 +231,28 @@ const PermissionTable = () => {
         }
       );
       const filteredData = response.data.reverse();
+      console.log(filteredData);
+      setData(filteredData);
       setFilteredData(filteredData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
+  const changeTableData = () => {
+    const filteredData_ = data.filter((row) => {
+      
+      const employee = empAll.find((emp) => emp.empId === row.empId);
+  
+      return (
+        
+        (department_ === "All Departments" || employee.department === department_)
+      );
+    });
+    console.log(department_)
+    console.log(filteredData_);
+    setFilteredData(filteredData_);
+  }
 
   return (
     <div className="w-[100%] p-3 border-slate-950 rounded-lg">

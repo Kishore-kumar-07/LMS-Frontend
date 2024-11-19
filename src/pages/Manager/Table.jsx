@@ -14,7 +14,7 @@ import decline from "../../images/cancel.png";
 import { useNavigate } from "react-router-dom";
 
 
-const Table = ({ leaveCardData , permissionCardData , department_}) => {
+const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept}) => {
 
   const headers = [
     "S.No",
@@ -38,6 +38,7 @@ const Table = ({ leaveCardData , permissionCardData , department_}) => {
   const [data, setData] = useState([]);
   const [selectedReason, setSelectedReason] = useState(null);
   const [empAll, setEmpAll] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
   const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
 
@@ -47,7 +48,14 @@ const Table = ({ leaveCardData , permissionCardData , department_}) => {
 
   useEffect(() => {
     getData();
+    getAllEmployee();
   }, []);
+
+  useEffect(() => {
+    changeTableData();
+  }, [changeInDept , data]);
+
+
 
   const handleAccept = async (id, status) => {
     try {
@@ -231,20 +239,10 @@ const Table = ({ leaveCardData , permissionCardData , department_}) => {
       );
       const filteredData = response.data.reverse();
 
-      const filteredData_ = filteredData.filter((row) => {
-        // Find the employee matching the current row's empId
-        const employee = empAll.find((emp) => emp.empId === row.empId);
       
-        // Filter rows where status is not "Withdrawn" and department matches the chosen department
-        return (
-          row.status !== "Withdrawn" &&
-          (department_ === "All Departments" || employee.department === department_)
-        );
-      });
-      
-      console.log(filteredData_);
 
-      setData(filteredData_);
+      setData(filteredData);
+      setFilteredData(filteredData);
       
     } catch (error) {
       if (error.response.status === 400) {
@@ -256,6 +254,22 @@ const Table = ({ leaveCardData , permissionCardData , department_}) => {
       console.error("Error fetching data:", error);
     }
   };
+
+  const changeTableData = () =>{
+    const filteredData_ = data.filter((row) => {
+      // Find the employee matching the current row's empId
+      const employee = empAll.find((emp) => emp.empId === row.empId);
+    
+      // Filter rows where status is not "Withdrawn" and department matches the chosen department
+      return (
+        row.status !== "Withdrawn" &&
+        (department_ === "All Departments" || employee.department === department_)
+      );
+    });
+    
+    console.log(filteredData_);
+    setFilteredData(filteredData_);
+  }
 
   const handleReasonClick = (reason) => {
     setSelectedReason(reason);
@@ -284,7 +298,7 @@ const Table = ({ leaveCardData , permissionCardData , department_}) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 text-lg">
-              {data.map((row, rowIndex) => (
+              {filteredData.map((row, rowIndex) => (
                 <tr key={rowIndex + 1}>
                   <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                     {rowIndex + 1}
