@@ -428,7 +428,7 @@ const Details = () => {
 
   const handleSelectAll = () => {
     if (selectAll) {
-      setSelectedEmployees(filteredEmployees.map((employee) => employee.empId)); // Select all employees
+      setSelectedEmployees(filteredEmployees.map((employee) => employee.empPhone)); // Select all employees
     } else {
       setSelectedEmployees([]); // Deselect all employees
     }
@@ -522,8 +522,8 @@ const Details = () => {
                 <td className="p-4 border">
                   <input
                     type="checkbox"
-                    checked={selectedEmployees.includes(employee.empId)}
-                    onChange={() => handleCheckboxChange(employee.empId)}
+                    checked={selectedEmployees.includes(employee.empPhone)}
+                    onChange={() => handleCheckboxChange(employee.empPhone)}
                     className="w-5 h-5 text-gray-600"
                   />
                 </td>
