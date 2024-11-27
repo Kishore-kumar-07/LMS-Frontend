@@ -114,7 +114,7 @@ const BarChart = ({department_ , changeInDept}) => {
           />
         </div>
       </div>
-      <p>Last Week Data</p>
+      <p className="font-semibold">Leave Count by Date</p>
     </div>
   );
 };

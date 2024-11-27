@@ -20,7 +20,9 @@ function ChangePassword() {
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
+  const userName = decodedToken.userName;
   const empId = decodedToken.empId;
+  console.log(empId , "USERNAME");
 
   const HideShowOldPass = () => {
     setShowOldPass(!showOldPass);
@@ -40,7 +42,7 @@ function ChangePassword() {
 
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/emp/checkPassword`,
-        { empId: decodedToken.empId, password: oldPass },
+        { empId: empId, password: oldPass },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -51,16 +53,18 @@ function ChangePassword() {
       toast.success("Verified");
       if (res.status === 200) {
         setIsLoading(CURRENT_STATUS.SUCCESS);
-
         sendOtp();
       }
     } catch (e) {
       console.log(e);
       console.log(decodedToken.empId);
       setIsLoading(CURRENT_STATUS.ERROR);
+      if(e.status === 400){
+        toast.error("Invalid password");
+      }else{
+        toast.error("Somthing Went Wrong");
 
-
-      toast.error("Somthing Went Wrong");
+      }
     }
   };
 
@@ -72,7 +76,7 @@ function ChangePassword() {
 
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/otp/send`,
-        { userName: "24Gilbarco003" },
+        { userName: userName },
         { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
@@ -83,9 +87,8 @@ function ChangePassword() {
       }
     } catch (e) {
       setIsLoading(CURRENT_STATUS.ERROR);
-
       console.log(e);
-      toast.error("Wrong Opt");
+      toast.error("Otp Not Sent");
     }
   };
 
@@ -96,13 +99,13 @@ function ChangePassword() {
 
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/otp/verify`,
-        { userName: "24Gilbarco003", otp: otp },
+        { userName: userName, otp: otp },
         { headers: { "Content-Type": "application/json" } }
       );
       if (res.status === 200) {
         setIsLoading(CURRENT_STATUS.IDEAL);
         toast.success("Otp Is valid");
-        navigate(`/reset-password/24Gilbarco003`);
+        navigate(`/reset-password/${userName}`);
       }
     } catch (e) {
       toast.error("Otp Is Not Valid");

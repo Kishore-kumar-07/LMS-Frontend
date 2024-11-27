@@ -36,6 +36,7 @@ const DoughnutChart = ({ three_p, gvr }) => {
       <div className="h-fit">
       <Doughnut data={data} options={{ maintainAspectRatio: false }}  />
       </div>
+      <p className="pr-20 font-semibold">Monthly Leave by Role</p>
     </div>
   );
 };

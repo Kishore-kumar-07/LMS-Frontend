@@ -147,6 +147,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
 
       toast.success("User Updated Successfully");
       
+      
 
       setTimeout(() => {
         setOpenEditModal(false);

@@ -37,6 +37,11 @@ function EmployeePopUp({ onClose, employeeId }) {
   const navigation = useNavigate();
   const [events, setEvents] = useState([]);
   const [gaugeData_, setGaugeData] = useState([]);
+  const [clCount, setClCount] = useState(0);
+  const [clTotal, setClTotal] = useState(0);
+  const [plCount, setPlCount] = useState(0);
+  const [plTotal, setPlTotal] = useState(0);
+  const [leaveCount, setLeaveCount] = useState(false);
   const [leaveCounts, setLeaveCounts] = useState(Array(12).fill(0));
   const [lopCounts, setLopCounts] = useState(Array(12).fill(0));
 
@@ -51,8 +56,12 @@ function EmployeePopUp({ onClose, employeeId }) {
     getUserDetails();
     getLogDetails();
     getGaugeDetails();
+    getTableData();
   }, []);
 
+//   useEffect(() => {
+//     setLeaveCount(!leaveCount)
+// }, [totalCountLeave]);
 
   const getGaugeDetails = async () => {
     try {
@@ -131,29 +140,29 @@ function EmployeePopUp({ onClose, employeeId }) {
     }
   };
 
-  const gaugeData = {
-    datasets: [
-      {
-        data: [gaugeData_.emp , gaugeData_.all - gaugeData_.emp],
-        backgroundColor: ["#125B9A", "#e0e0e0"],
-        borderWidth: 0,
-        rotation: 270,
-        circumference: 180,
-        cutout: "80%",
-      },
-    ],
-  };
+  // const gaugeData = {
+  //   datasets: [
+  //     {
+  //       data: [gaugeData_.emp , gaugeData_.all - gaugeData_.emp],
+  //       backgroundColor: ["#125B9A", "#e0e0e0"],
+  //       borderWidth: 0,
+  //       rotation: 270,
+  //       circumference: 180,
+  //       cutout: "80%",
+  //     },
+  //   ],
+  // };
 
-  const gaugeOptions = {
+  // const gaugeOptions = {
     
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      title: { display: true, text: "Leave Percentage" },
+  //   maintainAspectRatio: false,
+  //   plugins: {
+  //     legend: { display: false },
+  //     title: { display: true, text: "Leave Percentage" },
       
       
-    },
-  };
+  //   },
+  // };
 
 
   // Function to filter and calculate leave and LOP counts per month
@@ -181,6 +190,38 @@ function EmployeePopUp({ onClose, employeeId }) {
   useEffect(() => {
     setTheEvents();
   }, [logData]);
+
+  const getTableData = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/table/getDetails`,
+        {
+          empId: employeeId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const fetchedData = res.data;
+      console.log(empId)
+      
+      console.log(fetchedData);
+      setClCount(fetchedData.clDetails.availed)
+      setClTotal(fetchedData.clDetails.totalEligibility)
+      if(fetchedData.plDetails){
+        setPlCount(fetchedData.plDetails.availed);
+        setPlTotal(fetchedData.plDetails.totalEligibility)
+      }
+
+      console.log(fetchedData.clDetails.availed)
+    }
+    catch (error) {
+
+    }
+  }
 
   const setTheEvents = () => {
     setEvents(
@@ -314,10 +355,26 @@ function EmployeePopUp({ onClose, employeeId }) {
                   series={[{ label: "Leave", data: leaveCounts }, { label: "LOP", data: lopCounts }]}
                 />
               </div>
-              <div className="w-1/4 h-3/4 flex justify-center items-center">
-                <Doughnut data={gaugeData} options={gaugeOptions}/>
+              <div className="w-1/4 h-3/4 flex flex-col gap-5 justify-center items-start">
+                <p className="text-lg font-bold">Employee Leave Details: </p>
+                <div className="flex gap-5 font-semibold text-md">
+                <p>CL Details: </p>
+                <p>{clCount} / {clTotal} days</p>
+               
+                </div>
+    
+                {plTotal ?  <div className="flex gap-5 font-semibold text-md">
+                  <p> PL Details: </p>
+              
+                  <p>{plCount} / {plTotal} days</p>
+                  </div>
+                : null}
+               
+                
               </div>
-              <p>{gaugeData_.emp} of {gaugeData_.all}<br></br> Total Leaves</p>
+              <div className="flex flex-col gap-5">
+              
+              </div>
             </div>
           </div>
         </div>

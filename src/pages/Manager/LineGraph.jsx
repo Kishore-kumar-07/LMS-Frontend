@@ -184,7 +184,8 @@ export default function LineGraph({ department_ , changeInDept }) {
 
   return (
     <div style={{ width: '100%', height: '210px' }}>
-      <div className='p-1 w-[20%] flex justify-center items-center gap-4'>
+      <div className='p-1  flex justify-between items-center gap-4 w-full pl-5 pr-5'>
+        <div className='w-[25%] flex gap-5'>
         <select value={filterType} onChange={handleFilterChange} className='border p-1 rounded-lg border-gray border-2 w-[50%]'>
           <option value="All Types">All Types</option>
           <option value="3P">3P</option>
@@ -195,7 +196,16 @@ export default function LineGraph({ department_ , changeInDept }) {
           <option value={newDate - 1}>{newDate - 1}</option>
           <option value={newDate - 2}>{newDate - 2}</option>
         </select>
+        </div>
+        <div className='pr-40 font-semibold text-lg'>
+          Annual Leaves
+        </div>
+        <div>
+          
+        </div>
+        
       </div>
+      
       <div style={{ width: '100%', height: '180px' }}>
         <Line data={data} options={options} />
       </div>
