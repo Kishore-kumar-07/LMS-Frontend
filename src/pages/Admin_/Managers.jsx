@@ -107,7 +107,7 @@ const Managers = () => {
       }
       
     } catch (error) {
-      toast.error("Error in Saving imported Data")
+      // toast.error("Error in Saving imported Data")
       console.log("error");
     }
   }

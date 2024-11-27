@@ -42,7 +42,7 @@ const Login = () => {
               Leave Management System
             </h1>
             <p className="w-[70%] pt-16 pl-20 text-xl font-semibold text-[#1e303c]">
-            To log in using RFID, please scan your card. Alternatively, click 'Login' to use your phone number for authentication
+            To log in using RFID, please scan your card. Alternatively, click 'Login' to use your Username and password for authentication.
             </p>
             <div className = " pt-10 pl-20">
               <button className="w-24 h-10 border-2 font-semibold text-lg rounded-lg border-black" onClick={handleLoginButton}>Login</button>
