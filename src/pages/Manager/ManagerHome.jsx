@@ -256,7 +256,7 @@ const AdminHome = () => {
 
  
   const filteredEmployees = empAll.filter((employee) =>
-    employee.empName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (employee.empName.toLowerCase().includes(searchTerm.toLowerCase()) || employee.empId.includes(searchTerm)) &&
     (selectedDepartment === "" || employee.department === selectedDepartment)
   );
   

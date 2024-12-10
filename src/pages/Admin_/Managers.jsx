@@ -187,7 +187,7 @@ const Managers = () => {
     setFilterManager(filterManager);
     const filtered = filteredData.filter((row) => {
         const matchesSearchTerm =
-          searchTerm === "" || row.empName.toLowerCase().includes(searchTerm.toLowerCase());
+          searchTerm === "" || row.empName.toLowerCase().includes(searchTerm.toLowerCase()) || row.empId.includes(searchTerm);
         return  matchesSearchTerm;
       });
       setFilteredData(filtered);

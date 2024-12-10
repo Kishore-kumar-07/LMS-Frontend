@@ -34,6 +34,8 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
   const navigation = useNavigate();
   const [isPopupOpen, setPopupOpen] = useState(false);
 
+  const [denyReason , setDenyReason]  = useState(false);
+
   const [editRowId, setEditRowId] = useState(null);
   const [data, setData] = useState([]);
   const [selectedReason, setSelectedReason] = useState(null);
@@ -41,6 +43,9 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
   const [filteredData, setFilteredData] = useState([]);
 
   const [status, setStatus] = useState(CURRENT_STATUS.IDEAL);
+
+  const [currentId , setCurrentId] = useState(null);
+  const [currentStatus , setCurrentStatus] = useState(null);
 
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
@@ -124,14 +129,15 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
     }
   };
 
-  const handleReject = async (id, status) => {
+  const handleReject = async () => {
     try {
+      console.log(denyReason);
       setStatus(CURRENT_STATUS.LOADING);
-      if (status === "Pending") {
+      if (currentStatus === "Pending") {
         const response = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/leave/deny`,
           {
-            leaveId: id,
+            leaveId: currentId,
           },
           {
             headers: {
@@ -148,11 +154,11 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
         } else {
           toast.error("Failed to deny leave request.");
         }
-      } else if (status === "Approved") {
+      } else if (currentStatus === "Approved") {
         const response = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/leave/rejectAccepted`,
           {
-            leaveId: id,
+            leaveId: currentId,
             empId: empId,
           },
           {
@@ -178,6 +184,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
       leaveCardData();
       permissionCardData();
       setEditRowId(null);
+      setReasonPopupOpen(false);
     } catch (error) {
       if (error.response.status === 400) {
         navigation("/error404");
@@ -189,7 +196,11 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
       console.error("Error rejecting leave:", error);
       toast.error("Failed to send request");
       setEditRowId(null);
+      
     }
+    setCurrentId(null);
+      setCurrentStatus(null);
+      setReasonPopupOpen(false);
   };
 
   const handleEditClick = (id) => {
@@ -341,7 +352,9 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
                               />
                             </div>
                             <div
-                              onClick={() => handleReject(row._id, row.status)}
+                              onClick={() => (setCurrentId(row._id),
+                                setCurrentStatus(row.status),
+                                setReasonPopupOpen(true))}
                               className="flex justify-center cursor-pointer items-center"
                             >
                               <img
@@ -390,6 +403,45 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           </table>
         </div>
       </div>
+      {isReasonPopupOpen && (
+  <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="absolute inset-0 bg-black opacity-50"></div>
+    <div className="bg-white text-black p-6 rounded-lg shadow-lg z-10 max-w-lg w-full">
+     
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-900">Reason for Denial</h2>
+        <button
+          className="text-[#FF0000] font-semibold text-lg hover:text-gray-800"
+          onClick={() => setReasonPopupOpen(false)}
+        >
+          X
+        </button>
+      </div>
+
+      <textarea
+        className="w-full border rounded-lg p-2 text-gray-800 resize-none"
+        placeholder="Enter the reason for denying the leave..."
+        rows="4" onChange={(e) => setDenyReason(e.target.value)}
+      ></textarea>
+
+      <div className="flex justify-end mt-4 gap-3">
+        <button
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg"
+          onClick={() => setReasonPopupOpen(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg"
+          onClick={handleReject} 
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       <Popup
         isOpen={isPopupOpen}
         onClose={() => setPopupOpen(false)}
