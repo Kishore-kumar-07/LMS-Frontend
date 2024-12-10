@@ -22,7 +22,7 @@ const Employee = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [allEmployees, setAllEmployees] = useState([]);
-  const [filterManager, setFilterManager] = useState([]);
+  const [filterEmployee, setfilterEmployee] = useState([]);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
   const [fileData, setFileData] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -211,17 +211,17 @@ const Employee = () => {
     const filteredData = allEmployees.filter(
       (row) => row.role === "3P" || row.role === "GVR"
     );
-    const filterManager = allEmployees.filter(
+    const filterEmployee = allEmployees.filter(
       (row) => row.role === "Manager" || row.role === "Admin"
     );
-    setFilterManager(filterManager);
+    setfilterEmployee(filterEmployee);
     const filtered = filteredData.filter((row) => {
       const matchesType =
         selectedType === "" ||
         row.role.toLowerCase() === selectedType.toLowerCase();
       const matchesSearchTerm =
         searchTerm === "" ||
-        row.empName.toLowerCase().includes(searchTerm.toLowerCase());
+        row.empName.toLowerCase().includes(searchTerm.toLowerCase()) || row.empId.includes(searchTerm) ;
       return matchesType && matchesSearchTerm;
     });
     setFilteredData(filtered);
@@ -390,7 +390,7 @@ const Employee = () => {
               <Register
                 setOpenRegisterModal={setOpenRegisterModal}
                 getEmployees={getEmployees}
-                filterManager={filterManager}
+                filterEmployee={filterEmployee}
               />
             </div>
           </div>
@@ -436,7 +436,7 @@ const Employee = () => {
                 setOpenEditModal={setOpenEditModal}
                 currentEmployee={currentEmployee}
                 getEmployees={getEmployees}
-                filterManager={filterManager}
+                filterEmployee={filterEmployee}
               />
             </div>
           </div>

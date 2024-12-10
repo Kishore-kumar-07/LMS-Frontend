@@ -362,7 +362,8 @@ const Details = () => {
     const filtered = allEmployees.filter((employee) => {
       const matchesSearchTerm = employee.empName
         .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        .includes(searchTerm.toLowerCase()) ||  employee.empId
+        .includes(searchTerm);
       const matchesType = selectedType === "" || employee.role === selectedType;
       const matchesDepartment = selectedDepartment === "" || employee.department === selectedDepartment;
       return matchesSearchTerm && matchesType && matchesDepartment;

@@ -347,36 +347,41 @@ function EmployeePopUp({ onClose, employeeId }) {
   
           {/* Right - Yearly Leave Statistics */}
           <div className="flex-1 bg-white rounded-lg shadow-sm p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">Yearly Leave Statistics</h2>
-            <div className="flex h-40 w-full ">
-              <div className="flex-1 flex justify-center items-center">
-                <BarChart
-                  xAxis={[{ scaleType: "band", data: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"] }]}
-                  series={[{ label: "Leave", data: leaveCounts }, { label: "LOP", data: lopCounts }]}
-                />
-              </div>
-              <div className="w-1/4 h-3/4 flex flex-col gap-5 justify-center items-start">
-                <p className="text-lg font-bold">Employee Leave Details: </p>
-                <div className="flex gap-5 font-semibold text-md">
-                <p>CL Details: </p>
-                <p>{clCount} / {clTotal} days</p>
-               
-                </div>
-    
-                {plTotal ?  <div className="flex gap-5 font-semibold text-md">
-                  <p> PL Details: </p>
-              
-                  <p>{plCount} / {plTotal} days</p>
-                  </div>
-                : null}
-               
-                
-              </div>
-              <div className="flex flex-col gap-5">
-              
-              </div>
-            </div>
-          </div>
+  <h2 className="text-lg font-semibold text-gray-700 mb-2">Yearly Leave Statistics</h2>
+  <div className="flex h-40 w-full gap-4">
+    {/* Bar Chart Section */}
+    <div className="flex-1 border border-black rounded-lg  flex justify-center items-center">
+      <BarChart
+        xAxis={[
+          {
+            scaleType: "band",
+            data: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
+          },
+        ]}
+        series={[
+          { label: "Leave", data: leaveCounts },
+          { label: "LOP", data: lopCounts },
+        ]}
+      />
+    </div>
+
+    {/* Employee Leave Details Section */}
+    <div className="w-1/4 border border-black rounded-lg p-4 flex flex-col gap-4 justify-center">
+      <p className="text-lg font-bold">Employee Leave Details:</p>
+      <div className="flex gap-5 font-semibold text-md">
+        <p>CL Details:</p>
+        <p>{clCount} / {clTotal} days</p>
+      </div>
+      {plTotal ? (
+        <div className="flex gap-5 font-semibold text-md">
+          <p>PL Details:</p>
+          <p>{plCount} / {plTotal} days</p>
+        </div>
+      ) : null}
+    </div>
+  </div>
+</div>
+
         </div>
   
         {/* Bottom Section */}
