@@ -258,6 +258,7 @@ const PermissionForm = () => {
   const sendPermissionEmail = async (objId) => {
     const emailContent = await render(
       <PermissionEmailTemplate
+        empId = {decodedToken.empId}
         date={formatDate(permissionDate)}
         fromTime={fromTime.format("hh:mm A")}
         toTime={toTime.format("hh:mm A")}

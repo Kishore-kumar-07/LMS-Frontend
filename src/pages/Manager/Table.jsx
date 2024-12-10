@@ -138,6 +138,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           `${process.env.REACT_APP_BASE_URL}/leave/deny`,
           {
             leaveId: currentId,
+            rejectReason: denyReason
           },
           {
             headers: {
@@ -160,6 +161,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           {
             leaveId: currentId,
             empId: empId,
+            rejectReason : denyReason
           },
           {
             headers: {

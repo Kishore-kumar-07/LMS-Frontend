@@ -1,6 +1,7 @@
 import { Html, Head, Body, Text, Button, Img } from "@react-email/components";
 
 const EmailTemplate = ({
+  empId,
   leaveType,
   fromDate,
   toDate,
@@ -29,7 +30,7 @@ const EmailTemplate = ({
         style={{ width: "100px", marginBottom: "20px" }}
       />
       <h1 style={{ color: "#333", fontSize: "24px" }}>
-        Leave Request from {userName}
+        Leave Request from {userName} with id {empId}
       </h1>
       <Text style={{ color: "#555", fontSize: "16px", marginBottom: "20px" }}>
         Hi Manager,
