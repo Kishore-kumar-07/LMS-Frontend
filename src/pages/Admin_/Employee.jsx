@@ -58,7 +58,7 @@ const Employee = () => {
           },
         }
       );
-      // console.log(allEmp.data);
+      console.log(allEmp.data);
       setAllEmployees(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -204,6 +204,7 @@ const Employee = () => {
   };
 
   useEffect(() => {
+    console.log(allEmployees)
     filterData();
   }, [allEmployees]);
 
@@ -215,6 +216,7 @@ const Employee = () => {
       (row) => row.role === "Manager" || row.role === "Admin"
     );
     setfilterEmployee(filterEmployee);
+    console.log(filterEmployee);
     const filtered = filteredData.filter((row) => {
       const matchesType =
         selectedType === "" ||
@@ -390,7 +392,8 @@ const Employee = () => {
               <Register
                 setOpenRegisterModal={setOpenRegisterModal}
                 getEmployees={getEmployees}
-                filterEmployee={filterEmployee}
+                filterEmployees={filterEmployee}
+                
               />
             </div>
           </div>

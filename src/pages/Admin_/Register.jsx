@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { ClockLoader } from "react-spinners";
 
-function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
+function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
   const [formData, setFormData] = useState({
     empId: "",
     empName: "",
@@ -40,12 +40,12 @@ function Register({ setOpenRegisterModal, getEmployees, filterManager }) {
   const [isRegister , setIsRegister] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
-    console.log(filterManager);
-    const managerList = filterManager.filter((row) => row.role === "Manager");
-    const adminList = filterManager.filter((row) => row.role === "Admin");
+    console.log(filterEmployees);
+    const managerList = filterEmployees.filter((row) => row.role === "Manager");
+    const adminList = filterEmployees.filter((row) => row.role === "Admin");
     setManager(managerList);
     setAdmin(adminList);
-  }, [filterManager]);
+  }, [filterEmployees]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
