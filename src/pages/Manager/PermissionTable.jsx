@@ -15,7 +15,7 @@ import decline from "../../images/cancel.png";
 import { useNavigate } from "react-router-dom";
 
 
-const PermissionTable = ({permissionCardData ,  changeInDept , department_}) => {
+const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit , changeInUnit , gender , changeInGender , subDept , changeInSubDept}) => {
   const headers = [
     "S.No",
     "Name",
@@ -189,7 +189,7 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_}) => 
 
   useEffect(() => {
     changeTableData();
-  }, [changeInDept , data]);
+  }, [changeInDept , data ,changeInUnit , changeInGender , changeInSubDept]);
 
   const getAllEmployee = async () => {
     try {
@@ -246,7 +246,10 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_}) => 
   
       return (
         
-        (department_ === "All Departments" || employee.department === department_)
+        (department_ === "All Departments" || employee.department === department_) && 
+        (unit === "All Units" || employee.unit === unit) &&
+        (gender === "All Gender" || employee.gender === gender) &&
+        (subDept === "All Sub Departments" || employee.subDepartment === subDept)
       );
     });
     console.log(department_)

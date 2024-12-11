@@ -20,6 +20,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
     reportingManager: "",
     function: "",
     department: "",
+    subDepartment: "",
     level: "",
     location: "",
     unit: "",
@@ -54,6 +55,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
         manager: currentEmployee.manager || "",
         function: currentEmployee.function || "",
         department: currentEmployee.department || "",
+        subDepartment:currentEmployee.subDepartment || "",
         level: currentEmployee.level || "",
         location: currentEmployee.location || "",
         unit: currentEmployee.unit || "",
@@ -128,6 +130,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
             managerId: currentEmployee.managerId  ,
             function:formData.function,
             department: formData.department,
+            subDepartment:formData.subDepartment,
             level: formData.level,
             location: formData.location,
             unit: formData.unit,
@@ -207,6 +210,7 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
             "designation",
             "function",
             "department",
+            "subDepartment",
             "level",
             "location",
             "unit",
@@ -291,6 +295,37 @@ function EditRegister({ setOpenEditModal , getEmployees , currentEmployee ,  fil
                     <option value="EHS">EHS</option>
                     <option value="TACC Lab">TACC Lab</option>
                     <option value="Engineering">Engineering</option>
+                  </>
+                )}
+                {key === "subDepartment" && (
+                  <>
+                    <option value="">All Sub Departments</option>
+                    <option value="Cable Assembly">Cable Assembly</option>
+                    <option value="Customer Quality">Customer Quality</option>
+                    <option value="Despatch">Despatch</option>
+                    <option value="EHS">EHS</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Facilities">Facilities</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Gpu">Gpu</option>
+                    <option value="Human Resources">Human Resources</option>
+                    <option value="In Store">In Store</option>
+                    <option value="Inward">Inward</option>
+                    <option value="Logistics">Logistics</option>
+                    <option value="Main Assembly">Main Assembly</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Manifold">Manifold</option>
+                    <option value="Master Scheduling">Master Scheduling</option>
+                    <option value="ME">ME</option>
+                    <option value="Meterline">Meterline</option>
+                    <option value="MLD">MLD</option>
+                    <option value="Nozzle">Nozzle</option>
+                    <option value="Plant Quality">Plant Quality</option>
+                    <option value="Sourcing">Sourcing</option>
+                    <option value="Stp">Stp</option>
+                    <option value="Sub Assembly">Sub Assembly</option>
+                    <option value="Supplier Quality">Supplier Quality</option>
+                    <option value="TACC">TACC</option>
                   </>
                 )}
               {key === "level" && (

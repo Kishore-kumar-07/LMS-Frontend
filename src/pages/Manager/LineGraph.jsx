@@ -5,7 +5,7 @@ import moment from 'moment';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 
-export default function LineGraph({ department_ , changeInDept }) {
+export default function LineGraph({ department_ , changeInDept , gender , changeInGender , unit , changeInUnit , subDept , changeInSubDept  }) {
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
@@ -21,10 +21,10 @@ export default function LineGraph({ department_ , changeInDept }) {
   useEffect(() => {
     getLogDetails(); 
     getAllEmployee();
-  }, [changeInDept]);
+  }, [changeInDept , changeInUnit , changeInGender , changeInSubDept]);
 
   const newDate = new Date().getFullYear();
-  console.log(newDate);
+  // console.log(newDate);
 
   const getAllEmployee = async () => {
     try {
@@ -38,7 +38,7 @@ export default function LineGraph({ department_ , changeInDept }) {
           },
         }
       );
-      console.log("in admin home ", allEmp);
+      // console.log("in admin home ", allEmp);
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -89,6 +89,9 @@ export default function LineGraph({ department_ , changeInDept }) {
       const employee = empAll.find(emp => emp.empId === log.empId);
       if (
         (department_ === "All Departments" || employee.department === department_) &&
+        (unit === "All Units" || employee.unit === unit) &&
+        (gender === "All Gender" || employee.gender === gender) &&
+        (subDept === "All Sub Departments" || employee.subDepartment === subDept) &&
         log.status === "Approved"
       ) {
         const fromDate = moment(log.from.date, "DD/MM/YYYY");
@@ -96,7 +99,7 @@ export default function LineGraph({ department_ , changeInDept }) {
         leaveCountPerMonth[monthIndex] += log.leaveDays;
       }
     });
-    console.log(leaveCountPerMonth)
+    // console.log(leaveCountPerMonth)
 
     setLeaveCounts(leaveCountPerMonth);
   };
@@ -119,6 +122,9 @@ export default function LineGraph({ department_ , changeInDept }) {
       const employee = empAll.find(emp => emp.empId === log.empId);
       if (
         (department_ === "All Departments" || employee.department === department_) &&
+        (unit === "All Units" || employee.unit === unit) &&
+        (gender === "All Gender" || employee.gender === gender) &&
+        (subDept === "All Sub Departments" || employee.subDepartment === subDept) &&
         log.status === "Approved"
       ) {
         const fromDate = moment(log.from.date, "DD/MM/YYYY");
@@ -126,7 +132,7 @@ export default function LineGraph({ department_ , changeInDept }) {
         leaveCountPerMonth[monthIndex] += log.leaveDays;
       }
     });
-    console.log(leaveCountPerMonth)
+    // console.log(leaveCountPerMonth)
     setLeaveCounts(leaveCountPerMonth);
   };
 

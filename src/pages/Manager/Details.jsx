@@ -16,13 +16,21 @@ const Details = () => {
   const [content, setContent] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState(""); // State to store selected type
-  const [selectedDepartment, setSelectedDepartment] = useState(""); 
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]); // Store all employees
   const [data, setData] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
   // const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [selectedGender, setSelectedGender] = useState("All Gender");
+  const [selectedUnit, setSelectedUnit] = useState("All Units");
+  const [selectedSubDepartment, setSelectedSubDepartment] = useState(
+    "All Sub Departments"
+  );
+  const [changeInSubDept, setChangeInSubDept] = useState(false);
+  const [changeInGender, setChangeInGender] = useState(false);
+  const [changeInUnit, setChangeInUnit] = useState(false);
 
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
@@ -61,6 +69,40 @@ const Details = () => {
   //   const data = new Blob([excelBuffer], { type: fileType });
   //   FileSaver.saveAs(data, "Report" + fileExtension);
   // };
+
+  const subDepartments = [
+    "All Sub Departments",
+    "Cable Assembly",
+    "Customer Quality",
+    "Despatch",
+    "EHS",
+    "Engineering",
+    "Facilities",
+    "Finance",
+    "Gpu",
+    "Human Resources",
+    "In Store",
+    "Inward",
+    "Logistics",
+    "Main Assembly",
+    "Maintenance",
+    "Manifold",
+    "Master Scheduling",
+    "ME",
+    "Meterline",
+    "MLD",
+    "Nozzle",
+    "Plant Quality",
+    "Sourcing",
+    "Stp",
+    "Sub Assembly",
+    "Supplier Quality",
+    "TACC",
+  ];
+
+  const gender = ["All Gender", "Male", "Female"];
+
+  const units = ["All Units", "DTA", "EOU", "DTA/EOU"];
 
   const getLeaveDates = (month, empId) => {
     let date = "";
@@ -360,13 +402,20 @@ const Details = () => {
   // Function to filter employees based on search and type filter
   const filterEmployees = () => {
     const filtered = allEmployees.filter((employee) => {
-      const matchesSearchTerm = employee.empName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||  employee.empId
-        .includes(searchTerm);
+      const matchesSearchTerm =
+        employee.empName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        employee.empId.includes(searchTerm);
       const matchesType = selectedType === "" || employee.role === selectedType;
-      const matchesDepartment = selectedDepartment === "" || employee.department === selectedDepartment;
-      return matchesSearchTerm && matchesType && matchesDepartment;
+      const matchesDepartment =
+        selectedDepartment === "" || employee.department === selectedDepartment;
+      const matchesGender = 
+        selectedGender === "All Gender" || employee.gender === selectedGender;  
+      const matchesUnit = 
+        selectedUnit === "All Units" || employee.unit === selectedUnit;
+      const matchesSubDept = 
+      selectedSubDepartment=== "All Sub Departments" || employee.subDepartment === selectedSubDepartment;
+      
+      return matchesSearchTerm && matchesType && matchesDepartment && matchesGender && matchesUnit && matchesSubDept;
     });
     setFilteredEmployees(filtered);
   };
@@ -374,7 +423,7 @@ const Details = () => {
   // Trigger filtering every time searchTerm or selectedType changes
   useEffect(() => {
     filterEmployees();
-  }, [searchTerm, selectedType , selectedDepartment]);
+  }, [searchTerm, selectedType, selectedDepartment , selectedGender , selectedUnit , selectedSubDepartment]);
 
   const handleSendCircular = () => {
     setIsModalOpen(true);
@@ -429,10 +478,28 @@ const Details = () => {
 
   const handleSelectAll = () => {
     if (selectAll) {
-      setSelectedEmployees(filteredEmployees.map((employee) => employee.empPhone)); // Select all employees
+      setSelectedEmployees(
+        filteredEmployees.map((employee) => employee.empPhone)
+      ); // Select all employees
     } else {
       setSelectedEmployees([]); // Deselect all employees
     }
+  };
+
+  const handleChangeInSubdept = (event) => {
+    setSelectedSubDepartment(event.target.value);
+    setChangeInSubDept(!changeInSubDept);
+  };
+
+  const handleChangeInGender = (event) => {
+    setSelectedGender(event.target.value);
+    setChangeInGender(!changeInGender);
+  };
+
+  const handleChangeInUnit = (event) => {
+    console.log(event.target.value);
+    setSelectedUnit(event.target.value);
+    setChangeInUnit(!changeInUnit);
   };
 
   // useEffect to watch selectAll and filteredEmployees changes
@@ -445,7 +512,7 @@ const Details = () => {
       <ToastContainer />
 
       <div className="mb-6 flex justify-between items-start space-x-4 w-full">
-        <div className="flex gap-5">
+        <div className="flex gap-5 w-fit">
           <input
             type="text"
             value={searchTerm}
@@ -469,23 +536,50 @@ const Details = () => {
           >
             <option value="">All Department</option>
             <option value="Manufacturing">Manufacturing</option>
-                   <option value="Store">Store</option>
-                   <option value="Quality">Quality</option>
-                   <option value="Manufacturing Engineering">
-                     Manufacturing Engineering
-                   </option>
-                   <option value="Facilities and Maintenance">
-                     Facilities and Maintenance
-                   </option>
-                   <option value="Sourcing">Sourcing</option>
-                   <option value="Planning">Planning</option>
-                   <option value="Human Resource">Human Resource</option>
-                   <option value="Customer Support">Customer Support</option>
-                   <option value="Finance">Finance</option>
-                   <option value="EHS">EHS</option>
-                   <option value="TACC Lab">TACC Lab</option>
-                   <option value="Engineering">Engineering</option>
+            <option value="Store">Store</option>
+            <option value="Quality">Quality</option>
+            <option value="Manufacturing Engineering">
+              Manufacturing Engineering
+            </option>
+            <option value="Facilities and Maintenance">
+              Facilities and Maintenance
+            </option>
+            <option value="Sourcing">Sourcing</option>
+            <option value="Planning">Planning</option>
+            <option value="Human Resource">Human Resource</option>
+            <option value="Customer Support">Customer Support</option>
+            <option value="Finance">Finance</option>
+            <option value="EHS">EHS</option>
+            <option value="TACC Lab">TACC Lab</option>
+            <option value="Engineering">Engineering</option>
           </select>
+          <select
+            className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+            value={selectedSubDepartment} // Bind the state to the select value
+            onChange={handleChangeInSubdept}
+          >
+            {subDepartments.map((row) => (
+              <option key={row}>{row}</option>
+            ))}
+          </select>
+          <select
+            className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+            value={selectedGender} // Bind the state to the select value
+            onChange={handleChangeInGender}
+          >
+            {gender.map((row) => (
+              <option key={row}>{row}</option>
+            ))}
+          </select>
+          <select
+                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+                      value={selectedUnit} // Bind the state to the select value
+                      onChange={handleChangeInUnit}
+                    >
+                      {units.map((row) => (
+                        <option key={row}>{row}</option>
+                      ))}
+                    </select>
         </div>
         <div className="pr-5 ">
           <div></div>
@@ -497,7 +591,12 @@ const Details = () => {
           </button>
         </div>
       </div>
-      <button onClick={() => setSelectAll(!selectAll)} className="p-1 border border-black rounded-lg mb-1 ">select All</button>
+      <button
+        onClick={() => setSelectAll(!selectAll)}
+        className="p-1 border border-black rounded-lg mb-1 "
+      >
+        select All
+      </button>
       <table className="table-auto w-full border-collapse">
         <thead>
           <tr className="bg-gray-300 text-black">
