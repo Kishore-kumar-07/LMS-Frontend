@@ -6,14 +6,14 @@ import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
-const Charts = ({department_ , changeInDept}) => {
+const Charts = ({department_ , changeInDept , unit , changeInUnit , gender , changeInGender , subDept , changeInSubDept}) => {
 
   const navigation = useNavigate();
 
   const newDate = new Date().getFullYear();
   const currentDate = new Date();
   const month = currentDate.getMonth() + 1; 
-  console.log(month)
+  // console.log(month)
 
   const [data, setData] = useState([]);
   const [gvr, setGvr] = useState(0);
@@ -37,11 +37,11 @@ const Charts = ({department_ , changeInDept}) => {
   // Re-run the filter when selectedYear or data changes
   useEffect(() => {
     filterDataByYear(selectedYear, data);
-  }, [selectedYear, data , changeInDept]);
+  }, [selectedYear, data , changeInDept , changeInGender , changeInUnit , changeInSubDept]);
 
   useEffect(()=>{
     filterDataByMonth(selectedMonth, data);
-  },[data ,selectedMonth , changeInDept])
+  },[data ,selectedMonth , changeInDept , changeInGender , changeInUnit , changeInSubDept])
 
   const getAllEmployee = async () => {
     try {
@@ -55,7 +55,7 @@ const Charts = ({department_ , changeInDept}) => {
           },
         }
       );
-      console.log("in admin home ", allEmp);
+      // console.log("in admin home ", allEmp);
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -90,19 +90,22 @@ const Charts = ({department_ , changeInDept}) => {
   };
 
   const filterDataByYear = (year, data) => {
-    console.log(year, data);
-    console.log(department_)
+    // console.log(year, data);
+    // console.log(department_)
     const filteredData = data.filter(row => {
       const [day, month, yearStr] = row.from.date.split("/"); // Split "DD/MM/YYYY"
       return parseInt(yearStr) === parseInt(year) && parseInt(month) === parseInt(selectedMonth);
     });
-    console.log(filteredData)
+    // console.log(filteredData)
     const three_p = filteredData
   .filter((row) => {
     // Find the corresponding employee object based on the employee ID (or another key)
     const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
     return (
       (department_ === "All Departments" || employee.department === department_) &&
+      (unit === "All Units" || employee.unit === unit) && 
+      (gender === "All Gender" || employee.gender === gender) &&
+      (subDept === "All Sub Departments" || employee.subDepartment === subDept) &&
       row.role === "3P" &&
       row.status === "Approved"
     );
@@ -115,18 +118,22 @@ const gvr = filteredData
     const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
     return (
       (department_ === "All Departments" || employee.department === department_) &&
+      (unit === "All Units" || employee.unit === unit) && 
+      (gender === "All Gender" || employee.gender === gender) &&
+      (subDept === "All Sub Departments" || employee.subDepartment === subDept) &&
+
       row.role === "GVR" &&
       row.status === "Approved"
     );
   })
   .reduce((sum, row) => sum + row.leaveDays, 0);
 
-console.log("3P Leave Days (Department Filtered): ", three_p);
-console.log("GVR Leave Days (Department Filtered): ", gvr);
+// console.log("3P Leave Days (Department Filtered): ", three_p);
+// console.log("GVR Leave Days (Department Filtered): ", gvr);
 
 
-console.log("3P Leave Days (Department Filtered): ", three_p);
-console.log("GVR Leave Days (Department Filtered): ", gvr);
+// console.log("3P Leave Days (Department Filtered): ", three_p);
+// console.log("GVR Leave Days (Department Filtered): ", gvr);
 
 
     setGvr(gvr);
@@ -134,18 +141,22 @@ console.log("GVR Leave Days (Department Filtered): ", gvr);
   };
 
   const filterDataByMonth = (month_, data) => {
-    console.log(month, data);
+    // console.log(month, data);
     const filteredData = data.filter(row => {
       const [day, month, yearStr] = row.from.date.split("/"); // Split "DD/MM/YYYY"
       return parseInt(month) === parseInt(month_) && parseInt(yearStr) === parseInt(selectedYear);
     });
-    console.log(filteredData)
+    // console.log(filteredData)
     const three_p = filteredData
   .filter((row) => {
     // Find the corresponding employee object based on the employee ID (or another key)
     const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
     return (
       (department_ === "All Departments" || employee.department === department_) &&
+      (unit === "All Units" || employee.unit === unit) && 
+      (gender === "All Gender" || employee.gender === gender) &&
+      (subDept === "All Sub Departments" || employee.subDepartment === subDept) &&
+
       row.role === "3P" &&
       row.status === "Approved"
     );
@@ -158,18 +169,22 @@ const gvr = filteredData
     const employee = empAll.find(emp => emp.empId === row.empId); // Assuming `employeeId` links to `empAll`
     return (
       (department_ === "All Departments" || employee.department === department_) &&
+      (unit === "All Units" || employee.unit === unit) && 
+      (gender === "All Gender" || employee.gender === gender) &&
+      (subDept === "All Sub Departments" || employee.subDepartment === subDept) &&
+
       row.role === "GVR" &&
       row.status === "Approved"
     );
   })
   .reduce((sum, row) => sum + row.leaveDays, 0);
 
-console.log("3P Leave Days (Department Filtered): ", three_p);
-console.log("GVR Leave Days (Department Filtered): ", gvr);
+// console.log("3P Leave Days (Department Filtered): ", three_p);
+// console.log("GVR Leave Days (Department Filtered): ", gvr);
 
 
-console.log("3P Leave Days (Department Filtered): ", three_p);
-console.log("GVR Leave Days (Department Filtered): ", gvr);
+// console.log("3P Leave Days (Department Filtered): ", three_p);
+// console.log("GVR Leave Days (Department Filtered): ", gvr);
 
 
     setGvr(gvr);
@@ -181,7 +196,7 @@ console.log("GVR Leave Days (Department Filtered): ", gvr);
       <div className="w-full h-fit rounded-lg mb-3 border border-[#c0c0c0] bg-white">
         <div className="flex md:flex-col lg:flex-row flex-wrap">
           <div className="flex-1 flex justify-center items-center">
-            <BarChart department_ = {department_} changeInDept = {changeInDept}/>
+            <BarChart department_ = {department_} changeInDept = {changeInDept} gender = {gender} changeInGender = {changeInGender} unit = {unit} changeInUnit = {changeInUnit} subDept = {subDept} changeInSubDept = {changeInSubDept}/>
           </div>
           <div className="border border-black-300"></div>
 
@@ -221,7 +236,7 @@ console.log("GVR Leave Days (Department Filtered): ", gvr);
       </div>
 
       <div className="w-full rounded-lg mt-4 h-full bg-white p-2 border border-[#c0c0c0]">
-        <LineGraph department_ = {department_} changeInDept = {changeInDept}/>
+        <LineGraph department_ = {department_} changeInDept = {changeInDept} gender = {gender} changeInGender = {changeInGender} unit = {unit} changeInUnit = {changeInUnit} subDept = {subDept} changeInSubDept = {changeInSubDept}/>
       </div>
     </div>
   );

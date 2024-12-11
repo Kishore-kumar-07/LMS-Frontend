@@ -14,7 +14,7 @@ import decline from "../../images/cancel.png";
 import { useNavigate } from "react-router-dom";
 
 
-const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept}) => {
+const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept ,  unit , changeInUnit , gender , changeInGender , subDept , changeInSubDept}) => {
 
   const headers = [
     "S.No",
@@ -58,7 +58,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
 
   useEffect(() => {
     changeTableData();
-  }, [changeInDept , data]);
+  }, [changeInDept , data , changeInUnit , changeInGender , changeInSubDept]);
 
 
 
@@ -79,12 +79,14 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           }
         );
 
-        setStatus(CURRENT_STATUS.IDEAL);
+        
 
         if (response.status === 200) {
           toast.success("Leave request approved successfully!");
+          setStatus(CURRENT_STATUS.IDEAL);
         } else {
           toast.error("Failed to approve leave request.");
+          setStatus(CURRENT_STATUS.IDEAL);
         }
       } else if (status === "Denied") {
         const response = await axios.post(
@@ -100,15 +102,18 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           }
         );
 
-        setStatus(CURRENT_STATUS.IDEAL);
+        
 
         if (response.status === 200) {
           toast.success("Leave request updated successfully!");
+          setStatus(CURRENT_STATUS.IDEAL);
         } else {
           toast.error("Failed to update leave request.");
+          setStatus(CURRENT_STATUS.IDEAL);
         }
       } else {
         toast.warn("Leave already in status Approved");
+        setStatus(CURRENT_STATUS.IDEAL);
       }
 
       getData();
@@ -116,10 +121,12 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
       permissionCardData();
       setEditRowId(null);
     } catch (error) {
-      if (error.response.status === 400) {
+      console.log(error)
+      if (error.status === 404) {
+        
         navigation("/error404");
       }
-      if (error.response.status === 500) {
+      if (error.status === 500) {
         navigation("/error500");
       }
       setStatus(CURRENT_STATUS.IDEAL);
@@ -148,12 +155,14 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           }
         );
 
-        setStatus(CURRENT_STATUS.IDEAL);
+        
 
         if (response.status === 200) {
           toast.success("Leave request declined successfully!");
+          setStatus(CURRENT_STATUS.IDEAL);
         } else {
           toast.error("Failed to deny leave request.");
+          setStatus(CURRENT_STATUS.IDEAL);
         }
       } else if (currentStatus === "Approved") {
         const response = await axios.post(
@@ -171,15 +180,18 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           }
         );
 
-        setStatus(CURRENT_STATUS.IDEAL);
+        
 
         if (response.status === 200) {
           toast.success("Leave request updated successfully!");
+          setStatus(CURRENT_STATUS.IDEAL);
         } else {
           toast.error("Failed to update leave request.");
+          setStatus(CURRENT_STATUS.IDEAL);
         }
       } else {
         toast.warn("Leave already in status Rejected");
+        setStatus(CURRENT_STATUS.IDEAL);
       }
 
       getData();
@@ -188,7 +200,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
       setEditRowId(null);
       setReasonPopupOpen(false);
     } catch (error) {
-      if (error.response.status === 400) {
+      if (error.response.status === 404) {
         navigation("/error404");
       }
       if (error.response.status === 500) {
@@ -228,7 +240,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
       console.log("in admin home ", allEmp);
       setEmpAll(allEmp.data);
     } catch (error) {
-      if (error.response.status === 400) {
+      if (error.response.status === 404) {
         navigation("/error404");
       }
       if (error.response.status === 500) {
@@ -272,11 +284,15 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
     const filteredData_ = data.filter((row) => {
       // Find the employee matching the current row's empId
       const employee = empAll.find((emp) => emp.empId === row.empId);
+      console.log(employee)
     
       // Filter rows where status is not "Withdrawn" and department matches the chosen department
       return (
         row.status !== "Withdrawn" &&
-        (department_ === "All Departments" || employee.department === department_)
+        (department_ === "All Departments" || employee.department === department_) && 
+        (unit === "All Units" || employee.unit === unit) &&
+        (gender === "All Gender" || employee.gender === gender) &&
+        (subDept === "All Sub Departments" || employee.subDepartment === subDept)
       );
     });
     

@@ -20,9 +20,11 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
     dateOfJoining: "",
     function: "",
     department: "",
+    subDepartment: "",
     level: "",
     location: "",
     unit: "",
+    
   });
 
   const navigate = useNavigate();
@@ -37,7 +39,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
   const [manager, setManager] = useState([]);
   const [admin, setAdmin] = useState([]);
 
-  const [isRegister , setIsRegister] = useState(CURRENT_STATUS.IDEAL);
+  const [isRegister, setIsRegister] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
     console.log(filterEmployees);
@@ -72,10 +74,10 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
   };
 
   const formattedDateOfJoining = new Date(formData.dateOfJoining);
-  const day = String(formattedDateOfJoining.getDate()).padStart(2, '0');
-  const month = String(formattedDateOfJoining.getMonth() + 1).padStart(2, '0');
+  const day = String(formattedDateOfJoining.getDate()).padStart(2, "0");
+  const month = String(formattedDateOfJoining.getMonth() + 1).padStart(2, "0");
   const year = formattedDateOfJoining.getFullYear();
-  
+
   const dateOfJoiningFormatted = `${day}-${month}-${year}`;
 
   const handleSubmit = async (e) => {
@@ -111,6 +113,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
           dateOfJoining: dateOfJoiningFormatted,
           function: formData.function,
           department: formData.department,
+          subDepartment: formData.subDepartment,
           level: formData.level,
           location: formData.location,
           unit: formData.unit,
@@ -151,7 +154,6 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
           toast.error("Employee already exists");
         }
         setIsRegister(CURRENT_STATUS.ERROR);
-
       }
     }
   };
@@ -195,6 +197,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
               "Date of Joining",
               "function",
               "department",
+              "subDepartment",
               "level",
               "location",
               "unit",
@@ -272,48 +275,75 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
                   </>
                 )}
                 {key === "department" && (
-                   <>
-                   <option value="Manufacturing">Manufacturing</option>
-                   <option value="Store">Store</option>
-                   <option value="Quality">Quality</option>
-                   <option value="Manufacturing Engineering">
-                     Manufacturing Engineering
-                   </option>
-                   <option value="Facilities and Maintenance">
-                     Facilities and Maintenance
-                   </option>
-                   <option value="Sourcing">Sourcing</option>
-                   <option value="Planning">Planning</option>
-                   <option value="Human Resource">Human Resource</option>
-                   <option value="Customer Support">Customer Support</option>
-                   <option value="Finance">Finance</option>
-                   <option value="EHS">EHS</option>
-                   <option value="TACC Lab">TACC Lab</option>
-                   <option value="Engineering">Engineering</option>
-                 </>
-
+                  <>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Store">Store</option>
+                    <option value="Quality">Quality</option>
+                    <option value="Manufacturing Engineering">
+                      Manufacturing Engineering
+                    </option>
+                    <option value="Facilities and Maintenance">
+                      Facilities and Maintenance
+                    </option>
+                    <option value="Sourcing">Sourcing</option>
+                    <option value="Planning">Planning</option>
+                    <option value="Human Resource">Human Resource</option>
+                    <option value="Customer Support">Customer Support</option>
+                    <option value="Finance">Finance</option>
+                    <option value="EHS">EHS</option>
+                    <option value="TACC Lab">TACC Lab</option>
+                    <option value="Engineering">Engineering</option>
+                  </>
+                )}
+                {key === "subDepartment" && (
+                  <>
+                    <option value="">All Sub Departments</option>
+                    <option value="Cable Assembly">Cable Assembly</option>
+                    <option value="Customer Quality">Customer Quality</option>
+                    <option value="Despatch">Despatch</option>
+                    <option value="EHS">EHS</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Facilities">Facilities</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Gpu">Gpu</option>
+                    <option value="Human Resources">Human Resources</option>
+                    <option value="In Store">In Store</option>
+                    <option value="Inward">Inward</option>
+                    <option value="Logistics">Logistics</option>
+                    <option value="Main Assembly">Main Assembly</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Manifold">Manifold</option>
+                    <option value="Master Scheduling">Master Scheduling</option>
+                    <option value="ME">ME</option>
+                    <option value="Meterline">Meterline</option>
+                    <option value="MLD">MLD</option>
+                    <option value="Nozzle">Nozzle</option>
+                    <option value="Plant Quality">Plant Quality</option>
+                    <option value="Sourcing">Sourcing</option>
+                    <option value="Stp">Stp</option>
+                    <option value="Sub Assembly">Sub Assembly</option>
+                    <option value="Supplier Quality">Supplier Quality</option>
+                    <option value="TACC">TACC</option>
+                  </>
                 )}
                 {key === "level" && (
                   <>
-                  <option value="Junior">Junior</option>
-                  <option value="Senior">Senior</option>
-                </>
-
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
+                  </>
                 )}
                 {key === "location" && (
                   <>
-                    
                     <option value="Coimbatore">Coimbatore</option>
                     <option value="Chennai">Chennai</option>
                   </>
                 )}
                 {key === "unit" && (
                   <>
-                  <option value="DTA">DTA</option>
-                  <option value="EOU">EOU</option>
-                  <option value="DTA/EOU">DTA/EOU</option>
-                </>
-
+                    <option value="DTA">DTA</option>
+                    <option value="EOU">EOU</option>
+                    <option value="DTA/EOU">DTA/EOU</option>
+                  </>
                 )}
               </select>
             ) : key === "dateOfJoining" ? (
@@ -349,39 +379,43 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
         {formData.role === "GVR" && (
           <div className="flex flex-col justify-center gap-3">
             <div className="flex gap-3">
-            <label className="text-gray-700 font-semibold">
-              Paternity Leave
-            </label>
-            <input
-              type="checkbox"
-              checked={isPaternity}
-              onChange={handlePaternityChange}
-              className="mt-2"
-            />
+              <label className="text-gray-700 font-semibold">
+                Paternity Leave
+              </label>
+              <input
+                type="checkbox"
+                checked={isPaternity}
+                onChange={handlePaternityChange}
+                className="mt-2"
+              />
             </div>
             <div className="flex gap-2">
-            <label className="text-gray-700 font-semibold">
-              Adoption Leave
-            </label>
-            <input
-              type="checkbox"
-              checked={isAdoption}
-              onChange={handleAdoptionChange}
-              className="mt-2"
-            />
+              <label className="text-gray-700 font-semibold">
+                Adoption Leave
+              </label>
+              <input
+                type="checkbox"
+                checked={isAdoption}
+                onChange={handleAdoptionChange}
+                className="mt-2"
+              />
             </div>
           </div>
         )}
 
         <div className="col-span-1 md:col-span-3 flex justify-center mt-5">
-         {isRegister!==CURRENT_STATUS.LOADING? <button
-            type="submit"
-            className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Submit
-          </button>: <div className="flex justify-center mt-5">
-                <ClockLoader color="#000000" size={30} />
-              </div>}
+          {isRegister !== CURRENT_STATUS.LOADING ? (
+            <button
+              type="submit"
+              className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Submit
+            </button>
+          ) : (
+            <div className="flex justify-center mt-5">
+              <ClockLoader color="#000000" size={30} />
+            </div>
+          )}
         </div>
       </form>
     </div>

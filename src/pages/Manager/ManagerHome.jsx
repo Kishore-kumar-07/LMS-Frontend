@@ -41,8 +41,17 @@ const AdminHome = () => {
   const [permissionApproved, setPermissionApproved] = useState(0);
   const [permissionDenied, setPermissionDenied] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedDepartmentMain , setSelectedDepartmentMain] = useState("All Departments");
-  const [changeInDept , setChangeInDept] = useState(false);
+  const [selectedDepartmentMain, setSelectedDepartmentMain] =
+    useState("All Departments");
+  const [selectedSubDepartment, setSelectedSubDepartment] = useState(
+    "All Sub Departments"
+  );
+  const [selectedGender, setSelectedGender] = useState("All Gender");
+  const [selectedUnit, setSelectedUnit] = useState("All Units");
+  const [changeInDept, setChangeInDept] = useState(false);
+  const [changeInSubDept, setChangeInSubDept] = useState(false);
+  const [changeInGender, setChangeInGender] = useState(false);
+  const [changeInUnit, setChangeInUnit] = useState(false);
 
   const departments = [
     "All Departments",
@@ -58,8 +67,42 @@ const AdminHome = () => {
     "Finance",
     "EHS",
     "TACC Lab",
-    "Engineering"
+    "Engineering",
   ];
+
+  const subDepartments = [
+    "All Sub Departments",
+    "Cable Assembly",
+    "Customer Quality",
+    "Despatch",
+    "EHS",
+    "Engineering",
+    "Facilities",
+    "Finance",
+    "Gpu",
+    "Human Resources",
+    "In Store",
+    "Inward",
+    "Logistics",
+    "Main Assembly",
+    "Maintenance",
+    "Manifold",
+    "Master Scheduling",
+    "ME",
+    "Meterline",
+    "MLD",
+    "Nozzle",
+    "Plant Quality",
+    "Sourcing",
+    "Stp",
+    "Sub Assembly",
+    "Supplier Quality",
+    "TACC",
+  ];
+
+  const gender = ["All Gender", "Male", "Female"];
+
+  const units = ["All Units", "DTA", "EOU", "DTA/EOU"];
 
   const [isRequest, setIsRequest] = useState(false);
   const [isPermission, setIsPermission] = useState(false);
@@ -100,8 +143,7 @@ const AdminHome = () => {
     try {
       const cardData = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/getLeave`,
-        {empId}
-        ,
+        { empId },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -126,8 +168,7 @@ const AdminHome = () => {
     try {
       const cardData = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/permission/getPermission`,
-        {empId}
-        ,
+        { empId },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -149,117 +190,170 @@ const AdminHome = () => {
   };
 
   useEffect(() => {
-    
     const totalLeave = leaveCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      const employee = empAll.find(emp => emp.empId === row.empId);
-    
+      const employee = empAll.find((emp) => emp.empId === row.empId);
+
       return (
         row.status !== "Withdrawn" &&
-        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+        (selectedDepartmentMain === "All Departments" ||
+          (employee && employee.department === selectedDepartmentMain)) &&
+        (selectedSubDepartment === "All Sub Departments" || (employee && employee.subDepartment === selectedSubDepartment)) &&
+        (selectedGender === "All Gender" || (employee && employee.gender === selectedGender)) &&
+        (selectedUnit === "All Units" ||
+          (employee && employee.unit === selectedUnit))
       );
     }).length;
-    
+
     const leavePending = leaveCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      const employee = empAll.find(emp => emp.empId === row.empId);
-    
+      const employee = empAll.find((emp) => emp.empId === row.empId);
+
       return (
         row.status === "Pending" &&
-        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+        (selectedDepartmentMain === "All Departments" ||
+          (employee && employee.department === selectedDepartmentMain)) &&
+        (selectedSubDepartment === "All Sub Departments" || (employee && employee.subDepartment === selectedSubDepartment)) &&
+        (selectedGender === "All Gender" || (employee && employee.gender === selectedGender)) &&
+        (selectedUnit === "All Units" ||
+          (employee && employee.unit === selectedUnit))
       );
     }).length;
-    
+
     const leaveApproved = leaveCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      const employee = empAll.find(emp => emp.empId === row.empId);
-    
+      const employee = empAll.find((emp) => emp.empId === row.empId);
+
       return (
         row.status === "Approved" &&
-        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+        (selectedDepartmentMain === "All Departments" ||
+          (employee && employee.department === selectedDepartmentMain)) &&
+        (selectedSubDepartment === "All Sub Departments" || (employee && employee.subDepartment === selectedSubDepartment)) &&
+        (selectedGender === "All Gender" || (employee && employee.gender === selectedGender)) &&
+        (selectedUnit === "All Units" ||
+          (employee && employee.unit === selectedUnit))
       );
     }).length;
-    
+
     const leaveDenied = leaveCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      const employee = empAll.find(emp => emp.empId === row.empId);
-    
+      const employee = empAll.find((emp) => emp.empId === row.empId);
+
       return (
         row.status === "Denied" &&
-        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+        (selectedDepartmentMain === "All Departments" ||
+          (employee && employee.department === selectedDepartmentMain)) &&
+        (selectedSubDepartment === "All Sub Departments" || (employee && employee.subDepartment === selectedSubDepartment)) &&
+        (selectedGender === "All Gender" || (employee && employee.gender === selectedGender)) &&
+        (selectedUnit === "All Units" ||
+          (employee && employee.unit === selectedUnit))
       );
     }).length;
-    
+
     setTotalLeaveRequests(totalLeave);
     setLeavesPending(leavePending);
     setLeavesApproved(leaveApproved);
     setLeavesDenied(leaveDenied);
 
+    console.log(permissionCardData);
+
     const totalPermission = permissionCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      const employee = empAll.find(emp => emp.id === row.employeeId);
-    
+      const employee = empAll.find((employee) => employee.empId === row.empId);
+      // console.log(employee);
+      // console.log(selectedUnit);
+
       return (
-        selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain)
-      );
+        (selectedDepartmentMain === "All Departments" ||
+        (employee && employee.department === selectedDepartmentMain)) &&
+        (selectedSubDepartment === "All Sub Departments" || (employee && employee.subDepartment === selectedSubDepartment)) &&
+        (selectedGender === "All Gender" || (employee && employee.gender === selectedGender)) &&
+        (selectedUnit === "All Units" || (employee && employee.unit === selectedUnit)))
+      ;
     }).length;
-    
+
     console.log(totalPermission);
-    
+
     const permissionPending = permissionCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      const employee = empAll.find(emp => emp.id === row.employeeId);
-    
+      const employee = empAll.find((employee) => employee.empId === row.empId);
+
       return (
         row.status === "Pending" &&
-        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+        (selectedDepartmentMain === "All Departments" ||
+          (employee && employee.department === selectedDepartmentMain)) &&
+        (selectedSubDepartment === "All Sub Departments" || (employee && employee.subDepartment === selectedSubDepartment)) &&
+        (selectedGender === "All Gender" || (employee && employee.gender === selectedGender)) &&
+        (selectedUnit === "All Units" || (employee && employee.unit === selectedUnit))
       );
     }).length;
-    
+
     const permissionApproved = permissionCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      const employee = empAll.find(emp => emp.id === row.employeeId);
-    
+      console.log(selectedUnit);
+      const employee = empAll.find((employee) => employee.empId === row.empId);
+
       return (
         row.status === "Approved" &&
-        (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
+        (selectedDepartmentMain === "All Departments" ||
+          (employee && employee.department === selectedDepartmentMain)) &&
+        (selectedSubDepartment === "All Sub Departments" || (employee && employee.subDepartment === selectedSubDepartment)) &&
+        (selectedGender === "All Gender" || (employee && employee.gender === selectedGender)) &&
+        (selectedUnit === "All Units" || (employee && employee.unit === selectedUnit))
       );
     }).length;
-    
+
     // const permissionDenied = permissionCardData.filter((row) => {
     //   // Find the employee object from empAll based on employeeId
     //   const employee = empAll.find(emp => emp.id === row.employeeId);
-    
+
     //   return (
     //     row.status === "Rejected" &&
     //     (selectedDepartmentMain === "All Departments" || (employee && employee.department === selectedDepartmentMain))
     //   );
     // }).length;
-    
-    console.log(permissionPending, permissionApproved);
-    
-    setTotalPermissionRequests(totalPermission);
-    setPermissionPending(permissionPending);   
-    setPermissionApproved(permissionApproved);
-    setPermissionDenied(totalPermission - permissionApproved - permissionPending);
-  }, [leaveCardData , permissionCardData ,selectedDepartmentMain]);
 
-  
+    console.log(totalPermission, permissionPending, permissionApproved);
+
+    setTotalPermissionRequests(totalPermission);
+    setPermissionPending(permissionPending);
+    setPermissionApproved(permissionApproved);
+    setPermissionDenied(
+      totalPermission - permissionApproved - permissionPending
+    );
+  }, [leaveCardData, permissionCardData, selectedDepartmentMain, selectedUnit, selectedGender , selectedSubDepartment]);
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleChange = (event) => {
-    setSelectedDepartmentMain(event.target.value); // Update state when an option is selected
-    setChangeInDept(!changeInDept); // Update state when an option changes
+  const handleChangeInDept = (event) => {
+    setSelectedDepartmentMain(event.target.value);
+    setChangeInDept(!changeInDept);
   };
 
- 
-  const filteredEmployees = empAll.filter((employee) =>
-    (employee.empName.toLowerCase().includes(searchTerm.toLowerCase()) || employee.empId.includes(searchTerm)) &&
-    (selectedDepartment === "" || employee.department === selectedDepartment)
+  const handleChangeInSubdept = (event) => {
+    setSelectedSubDepartment(event.target.value);
+    setChangeInSubDept(!changeInSubDept);
+  };
+
+  const handleChangeInGender = (event) => {
+    setSelectedGender(event.target.value);
+    setChangeInGender(!changeInGender);
+  };
+
+  const handleChangeInUnit = (event) => {
+    console.log(event.target.value);
+    setSelectedUnit(event.target.value);
+    setChangeInUnit(!changeInUnit);
+  };
+
+  const filteredEmployees = empAll.filter(
+    (employee) =>
+      (employee.empName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        employee.empId.includes(searchTerm)) &&
+      (selectedDepartment === "" || employee.department === selectedDepartment)
   );
-  
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedEmployeeIndex, setSelectedEmployeeIndex] = useState(null);
@@ -298,85 +392,171 @@ const AdminHome = () => {
           ) : (
             <div className="w-full h-full flex flex-col lg:flex-row lg:justify-between lg:items-start">
               <div className="w-full lg:w-[75%] flex flex-col p-3 gap-3">
-                <div className="w-full flex justify-between gap-3 pb-5">
-                  <div className="w-full lg:w-[30%]">
-                    <select className="w-full border rounded-md p-2 focus:outline-none focus:ring" value={selectedDepartmentMain} // Bind the state to the select value
-        onChange={handleChange}>
+                <div className="w-full flex  gap-3 pb-5">
+                  <div className="">
+                    <select
+                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+                      value={selectedDepartmentMain} // Bind the state to the select value
+                      onChange={handleChangeInDept}
+                    >
                       {departments.map((row) => (
                         <option key={row}>{row}</option>
                       ))}
                     </select>
                   </div>
+
+                  <div className="">
+                    <select
+                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+                      value={selectedSubDepartment} // Bind the state to the select value
+                      onChange={handleChangeInSubdept}
+                    >
+                      {subDepartments.map((row) => (
+                        <option key={row}>{row}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="">
+                    <select
+                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+                      value={selectedGender} // Bind the state to the select value
+                      onChange={handleChangeInGender}
+                    >
+                      {gender.map((row) => (
+                        <option key={row}>{row}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="">
+                    <select
+                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+                      value={selectedUnit} // Bind the state to the select value
+                      onChange={handleChangeInUnit}
+                    >
+                      {units.map((row) => (
+                        <option key={row}>{row}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-
-                
-
                 <div className="flex flex-col mb-4">
                   {isRequest ? (
                     <div>
                       <div className="w-full h-fit p-3 rounded-lg">
-                  <div className="flex flex-wrap justify-between gap-3">
-                    <Card
-                      label="Leaves Requested"
-                      value={totalLeaveRequests}
-                      color = "#C6E7FF"
-                      
-                    />
-                    <Card label="Leaves Pending" value={leavesPending} color = "#FEEFAD"/>
-                    <Card
-                      label="Leave Approved"
-                      value={leavesApproved}
-                      color = "#BFF6C3"
-                      
-                    />
-                    <Card label="Leave Denied" value={leavesDenied} color = "#FFB0B0" />
-                  </div>
-                </div>
-                      <Table leaveCardData={getLeaveCardData} permissionCardData = {getPermissionCardData} department_ = {selectedDepartmentMain} changeInDept = {changeInDept}/>
+                        <div className="flex flex-wrap justify-between gap-3">
+                          <Card
+                            label="Leaves Requested"
+                            value={totalLeaveRequests}
+                            color="#C6E7FF"
+                          />
+                          <Card
+                            label="Leaves Pending"
+                            value={leavesPending}
+                            color="#FEEFAD"
+                          />
+                          <Card
+                            label="Leave Approved"
+                            value={leavesApproved}
+                            color="#BFF6C3"
+                          />
+                          <Card
+                            label="Leave Denied"
+                            value={leavesDenied}
+                            color="#FFB0B0"
+                          />
+                        </div>
+                      </div>
+                      <Table
+                        leaveCardData={getLeaveCardData}
+                        permissionCardData={getPermissionCardData}
+                        department_={selectedDepartmentMain}
+                        changeInDept={changeInDept}
+                        unit = {selectedUnit}
+                        changeInUnit = {changeInUnit}
+                        gender = {selectedGender}
+                        changeInGender = {changeInGender}
+                        subDept = {selectedSubDepartment}
+                        changeInSubDept = {changeInSubDept}
+                        
+                      />
                     </div>
-                  ) : isPermission ? ( 
+                  ) : isPermission ? (
                     <div>
                       <div className="w-full h-fit p-3 rounded-lg">
-                  <div className="flex flex-wrap justify-between gap-3">
-                    <Card
-                      label="Permission Requested"
-                      value={totalPermissionRequests}
-                       color = "#C6E7FF"
-                      
-                    />
-                    <Card label="Permission Pending" value={permissionPending} color = "#FEEFAD"/>
-                    <Card
-                      label="Permission Approved"
-                      value={permissionApproved}
-                      color = "#BFF6C3"
-                      
-                    />
-                    <Card label="Permission Denied" value={permissionDenied} color = "#FFB0B0" />
-                  </div>
-                </div>
-                      <PermissionTable permissionCardData = {getPermissionCardData} changeInDept = {changeInDept} department_ = {selectedDepartmentMain}/>
+                        <div className="flex flex-wrap justify-between gap-3">
+                          <Card
+                            label="Permission Requested"
+                            value={totalPermissionRequests}
+                            color="#C6E7FF"
+                          />
+                          <Card
+                            label="Permission Pending"
+                            value={permissionPending}
+                            color="#FEEFAD"
+                          />
+                          <Card
+                            label="Permission Approved"
+                            value={permissionApproved}
+                            color="#BFF6C3"
+                          />
+                          <Card
+                            label="Permission Denied"
+                            value={permissionDenied}
+                            color="#FFB0B0"
+                          />
+                        </div>
+                      </div>
+                      <PermissionTable
+                        permissionCardData={getPermissionCardData}
+                        changeInDept={changeInDept}
+                        department_={selectedDepartmentMain}
+                        unit = {selectedUnit}
+                        changeInUnit = {changeInUnit}
+                        gender = {selectedGender}
+                        changeInGender = {changeInGender}
+                        subDept = {selectedSubDepartment}
+                        changeInSubDept = {changeInSubDept}
+                      />
                     </div>
                   ) : (
                     <div>
                       <div className="w-full h-fit p-3 mb-5 rounded-lg">
-                  <div className="flex flex-wrap justify-between gap-3">
-                    <Card
-                      label="Leaves Requested"
-                      value={totalLeaveRequests}
-                       color = "#C6E7FF"
-                     
-                    />
-                    <Card label="Leaves Pending" value={leavesPending}  color = "#FEEFAD"/>
-                    <Card
-                      label="Permission Requested"
-                      value={totalPermissionRequests}
-                       color = "#C6E7FF"
-                     
-                    />
-                    <Card label="Permission Pending" value={permissionPending} color = "#FEEFAD"   />
-                  </div>
-                </div>
-                      <Charts department_ = {selectedDepartmentMain} changeInDept = {changeInDept}/>
+                        <div className="flex flex-wrap justify-between gap-3">
+                          <Card
+                            label="Leaves Requested"
+                            value={totalLeaveRequests}
+                            color="#C6E7FF"
+                          />
+                          <Card
+                            label="Leaves Pending"
+                            value={leavesPending}
+                            color="#FEEFAD"
+                          />
+                          <Card
+                            label="Permission Requested"
+                            value={totalPermissionRequests}
+                            color="#C6E7FF"
+                          />
+                          <Card
+                            label="Permission Pending"
+                            value={permissionPending}
+                            color="#FEEFAD"
+                          />
+                        </div>
+                      </div>
+                      <Charts
+                        department_={selectedDepartmentMain}
+                        changeInDept={changeInDept}
+                        unit = {selectedUnit}
+                        changeInUnit = {changeInUnit}
+                        gender = {selectedGender}
+                        changeInGender = {changeInGender}
+                        subDept = {selectedSubDepartment}
+                        changeInSubDept = {changeInSubDept}
+
+                      />
                     </div>
                   )}
                 </div>
@@ -404,29 +584,29 @@ const AdminHome = () => {
                     placeholder="Search Employee"
                   />
                   <select
-            value={selectedDepartment}
-            onChange={(e) => setSelectedDepartment(e.target.value)}
-            className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600 w-[100%]"
-          >
-            <option value="">All Department</option>
-            <option value="Manufacturing">Manufacturing</option>
-                   <option value="Store">Store</option>
-                   <option value="Quality">Quality</option>
-                   <option value="Manufacturing Engineering">
-                     Manufacturing Engineering
-                   </option>
-                   <option value="Facilities and Maintenance">
-                     Facilities and Maintenance
-                   </option>
-                   <option value="Sourcing">Sourcing</option>
-                   <option value="Planning">Planning</option>
-                   <option value="Human Resource">Human Resource</option>
-                   <option value="Customer Support">Customer Support</option>
-                   <option value="Finance">Finance</option>
-                   <option value="EHS">EHS</option>
-                   <option value="TACC Lab">TACC Lab</option>
-                   <option value="Engineering">Engineering</option>
-          </select>
+                    value={selectedDepartment}
+                    onChange={(e) => setSelectedDepartment(e.target.value)}
+                    className="p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600 w-[100%]"
+                  >
+                    <option value="">All Department</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Store">Store</option>
+                    <option value="Quality">Quality</option>
+                    <option value="Manufacturing Engineering">
+                      Manufacturing Engineering
+                    </option>
+                    <option value="Facilities and Maintenance">
+                      Facilities and Maintenance
+                    </option>
+                    <option value="Sourcing">Sourcing</option>
+                    <option value="Planning">Planning</option>
+                    <option value="Human Resource">Human Resource</option>
+                    <option value="Customer Support">Customer Support</option>
+                    <option value="Finance">Finance</option>
+                    <option value="EHS">EHS</option>
+                    <option value="TACC Lab">TACC Lab</option>
+                    <option value="Engineering">Engineering</option>
+                  </select>
                 </div>
 
                 <div className="overflow-y-auto h-[400px] sm:h-[500px] md:h-[600px]">
@@ -461,14 +641,18 @@ export default AdminHome;
 // Responsive Card component
 const Card = (props) => {
   return (
-    <div className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 rounded-xl p-3 bg-opacity-50 " style={{backgroundColor : props.color }}>
-  <div className="flex flex-row text-white">
-    <p className="text-lg md:text-xl text-black font-medium">{props.label}</p>
-  </div>
-  <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-black">
-    <p>{props.value}</p>
-  </div>
-</div>
-
+    <div
+      className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 rounded-xl p-3 bg-opacity-50 "
+      style={{ backgroundColor: props.color }}
+    >
+      <div className="flex flex-row text-white">
+        <p className="text-lg md:text-xl text-black font-medium">
+          {props.label}
+        </p>
+      </div>
+      <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-black">
+        <p>{props.value}</p>
+      </div>
+    </div>
   );
 };

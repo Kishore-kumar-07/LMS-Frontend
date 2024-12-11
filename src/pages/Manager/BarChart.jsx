@@ -23,7 +23,7 @@ ChartJS.register(
   BarController
 );
 
-const BarChart = ({department_ , changeInDept}) => {
+const BarChart = ({department_ , changeInDept , gender , changeInGender , unit , changeInUnit , subDept , changeInSubDept}) => {
   const [weekData, setWeekData] = useState([]);
   const [chartData, setChartData] = useState({
     labels: [],
@@ -44,14 +44,17 @@ const BarChart = ({department_ , changeInDept}) => {
 
   useEffect(() => {
     getWeekData();
-  }, [changeInDept]);
+  }, [changeInDept , changeInGender ,changeInUnit , changeInSubDept ]);
 
   const getWeekData = async () => {
     try {
       const weekDataResponse = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/leave/weekData`,
         { empId : empId ,
-          department : department_
+          department : department_,
+          subDepartment : subDept ,
+          unit : unit,
+          gender : gender
          },
         {
           headers: {
