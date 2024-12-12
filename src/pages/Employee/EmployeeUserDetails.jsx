@@ -4,8 +4,16 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 function EmployeeUserDetails({ setIsPaternity, setIsAdoption }) {
+
+  EmployeeUserDetails.propTypes = {
+    setIsPaternity: PropTypes.func.isRequired,
+    setIsAdoption: PropTypes.func.isRequired,
+  };
+
+
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
@@ -63,6 +71,10 @@ function EmployeeUserDetails({ setIsPaternity, setIsAdoption }) {
 
         <table className="table-auto w-full mt-2 text-left">
           <tbody>
+          <tr className="">
+              <th scope="col"> </th>
+              <th scope="col"> </th>
+            </tr>
             <tr className="">
               <td className="font-bold text-lg py-2 pr-6">Designation:</td>
               <td className="text-lg py-2">{userDetails.role}</td>

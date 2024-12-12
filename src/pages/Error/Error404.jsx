@@ -16,7 +16,7 @@ const Error404 = () => {
         <div className="flex flex-col gap-8 justify-center items-center h-full w-full">
             <div className = "flex flex-col gap-3">
               <div className="">
-                <img src = {error} width={240} height = {240}></img>
+                <img src = {error} width={240} height = {240} alt='error'></img>
             </div>
             <div className = "font-semibold text-3xl">
               Employee Not Found

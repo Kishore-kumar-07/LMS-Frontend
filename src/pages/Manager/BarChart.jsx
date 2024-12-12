@@ -12,6 +12,7 @@ import {
 import {jwtDecode} from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import PropTypes from 'prop-types';
 
 ChartJS.register(
   Title,
@@ -24,6 +25,18 @@ ChartJS.register(
 );
 
 const BarChart = ({department_ , changeInDept , gender , changeInGender , unit , changeInUnit , subDept , changeInSubDept}) => {
+  
+BarChart.propTypes = {
+  department_: PropTypes.string.isRequired,
+  changeInDept: PropTypes.number.isRequired,
+  gender: PropTypes.string.isRequired,
+  changeInGender: PropTypes.number.isRequired,
+  unit: PropTypes.string.isRequired,
+  changeInUnit: PropTypes.number.isRequired,
+  subDept: PropTypes.string.isRequired,
+  changeInSubDept: PropTypes.number.isRequired,
+};
+
   const [weekData, setWeekData] = useState([]);
   const [chartData, setChartData] = useState({
     labels: [],

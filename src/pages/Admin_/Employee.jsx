@@ -308,8 +308,8 @@ const Employee = () => {
           </div>
         </div>
         {isImport !== CURRENT_STATUS.LOADING ? (
-          <div className="w-full pl-5 pr-5 pt-2 pb-2 h-fit">
-            <div className="w-full h-full p-5">
+          <div className="w-full pl-5 pr-5 pt-2 pb-2 h-full">
+            <div className="w-full h-fit p-1">
               <div className="w-full h-[570px] overflow-y-auto">
                 <table className="table-auto w-full border-collapse">
                   <thead>

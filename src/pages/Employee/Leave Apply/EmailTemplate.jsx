@@ -1,5 +1,5 @@
 import { Html, Head, Body, Text, Button, Img } from "@react-email/components";
-
+import PropTypes from 'prop-types';
 const EmailTemplate = ({
   empId,
   leaveType,
@@ -14,7 +14,9 @@ const EmailTemplate = ({
   noOfLOP,
   leaveDescription,
   totalLeave
-}) => (
+}) => 
+  
+  (
   <Html>
     <Head />
     <Body
@@ -184,5 +186,21 @@ const EmailTemplate = ({
     </Body>
   </Html>
 );
+
+EmailTemplate.propTypes = {
+  empId: PropTypes.string.isRequired,
+  leaveType: PropTypes.string.isRequired,
+  fromDate: PropTypes.string.isRequired,
+  toDate: PropTypes.string.isRequired,
+  leaveReason: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
+  imageUrl: PropTypes.string.isRequired,
+  fromDay: PropTypes.string.isRequired,
+  toDay: PropTypes.string.isRequired,
+  leaveId: PropTypes.string.isRequired,
+  noOfLOP: PropTypes.number.isRequired,
+  leaveDescription: PropTypes.string.isRequired,
+  totalLeave: PropTypes.number.isRequired,
+};
 
 export default EmailTemplate;

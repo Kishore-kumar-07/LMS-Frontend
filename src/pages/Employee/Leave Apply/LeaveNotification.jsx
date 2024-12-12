@@ -1,8 +1,18 @@
 import React from 'react';
 import { CURRENT_STATUS } from '../../../statusIndicator';
 import { OrbitProgress } from 'react-loading-indicators';
+import PropTypes from 'prop-types';
 
 const LeaveNotification = ({ totalLeaveDays, casualLeaveDays, lopDays, handleCancel, handleConfirm,status }) => {
+
+  LeaveNotification.propTypes = {
+    totalLeaveDays: PropTypes.number.isRequired,
+    casualLeaveDays: PropTypes.number.isRequired,
+    lopDays: PropTypes.number.isRequired,
+    handleCancel: PropTypes.func.isRequired,
+    handleConfirm: PropTypes.func.isRequired,
+    status: PropTypes.oneOf(['Pending', 'Approved', 'Denied']).isRequired,
+  };
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">  
    
@@ -16,6 +26,10 @@ const LeaveNotification = ({ totalLeaveDays, casualLeaveDays, lopDays, handleCan
      :<> <table className="w-full text-left">
 
           <tbody>
+            <tr>
+              <th> </th>
+              <th> </th>
+            </tr>
             <tr>
               <td className="py-4 font-semibold text-xl">Total Leave Days:</td>
               <td className="py-4 text-xl"><strong>{totalLeaveDays}</strong></td>

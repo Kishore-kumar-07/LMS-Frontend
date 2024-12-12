@@ -9,7 +9,6 @@ import { ClockLoader } from "react-spinners";
 import PropTypes from "prop-types";
 
 function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
-
   Register.propTypes = {
     setOpenRegisterModal: PropTypes.func.isRequired,
     getEmployees: PropTypes.func.isRequired,
@@ -32,7 +31,6 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
     level: "",
     location: "",
     unit: "",
-    
   });
 
   const navigate = useNavigate();
@@ -50,7 +48,6 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
   const [isRegister, setIsRegister] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
-   
     const managerList = filterEmployees.filter((row) => row.role === "Manager");
     const adminList = filterEmployees.filter((row) => row.role === "Admin");
     setManager(managerList);
@@ -387,10 +384,11 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
         {formData.role === "GVR" && (
           <div className="flex flex-col justify-center gap-3">
             <div className="flex gap-3">
-              <label className="text-gray-700 font-semibold">
-                <input type="text"/>
-                Paternity Leave
+              <label className="text-gray-700 font-semibold flex items-center gap-2">
+               
+                <span>Paternity Leave</span>
               </label>
+
               <input
                 type="checkbox"
                 checked={isPaternity}
@@ -399,10 +397,11 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
               />
             </div>
             <div className="flex gap-2">
-              <label className="text-gray-700 font-semibold">
-                <input type="text" /> 
-                Adoption Leave
+              <label className="text-gray-700 font-semibold flex items-center gap-2">
+               
+                <span>Adoption Leave</span>
               </label>
+
               <input
                 type="checkbox"
                 checked={isAdoption}

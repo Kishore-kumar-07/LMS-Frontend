@@ -157,7 +157,8 @@ function Nav({ setIsManager, setIsEmployees }) {
                   <table className="text-gray-700 mt-2 w-full break-words">
                     <thead>
                       <tr>
-                         
+                         <th> </th>
+                         <th> </th>
                       </tr>
                     </thead>
                     <tbody>

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-// import useNavigate
-import { Doughnut } from "react-chartjs-2";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import PropTypes from 'prop-types';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,6 +33,11 @@ ChartJS.register(
 const localizer = momentLocalizer(moment);
 
 function EmployeePopUp({ onClose, employeeId }) {
+
+  EmployeePopUp.propTypes = {
+    onClose: PropTypes.func.isRequired,  
+    employeeId: PropTypes.number.isRequired,  
+  };
   const navigation = useNavigate();
   const [events, setEvents] = useState([]);
   const [gaugeData_, setGaugeData] = useState([]);
@@ -59,9 +63,6 @@ function EmployeePopUp({ onClose, employeeId }) {
     getTableData();
   }, []);
 
-//   useEffect(() => {
-//     setLeaveCount(!leaveCount)
-// }, [totalCountLeave]);
 
   const getGaugeDetails = async () => {
     try {
@@ -300,13 +301,16 @@ function EmployeePopUp({ onClose, employeeId }) {
       <div className="w-full bg-gray-600 text-white rounded-t-lg p-4 flex justify-between items-center shadow">
         <h1 className="text-xl font-semibold">{userData.empName}'s Details</h1>
         <span
-          onClick={() => {
-            onClose();
-          }}
-          className="cursor-pointer text-3xl text-white font-semibold"
-        >
-          &times;
-        </span>
+  onClick={() => onClose()}
+  className="cursor-pointer text-3xl text-white font-semibold"
+  role="button"
+  tabIndex={0} // Makes it focusable
+  aria-label="Close"
+  
+>
+  &#x2715; {/* Example close icon (cross) */}
+</span>
+
       </div>
   
       <div className="flex flex-col gap-4 sm:gap-6 p-4 bg-gray-50 rounded-b-lg w-full">
@@ -315,6 +319,10 @@ function EmployeePopUp({ onClose, employeeId }) {
           <div className="flex-1 max-w-[400px] bg-white rounded-lg p-4 shadow-sm">
             <table className="table-auto w-full text-left">
               <tbody>
+                <tr>
+                  <th> </th>
+                  <th> </th>
+                </tr>
                 <tr>
                   <td className="font-bold text-gray-700 py-1 pr-4 whitespace-nowrap overflow-hidden text-ellipsis">Designation:</td>
                   <td className="text-gray-600 py-1">{userData.role}</td>

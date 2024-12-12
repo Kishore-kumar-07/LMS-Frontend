@@ -52,10 +52,11 @@ const ResetPassword = () => {
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <div className="mb-4">
-          <label className="block text-md font-bold mb-2 text-gray-600">
+          <label htmlFor="new pass" className="block text-md font-bold mb-2 text-gray-600">
             New Password
           </label>
           <input
+          id="new pass"
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -65,10 +66,11 @@ const ResetPassword = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-md font-bold mb-2 text-gray-600">
+          <label htmlFor = "retype_pass" className="block text-md font-bold mb-2 text-gray-600">
             Retype New Password
           </label>
           <input
+          id="retype_pass"
             type="password"
             value={newRePassword}
             onChange={(e) => setNewRePassword(e.target.value)}

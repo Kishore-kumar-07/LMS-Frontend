@@ -4,8 +4,22 @@ import axios from 'axios';
 import moment from 'moment';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 export default function LineGraph({ department_ , changeInDept , gender , changeInGender , unit , changeInUnit , subDept , changeInSubDept  }) {
+  
+  LineGraph.propTypes = {
+    department_: PropTypes.any.isRequired,
+    changeInDept: PropTypes.any.isRequired,
+    gender: PropTypes.any.isRequired,
+    changeInGender: PropTypes.any.isRequired,
+    unit: PropTypes.any.isRequired,
+    changeInUnit: PropTypes.any.isRequired,
+    subDept: PropTypes.any.isRequired,
+    changeInSubDept: PropTypes.any.isRequired,
+  };
+  
+  
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;

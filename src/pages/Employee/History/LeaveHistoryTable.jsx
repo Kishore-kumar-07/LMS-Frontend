@@ -2,8 +2,16 @@ import React, { useState } from "react";
 import Pagination from "./Pagination";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import PropTypes from 'prop-types';
 
 const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
+
+  LeaveHistoryTable.propTypes = {
+    LeaveLogs: PropTypes.array.isRequired,
+    setReload: PropTypes.func.isRequired,
+    reload: PropTypes.bool.isRequired,
+  };
+
   const tableHead = [
     "S.No",
     "Leave Type",

@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import Pagination from './Pagination';
+import PropTypes from 'prop-types';
+
 
 const PermissionHistoryTable = ({ PermissionLogs }) => {
+
+  PermissionHistoryTable.propTypes = {
+    PermissionLogs: PropTypes.array.isRequired, 
+  };
+  
+
   const tableHead = ["S.No", "Date", "From", "To", "Duration", "Reason of Permission", "Status"];
 
   const [currentPage, setCurrentPage] = useState(1);

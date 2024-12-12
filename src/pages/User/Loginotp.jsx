@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { ClockLoader } from "react-spinners";
-import { toast } from "react-toastify";
 
 function Loginotp() {
   const navigate = useNavigate();
@@ -129,10 +128,11 @@ function Loginotp() {
         </h2>
         {isForgetPassword ? (
           <div className="mt-6">
-            <label className="block text-md font-bold mb-2 text-gray-600">
+            <label htmlFor="username" className="block text-md font-bold mb-2 text-gray-600">
               Username
             </label>
             <input
+            id="username"
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
@@ -141,10 +141,11 @@ function Loginotp() {
             />
             {isOtpSent && (
               <>
-                <label className="block text-md font-bold mt-4 mb-2 text-gray-600">
+                <label htmlFor="otp" className="block text-md font-bold mt-4 mb-2 text-gray-600">
                   Enter OTP
                 </label>
                 <input
+                id="otp"
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
@@ -188,20 +189,22 @@ function Loginotp() {
           </div>
         ) : (
           <div className="mt-6">
-            <label className="block text-md font-bold mb-2 text-gray-600">
+            <label htmlFor="usernamee" className="block text-md font-bold mb-2 text-gray-600">
               Username
             </label>
             <input
+            id="username"
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               placeholder="Enter your Username"
             />
-            <label className="block text-md font-bold mt-4 mb-2 text-gray-600">
+            <label htmlFor="password" className="block text-md font-bold mt-4 mb-2 text-gray-600">
               Password
             </label>
             <input
+            id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -222,6 +225,7 @@ function Loginotp() {
               </div>
             )}
             <p
+            role="button"
               className="cursor-pointer mt-4 text-center text-blue-500"
               onClick={() => setIsForgetPassword(true)}
             >

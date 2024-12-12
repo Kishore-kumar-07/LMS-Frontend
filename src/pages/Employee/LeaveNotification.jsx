@@ -1,6 +1,15 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 const LeaveNotification = ({ totalLeaveDays, casualLeaveDays, lopDays, handleCancel, handleConfirm }) => {
+
+  LeaveNotification.propTypes = {
+    totalLeaveDays: PropTypes.number.isRequired,
+    casualLeaveDays: PropTypes.number.isRequired,
+    lopDays: PropTypes.number.isRequired,
+    handleCancel: PropTypes.func.isRequired,
+    handleConfirm: PropTypes.func.isRequired,
+    status: PropTypes.oneOf(['Pending', 'Approved', 'Denied']).isRequired,
+  };
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-80">

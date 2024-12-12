@@ -1,7 +1,15 @@
 import React from 'react';
 import { HiArrowCircleRight, HiArrowCircleLeft } from 'react-icons/hi';
+import PropTypes from 'prop-types';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+
+  Pagination.propTypes = {
+    currentPage: PropTypes.number.isRequired,   
+    totalPages: PropTypes.number.isRequired,    
+    onPageChange: PropTypes.func.isRequired,    
+  };
+
   const handleClick = (page) => {
     if (page !== '...') {
       onPageChange(page);

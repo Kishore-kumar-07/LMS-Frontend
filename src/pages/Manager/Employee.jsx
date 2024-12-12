@@ -1,7 +1,14 @@
 import React from "react";
 import user from "../../images/user.png";
+import PropTypes from 'prop-types';
 
 const Employee = ({ employeeName, employeeType }) => {
+
+  Employee.propTypes = {
+    employeeName: PropTypes.string.isRequired, 
+    employeeType: PropTypes.string.isRequired,
+  };
+
   return (
     <div className="flex w-full gap-10 h-[70px] p-2 justify-evenly items-center rounded-lg border-2">
       <img width={40} height={40} src={user} alt="Logo" />

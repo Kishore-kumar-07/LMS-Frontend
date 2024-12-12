@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
-import Footer from "./Footer";
 import Employee from "./Employee";
 import Charts from "./Charts";
 import PermissionTable from "./PermissionTable";
@@ -11,6 +10,7 @@ import "./admin.css";
 import Details from "./Details";
 import EmployeePopup from "./EmployeePopUp";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 const AdminHome = () => {
   const token = document.cookie.split("=")[1];
@@ -564,7 +564,7 @@ const AdminHome = () => {
                     <div className="absolute inset-0 bg-black opacity-50"></div>
                     <div className="w-[90%] h-[90%] flex justify-center items-center">
                       <EmployeePopup
-                        onClose={() => closePopup(false)}
+                        onClose={() => closePopup()}
                         employeeId={employeeId}
                       />
                     </div>
@@ -610,6 +610,7 @@ const AdminHome = () => {
                 <div className="overflow-y-auto h-[400px] sm:h-[500px] md:h-[600px]">
                   {filteredEmployees.map((employee, index) => (
                     <div
+                    role="button"
                       key={index}
                       onClick={() => handleClick(index, employee.empId)}
                       className={`rounded-lg hover:cursor-pointer p-2 transition-colors duration-200 ${
@@ -637,19 +638,24 @@ const AdminHome = () => {
 export default AdminHome;
 
 // Responsive Card component
-const Card = (props) => {
+const Card = ({label , value , color}) => {
+  Card.propTypes = {
+    label: PropTypes.string.isRequired,     // 'label' should be a string and is required
+    value: PropTypes.string.isRequired,     // 'value' should be a string and is required
+    color: PropTypes.string,                // 'color' should be a string (optional)
+  };
   return (
     <div
       className="w-full md:w-[48%] lg:w-[250px] h-auto flex flex-col items-center justify-center border-2 border-gray-600 text-white gap-2 rounded-xl p-3 bg-opacity-50 "
-      style={{ backgroundColor: props.color }}
+      style={{ backgroundColor: color }}
     >
       <div className="flex flex-row text-white">
         <p className="text-lg md:text-xl text-black font-medium">
-          {props.label}
+          {label}
         </p>
       </div>
       <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-black">
-        <p>{props.value}</p>
+        <p>{value}</p>
       </div>
     </div>
   );
