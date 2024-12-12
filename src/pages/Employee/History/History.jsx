@@ -31,8 +31,7 @@ function History() {
           },
         }
       );
-      console.log("Leave Logs");
-      console.log(res.data);
+      
 
       setLeaveLogs(res.data);
     } catch (error) {

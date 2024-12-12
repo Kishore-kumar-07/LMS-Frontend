@@ -50,9 +50,9 @@ const PermissionForm = () => {
 
   const token = document.cookie.split("=")[1];
 
-  console.log(token);
+ 
   const decodedToken = jwtDecode(token);
-  console.log("in", decodedToken.empId);
+
 
   // const [fromTime, setFromTime] = useState(
   //   dayjs().isBetween(
@@ -65,7 +65,7 @@ const PermissionForm = () => {
 
   const isTimeExceeding = () => {
     const timeDifference = dayjs.duration(toTime.diff(fromTime)).asHours();
-    console.log("time Difference", timeDifference);
+    
     return timeDifference > 2;
   };
 
@@ -139,15 +139,12 @@ const PermissionForm = () => {
   }, [fromTime]);
 
   const applyPermission = async (e) => {
-    console.log("permission");
+    
     try {
       if (isTimeExceeding()) {
         toast.error("Time limit Exceeded");
       } else {
-        console.log(
-          "Permession Sendttttt",
-          typeof dayjs.duration(toTime.diff(fromTime)).asHours()
-        );
+       
         setApplyStatus(CURRENT_STATUS.LOADING);
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/permission/apply`,
@@ -170,7 +167,7 @@ const PermissionForm = () => {
         if (res.status === 201) {
           toast.success("Requested Permission Successfully");
           var data = res.data;
-          console.log("data", data.permission._id);
+        
           sendPermissionEmail(data.permission._id);
           // sendPermissionEmail(data.permission._id);
         } else if (res.status === 203) {
@@ -187,7 +184,7 @@ const PermissionForm = () => {
       console.error("Error permission Apply", error);
       toast.error("Error is requesting Permission");
     } finally {
-      console.log("perend");
+     
       // setIsPermission(!isPermission);
     }
   };
@@ -222,8 +219,7 @@ const PermissionForm = () => {
           setCheckStatus(CURRENT_STATUS.SUCCESS);
           if (res.status === 202) {
             toast.warn("Already permission or Leave had applied in the same day");
-            console.log("res:");
-            console.log(res);
+           
           } else if (res.status === 203) {
             toast.warn("Permission Limit exceeded");
           } else {
@@ -254,7 +250,7 @@ const PermissionForm = () => {
     return !newErrors.permissionDate && !newErrors.permissionReason; // Return true if there are no errors
   };
 
-  console.log("checiittt", decodedToken.managerMail);
+
   const sendPermissionEmail = async (objId) => {
     const emailContent = await render(
       <PermissionEmailTemplate

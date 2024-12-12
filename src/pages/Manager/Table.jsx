@@ -138,7 +138,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
 
   const handleReject = async () => {
     try {
-      console.log(denyReason);
+      
       setStatus(CURRENT_STATUS.LOADING);
       if (currentStatus === "Pending") {
         const response = await axios.post(
@@ -237,7 +237,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
           },
         }
       );
-      console.log("in admin home ", allEmp);
+      
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 404) {
@@ -284,7 +284,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
     const filteredData_ = data.filter((row) => {
       // Find the employee matching the current row's empId
       const employee = empAll.find((emp) => emp.empId === row.empId);
-      console.log(employee)
+     
     
       // Filter rows where status is not "Withdrawn" and department matches the chosen department
       return (
@@ -296,7 +296,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
       );
     });
     
-    console.log(filteredData_);
+  
     setFilteredData(filteredData_);
   }
 

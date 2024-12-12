@@ -63,7 +63,7 @@ const BarChart = ({department_ , changeInDept , gender , changeInGender , unit ,
           },
         }
       );
-      console.log(weekDataResponse.data)
+      
       const today = new Date();
     const dates = [];
     for (let i = 0; i < 7; i++) {
@@ -81,8 +81,7 @@ const BarChart = ({department_ , changeInDept , gender , changeInGender , unit ,
 
       // Count leaves by day
       const leaveCounts = weekDataResponse.data.weekData.reverse(); 
-      console.log(dates)
-      console.log(leaveCounts.weekData)
+     
 
     // Update the chartData state
     setChartData({

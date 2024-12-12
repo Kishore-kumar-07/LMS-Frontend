@@ -7,10 +7,10 @@ const PermissionDetailTable = () => {
   const navigation = useNavigate();
   const [userDetails, setUserDetails] = useState({});
   const token = document.cookie.split("=")[1];
-  console.log(token);
+ 
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
-  console.log("in", decodedToken.empId);
+ 
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -27,11 +27,10 @@ const PermissionDetailTable = () => {
         );
 
         if (res.status === 401) {
-          console.log("yes");
+          
         }
 
         setUserDetails(res.data[0]);
-        console.log(res.data[0]);
       } catch (error) {
         if (error.response.status === 400) {
           navigation("/error404");

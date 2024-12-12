@@ -39,7 +39,7 @@ const NotificationButton = () => {
       if (error.response.status === 500) {
         navigate("/error500");
       }
-      console.log("ERROR IN CIRCULAR");
+      
     }
   };
 

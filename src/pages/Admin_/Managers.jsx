@@ -61,7 +61,7 @@ const Managers = () => {
           },
         }
       );
-      console.log(allEmp.data);
+      
       setAllEmployees(allEmp.data); 
       
     } catch (error) {
@@ -80,7 +80,7 @@ const Managers = () => {
   }
 
   useEffect(()=>{
-    console.log(fileData)
+    
     saveImportData();
   },[fileData])
 
@@ -99,7 +99,7 @@ const Managers = () => {
           },
         }
       );
-      console.log(res);
+      
       if(res.status === 200){
         toast.success("Data imported successfully")
         getEmployees();
@@ -163,7 +163,7 @@ const Managers = () => {
           },
         }
       );
-      // console.log(res);
+    
      toast.success("Employee deleted Successfully")
      setIsDelete(CURRENT_STATUS.SUCCESS)
       
@@ -202,7 +202,7 @@ const Managers = () => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const sheetData = XLSX.utils.sheet_to_json(sheet);
-      console.log(sheetData);
+    
       setFileData(sheetData);
     };
 
@@ -294,7 +294,7 @@ const Managers = () => {
                       onClick={() => handleEditClick(employee)}
                       className="ml-2 text-white px-2 py-1 rounded"
                     >
-                      <img src={edit} height={25} width={25}></img>
+                      <img src={edit} height={25} width={25} alt='edit'></img>
 
                     </button>
                   </td>
@@ -303,7 +303,7 @@ const Managers = () => {
                       onClick={() => handleDeleteClick(employee.empId)}
                       className="ml-2  text-white px-2 py-1 rounded"
                     >
-                      <img src={delete_} height={25} width={25}></img>
+                      <img src={delete_} height={25} width={25} alt='delete'></img>
                     </button>
                   </td>
                 
@@ -355,7 +355,7 @@ const Managers = () => {
         )}
         {openEditModal && (
   <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-white p-2 rounded-lg shadow-2xl w-[70%] h-[70%] flex justify-center items-center">
+    <div className="bg-white p-2 rounded-lg shadow-2xl w-[70%] h-[80%] flex justify-center items-center">
       <EditRegister
         setOpenEditModal={setOpenEditModal}
         currentEmployee={currentEmployee}

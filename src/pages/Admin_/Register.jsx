@@ -6,8 +6,16 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { ClockLoader } from "react-spinners";
+import PropTypes from "prop-types";
 
 function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
+
+  Register.propTypes = {
+    setOpenRegisterModal: PropTypes.func.isRequired,
+    getEmployees: PropTypes.func.isRequired,
+    filterEmployees: PropTypes.func.isRequired,
+  };
+
   const [formData, setFormData] = useState({
     empId: "",
     empName: "",
@@ -42,7 +50,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
   const [isRegister, setIsRegister] = useState(CURRENT_STATUS.IDEAL);
 
   useEffect(() => {
-    console.log(filterEmployees);
+   
     const managerList = filterEmployees.filter((row) => row.role === "Manager");
     const adminList = filterEmployees.filter((row) => row.role === "Admin");
     setManager(managerList);
@@ -159,8 +167,8 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
   };
 
   return (
-    <div className="w-full bg-white rounded-lg p-5 overflow-y-auto h-fit md:h-full">
-      <ToastContainer autoClose={5000} />
+    <div className="w-full bg-white rounded-lg p-5 overflow-y-auto h-full ">
+      <ToastContainer autoClose={3000} />
       <div className="w-full mb-10 flex justify-between">
         <p></p>
         <h1 className="text-3xl font-bold text-center text-blue-700">
@@ -380,6 +388,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
           <div className="flex flex-col justify-center gap-3">
             <div className="flex gap-3">
               <label className="text-gray-700 font-semibold">
+                <input type="text"/>
                 Paternity Leave
               </label>
               <input
@@ -391,6 +400,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
             </div>
             <div className="flex gap-2">
               <label className="text-gray-700 font-semibold">
+                <input type="text" /> 
                 Adoption Leave
               </label>
               <input

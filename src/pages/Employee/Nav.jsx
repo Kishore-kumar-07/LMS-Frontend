@@ -35,7 +35,7 @@ function Nav({ setOption }) {
         );
 
         if (res.status === 401) {
-          console.log("yes");
+
           navigate("/thank-you");
         }
 
@@ -74,7 +74,7 @@ function Nav({ setOption }) {
 
   const handleLogout = () => {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    console.log("Logged out, cookie removed");
+    
     navigate("/");
   };
 

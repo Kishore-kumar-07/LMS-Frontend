@@ -27,10 +27,10 @@ function EmployeeUserDetails({ setIsPaternity, setIsAdoption }) {
           }
         );
 
-        console.log("details", res.data[0]);
+       
 
         if (res.status === 401) {
-          console.log("yes");
+          
           navigate("/thank-you");
         }
 

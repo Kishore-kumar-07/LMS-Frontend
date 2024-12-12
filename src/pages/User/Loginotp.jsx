@@ -34,7 +34,7 @@ function Loginotp() {
 
   const sendOtp = async () => {
     try {
-      console.log("inside try");
+      
       setSendStatus(CURRENT_STATUS.LOADING);
       if (userName.length != "") {
         const res = await axios.post(
@@ -61,8 +61,7 @@ function Loginotp() {
 
   const validateOtp = async () => {
     try {
-      console.log("otp is ", otp);
-      console.log("username is ", userName);
+      
       setValidateStatus(CURRENT_STATUS.LOADING);
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/otp/verify`,

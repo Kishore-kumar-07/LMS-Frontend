@@ -126,7 +126,7 @@ const AdminHome = () => {
           },
         }
       );
-      console.log("in admin home ", allEmp);
+    
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -151,7 +151,7 @@ const AdminHome = () => {
           },
         }
       );
-      console.log("in manager home ", cardData.data.length);
+     
       setLeaveCardData(cardData.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -176,7 +176,7 @@ const AdminHome = () => {
           },
         }
       );
-      console.log("in manager home ", cardData.data.length);
+     
       setPermissionCardData(cardData.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -255,13 +255,11 @@ const AdminHome = () => {
     setLeavesApproved(leaveApproved);
     setLeavesDenied(leaveDenied);
 
-    console.log(permissionCardData);
+   
 
     const totalPermission = permissionCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
       const employee = empAll.find((employee) => employee.empId === row.empId);
-      // console.log(employee);
-      // console.log(selectedUnit);
 
       return (
         (selectedDepartmentMain === "All Departments" ||
@@ -272,7 +270,7 @@ const AdminHome = () => {
       ;
     }).length;
 
-    console.log(totalPermission);
+
 
     const permissionPending = permissionCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
@@ -290,7 +288,7 @@ const AdminHome = () => {
 
     const permissionApproved = permissionCardData.filter((row) => {
       // Find the employee object from empAll based on employeeId
-      console.log(selectedUnit);
+      
       const employee = empAll.find((employee) => employee.empId === row.empId);
 
       return (
@@ -313,7 +311,7 @@ const AdminHome = () => {
     //   );
     // }).length;
 
-    console.log(totalPermission, permissionPending, permissionApproved);
+   
 
     setTotalPermissionRequests(totalPermission);
     setPermissionPending(permissionPending);
@@ -343,7 +341,7 @@ const AdminHome = () => {
   };
 
   const handleChangeInUnit = (event) => {
-    console.log(event.target.value);
+   
     setSelectedUnit(event.target.value);
     setChangeInUnit(!changeInUnit);
   };
@@ -362,7 +360,7 @@ const AdminHome = () => {
 
   const handleClick = (index, id) => {
     setEmployeeId(id);
-    // console.log("after clicking", index);
+
     setSelectedEmployee(filteredEmployees[index]);
     setSelectedEmployeeIndex(index);
     setShowPopup(true);

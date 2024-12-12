@@ -203,7 +203,7 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit
           },
         }
       );
-      console.log("in admin home ", allEmp);
+      
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -231,7 +231,7 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit
         }
       );
       const filteredData = response.data.reverse();
-      console.log(filteredData);
+     
       setData(filteredData);
       setFilteredData(filteredData);
     } catch (error) {
@@ -252,8 +252,7 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit
         (subDept === "All Sub Departments" || employee.subDepartment === subDept)
       );
     });
-    console.log(department_)
-    console.log(filteredData_);
+   
     setFilteredData(filteredData_);
   }
 

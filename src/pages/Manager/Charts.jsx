@@ -13,7 +13,7 @@ const Charts = ({department_ , changeInDept , unit , changeInUnit , gender , cha
   const newDate = new Date().getFullYear();
   const currentDate = new Date();
   const month = currentDate.getMonth() + 1; 
-  // console.log(month)
+ 
 
   const [data, setData] = useState([]);
   const [gvr, setGvr] = useState(0);
@@ -55,7 +55,7 @@ const Charts = ({department_ , changeInDept , unit , changeInUnit , gender , cha
           },
         }
       );
-      // console.log("in admin home ", allEmp);
+      
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -90,13 +90,12 @@ const Charts = ({department_ , changeInDept , unit , changeInUnit , gender , cha
   };
 
   const filterDataByYear = (year, data) => {
-    // console.log(year, data);
-    // console.log(department_)
+   
     const filteredData = data.filter(row => {
       const [day, month, yearStr] = row.from.date.split("/"); // Split "DD/MM/YYYY"
       return parseInt(yearStr) === parseInt(year) && parseInt(month) === parseInt(selectedMonth);
     });
-    // console.log(filteredData)
+
     const three_p = filteredData
   .filter((row) => {
     // Find the corresponding employee object based on the employee ID (or another key)
@@ -127,26 +126,18 @@ const gvr = filteredData
     );
   })
   .reduce((sum, row) => sum + row.leaveDays, 0);
-
-// console.log("3P Leave Days (Department Filtered): ", three_p);
-// console.log("GVR Leave Days (Department Filtered): ", gvr);
-
-
-// console.log("3P Leave Days (Department Filtered): ", three_p);
-// console.log("GVR Leave Days (Department Filtered): ", gvr);
-
 
     setGvr(gvr);
     setThree_p(three_p);
   };
 
   const filterDataByMonth = (month_, data) => {
-    // console.log(month, data);
+    
     const filteredData = data.filter(row => {
       const [day, month, yearStr] = row.from.date.split("/"); // Split "DD/MM/YYYY"
       return parseInt(month) === parseInt(month_) && parseInt(yearStr) === parseInt(selectedYear);
     });
-    // console.log(filteredData)
+   
     const three_p = filteredData
   .filter((row) => {
     // Find the corresponding employee object based on the employee ID (or another key)
@@ -178,14 +169,6 @@ const gvr = filteredData
     );
   })
   .reduce((sum, row) => sum + row.leaveDays, 0);
-
-// console.log("3P Leave Days (Department Filtered): ", three_p);
-// console.log("GVR Leave Days (Department Filtered): ", gvr);
-
-
-// console.log("3P Leave Days (Department Filtered): ", three_p);
-// console.log("GVR Leave Days (Department Filtered): ", gvr);
-
 
     setGvr(gvr);
     setThree_p(three_p);

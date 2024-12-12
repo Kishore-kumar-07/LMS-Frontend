@@ -78,7 +78,7 @@ function EmployeePopUp({ onClose, employeeId }) {
           },
         }
       );
-      console.log(res.data)
+     
       setGaugeData(res.data)
     } catch (error) {
       if (error.response.status === 400) {
@@ -133,7 +133,7 @@ function EmployeePopUp({ onClose, employeeId }) {
       );
       const correctData = res.data.filter((row) => row.status !== "Withdrawn");
       setLogData(correctData.reverse());
-      console.log(res.data);
+   
       filterLeaveDataByMonth(res.data); // Filter and calculate leave data by month
     } catch (error) {
       console.log(error);
@@ -174,13 +174,13 @@ function EmployeePopUp({ onClose, employeeId }) {
       const fromDate = moment(log.from.date, "DD/MM/YYYY");
       const monthIndex = fromDate.month(); // 0 for January, 11 for December
 
-      console.log(monthIndex);
+    
       if (log.LOP === 0 && log.status === "Approved") {
         leaveCountPerMonth[monthIndex] += log.numberOfDays;
       } else if (log.LOP !== 0 && log.status === "Approved") {
         lopCountPerMonth[monthIndex] += log.LOP;
       }
-      console.log(leaveCountPerMonth);
+    
     });
 
     setLeaveCounts(leaveCountPerMonth);
@@ -206,9 +206,7 @@ function EmployeePopUp({ onClose, employeeId }) {
         }
       );
       const fetchedData = res.data;
-      console.log(empId)
-      
-      console.log(fetchedData);
+    
       setClCount(fetchedData.clDetails.availed)
       setClTotal(fetchedData.clDetails.totalEligibility)
       if(fetchedData.plDetails){
@@ -216,7 +214,7 @@ function EmployeePopUp({ onClose, employeeId }) {
         setPlTotal(fetchedData.plDetails.totalEligibility)
       }
 
-      console.log(fetchedData.clDetails.availed)
+     
     }
     catch (error) {
 

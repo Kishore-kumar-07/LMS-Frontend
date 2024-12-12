@@ -43,7 +43,7 @@ const LeaveHistoryTable = ({ LeaveLogs, setReload, reload }) => {
           },
         }
       );
-      console.log(res);
+      
       setReload(!reload);
     } catch (error) {
       console.error(error);
