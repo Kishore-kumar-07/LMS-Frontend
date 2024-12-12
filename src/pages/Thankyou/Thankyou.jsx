@@ -12,9 +12,7 @@ const Thankyou = () => {
 
   useEffect(() => {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    console.log("Logged out, cookie removed");
-    // navigate("/");
-    //delay for 10 sec
+   
     setTimeout(() => {
       navigate("/");
     }, 5000);

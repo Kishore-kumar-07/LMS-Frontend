@@ -142,7 +142,7 @@ function LeaveDetailTable() {
           col4: fetchedData.paternityLeave ? fetchedData.paternityLeave.carryForward : 0,
         },
       ];
-      console.log(newData);
+     
       setTableData(newData);
     } catch (error) {
       console.error("Error fetching table data", error);

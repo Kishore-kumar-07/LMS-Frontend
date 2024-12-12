@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from "react";
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +7,7 @@ import * as FileSaver from "file-saver";
 import XLSX from "sheetjs-style";
 import delete_ from "../../images/delete.png";
 import edit from "../../images/edit.png";
-import { ToastContainer } from "react-toastify";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import EditRegister from "./EditRegister";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
@@ -58,7 +56,7 @@ const Employee = () => {
           },
         }
       );
-      console.log(allEmp.data);
+
       setAllEmployees(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -76,7 +74,6 @@ const Employee = () => {
   };
 
   useEffect(() => {
-    console.log(fileData);
     saveImportData();
   }, [fileData]);
 
@@ -86,7 +83,6 @@ const Employee = () => {
       setIsImport(CURRENT_STATUS.IDEAL);
       return;
     }
-    console.log(fileData);
 
     const chunks = [];
     for (let i = 0; i < fileData.length; i += 25) {
@@ -94,32 +90,27 @@ const Employee = () => {
       chunks.push(chunk);
     }
 
-    for (let i = 0; i < chunks.length; i += 1) {
+    for (const chunk of chunks) {
       try {
-        const res = await axios.post(
+        const response = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/emp/import`,
+          { id: adminId, emp: chunk },
           {
-            id: adminId,
-            emp: chunks[i],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           }
         );
-        console.log(res);
-        if (res.status === 201) {
-          setIsImport(CURRENT_STATUS.IDEAL);
+
+        if (response.status === 201) {
           toast.success("Data imported successfully");
-          getEmployees();
-          setFileData([]);
+          setFileData([]); // Clear file data after success
+          getEmployees(); // Refresh employee data
         }
       } catch (error) {
-        setIsImport(CURRENT_STATUS.IDEAL);
-        // toast.error("Error in Importing Data");
-        console.log("error");
+        console.error("Error importing data:", error);
+        toast.error("Failed to import data. Please try again.");
+      } finally {
+        setIsImport(CURRENT_STATUS.IDEAL); // Reset status regardless of success or failure
       }
     }
     setFileData([]);
@@ -191,7 +182,7 @@ const Employee = () => {
           },
         }
       );
-      console.log(res);
+
       setDeleteModal(false);
       toast.success("Employee deleted Successfully");
       getEmployees();
@@ -204,7 +195,6 @@ const Employee = () => {
   };
 
   useEffect(() => {
-    console.log(allEmployees)
     filterData();
   }, [allEmployees]);
 
@@ -216,14 +206,15 @@ const Employee = () => {
       (row) => row.role === "Manager" || row.role === "Admin"
     );
     setfilterEmployee(filterEmployee);
-    console.log(filterEmployee);
+
     const filtered = filteredData.filter((row) => {
       const matchesType =
         selectedType === "" ||
         row.role.toLowerCase() === selectedType.toLowerCase();
       const matchesSearchTerm =
         searchTerm === "" ||
-        row.empName.toLowerCase().includes(searchTerm.toLowerCase()) || row.empId.includes(searchTerm) ;
+        row.empName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.empId.includes(searchTerm);
       return matchesType && matchesSearchTerm;
     });
     setFilteredData(filtered);
@@ -242,7 +233,7 @@ const Employee = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    console.log(file);
+
     const reader = new FileReader();
 
     reader.onload = (event) => {
@@ -256,8 +247,6 @@ const Employee = () => {
         }
         return row;
       });
-
-      console.log(transformedData);
       setFileData(transformedData);
     };
 
@@ -318,82 +307,90 @@ const Employee = () => {
             </div>
           </div>
         </div>
-       { isImport !== CURRENT_STATUS.LOADING ? <div className="w-full pl-5 pr-5 pt-2 pb-2 h-fit">
-          <div className="w-full h-full p-5">
-            <div className="w-full h-[570px] overflow-y-auto">
-              <table className="table-auto w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-200 text-black sticky top-0 z-10">
-                    <th className="p-2 border">Employee ID</th>
-                    <th className="p-2 border">Employee Name</th>
-                    <th className="p-2 border">Type</th>
-                    <th className="p-2 border">Reporting Manager</th>
-                    <th className="p-2 border">DOJ</th>
-                    <th className="p-2 border">Phone Number</th>
-                    <th className="p-2 border">Edit</th>
-                    <th className="p-2 border">Delete</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.length > 0 ? (
-                    filteredData.map((employee) => (
-                      <tr key={employee.empId} className="table-row w-full">
-                        <td className="p-4 border">{employee.empId}</td>
-                        <td className="p-4 border">{employee.empName}</td>
-                        <td className="p-4 border">{employee.role}</td>
-                        <td className="p-4 border">{employee.manager}</td>
-                        <td className="p-4 border">{employee.dateOfJoining}</td>
-                        <td className="p-4 border">{employee.empPhone}</td>
-                        <td className="border text-md font-medium text-sm flex gap-2 h-[100%] p-4">
-                          <button
-                            onClick={() => handleEditClick(employee)}
-                            className="ml-2 text-white px-2 py-1 rounded"
-                          >
-                            <img src={edit} height={25} width={25} alt="edit" />
-                          </button>
-                        </td>
-                        <td className="border px-4 py-4 text-md font-medium">
-                          <button
-                            onClick={() => handleDeleteClick(employee.empId)}
-                            className="ml-2 text-white px-2 py-1 rounded"
-                          >
-                            <img
-                              src={delete_}
-                              height={25}
-                              width={25}
-                              alt="delete"
-                            />
-                          </button>
+        {isImport !== CURRENT_STATUS.LOADING ? (
+          <div className="w-full pl-5 pr-5 pt-2 pb-2 h-fit">
+            <div className="w-full h-full p-5">
+              <div className="w-full h-[570px] overflow-y-auto">
+                <table className="table-auto w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-200 text-black sticky top-0 z-10">
+                      <th className="p-2 border">Employee ID</th>
+                      <th className="p-2 border">Employee Name</th>
+                      <th className="p-2 border">Type</th>
+                      <th className="p-2 border">Reporting Manager</th>
+                      <th className="p-2 border">DOJ</th>
+                      <th className="p-2 border">Phone Number</th>
+                      <th className="p-2 border">Edit</th>
+                      <th className="p-2 border">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.length > 0 ? (
+                      filteredData.map((employee) => (
+                        <tr key={employee.empId} className="table-row w-full">
+                          <td className="p-4 border">{employee.empId}</td>
+                          <td className="p-4 border">{employee.empName}</td>
+                          <td className="p-4 border">{employee.role}</td>
+                          <td className="p-4 border">{employee.manager}</td>
+                          <td className="p-4 border">
+                            {employee.dateOfJoining}
+                          </td>
+                          <td className="p-4 border">{employee.empPhone}</td>
+                          <td className="border text-md font-medium text-sm flex gap-2 h-[100%] p-4">
+                            <button
+                              onClick={() => handleEditClick(employee)}
+                              className="ml-2 text-white px-2 py-1 rounded"
+                            >
+                              <img
+                                src={edit}
+                                height={25}
+                                width={25}
+                                alt="edit"
+                              />
+                            </button>
+                          </td>
+                          <td className="border px-4 py-4 text-md font-medium">
+                            <button
+                              onClick={() => handleDeleteClick(employee.empId)}
+                              className="ml-2 text-white px-2 py-1 rounded"
+                            >
+                              <img
+                                src={delete_}
+                                height={25}
+                                width={25}
+                                alt="delete"
+                              />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan="8"
+                          className="p-4 text-center text-gray-500 w-full"
+                        >
+                          No employees found.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="8"
-                        className="p-4 text-center text-gray-500 w-full"
-                      >
-                        No employees found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>:
-             <div className="flex justify-center items-center  p-64">
-                <ClockLoader color="#000000" size={45} />
+        ) : (
+          <div className="flex justify-center items-center  p-64">
+            <ClockLoader color="#000000" size={45} />
           </div>
-          }
+        )}
         {openRegisterModal && (
           <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-2 rounded-lg shadow-2xl w-[85%] h-[85%] flex justify-center items-center">
+            <div className="bg-white p-2 rounded-lg shadow-2xl w-[85%] h-[90%] flex justify-center items-center">
               <Register
                 setOpenRegisterModal={setOpenRegisterModal}
                 getEmployees={getEmployees}
                 filterEmployees={filterEmployee}
-                
               />
             </div>
           </div>
@@ -434,7 +431,7 @@ const Employee = () => {
         )}
         {openEditModal && (
           <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-2 rounded-lg shadow-2xl w-[70%] h-[70%] flex justify-center items-center">
+            <div className="bg-white p-2 rounded-lg shadow-2xl w-[70%] h-[80%] flex justify-center items-center">
               <EditRegister
                 setOpenEditModal={setOpenEditModal}
                 currentEmployee={currentEmployee}

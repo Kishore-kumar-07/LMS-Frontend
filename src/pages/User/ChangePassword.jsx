@@ -22,7 +22,7 @@ function ChangePassword() {
   const decodedToken = jwtDecode(token);
   const userName = decodedToken.userName;
   const empId = decodedToken.empId;
-  console.log(empId , "USERNAME");
+  
 
   const HideShowOldPass = () => {
     setShowOldPass(!showOldPass);
@@ -56,8 +56,8 @@ function ChangePassword() {
         sendOtp();
       }
     } catch (e) {
-      console.log(e);
-      console.log(decodedToken.empId);
+    
+      
       setIsLoading(CURRENT_STATUS.ERROR);
       if(e.status === 400){
         toast.error("Invalid password");
@@ -70,7 +70,6 @@ function ChangePassword() {
 
   const sendOtp = async () => {
     try {
-      console.log("inside try");
 
       setIsLoading(CURRENT_STATUS.LOADING);
 
@@ -87,14 +86,14 @@ function ChangePassword() {
       }
     } catch (e) {
       setIsLoading(CURRENT_STATUS.ERROR);
-      console.log(e);
+     
       toast.error("Otp Not Sent");
     }
   };
 
   const validateOtp = async () => {
     try {
-      console.log("otp is ", otp);
+     
       setIsLoading(CURRENT_STATUS.LOADING);
 
       const res = await axios.post(

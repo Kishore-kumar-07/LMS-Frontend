@@ -22,7 +22,7 @@ const LoginTextFeild = ({ idRef }) => {
     if (RFID !== "") {
       try {
         setStatus(CURRENT_STATUS.LOADING);
-        console.log(RFID);
+       
         const res = await axios.post(
           `${process.env.REACT_APP_BASE_URL}/emp/login`,
           {
@@ -36,14 +36,13 @@ const LoginTextFeild = ({ idRef }) => {
         );
       
         setStatus(CURRENT_STATUS.SUCCESS);
-        console.log(res.status);
-        console.log(res.data.token);
+      
         if (res.status === 200) {
           document.cookie = `token=${res.data.token}`;
-          console.log(document.cookie);
+         
 
           const decodedToken = jwtDecode(res.data.token);
-          console.log("decoded", decodedToken);
+        
 
           if (decodedToken.role === "Manager") {
             navigate("/Manager");

@@ -18,9 +18,9 @@ function EmployeeHome() {
   const [isAdoption, setIsAdoption] = useState(null);
 
   const token = document.cookie.split("=")[1];
-  console.log(token);
+ 
   const decodedToken = jwtDecode(token);
-  console.log("in", decodedToken);
+ 
 
   return (
     <>

@@ -56,9 +56,9 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
   // const [isAppliedLeave, setIsAppliedLeave] = useState(false);
 
   const token = document.cookie.split("=")[1];
-  console.log(token);
+
   const decodedToken = jwtDecode(token);
-  console.log("in", decodedToken.empId);
+
 
   const formatDate = (date) => {
     return date ? dayjs(date).format("DD/MM/YYYY") : "";
@@ -105,7 +105,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    console.log("Cancelled!");
+  
     setLopStatus(CURRENT_STATUS.IDEAL);
     setPopupVisible(!popupVisible);
   };
@@ -128,7 +128,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         ? true
         : false;
 
-    console.log("Check Leave 00000000000");
+    
     if (leaveType === "privilege Leave" && totalDays < 3) {
       toast.warn("privilege Leave must be minimum of 3 days");
       return;
@@ -136,15 +136,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
     try {
       setIsLeaveApplied(CURRENT_STATUS.LOADING);
 
-      console.log(`empId: ${decodedToken.empId} 
-        role: ${decodedToken.role} 
-        leaveType: ${leaveType} 
-        from: {
-          date: ${formatDate(fromDate)} 
-          firstHalf: ${from1stHalf} 
-          secondHalf: ${from2ndHalf} 
-        } 
-        numberOfDays: ${totalDays}`);
+      
 
       const res = await axios.post(
         ` ${process.env.REACT_APP_BASE_URL}/leave/checkLeave`,
@@ -294,22 +286,20 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
         }
       );
 
-      console.log(" ");
+      
       if (res.status === 201) {
         setIsLeaveApplied(CURRENT_STATUS.SUCCESS);
         setPopupVisible(!popupVisible);
         toast.success("Leave Appliled Successfully");
-        console.log(res.data.leave._id);
+        
         sendLeaveEmail(res.data.leave._id, summary.LOP);
       } else {
         setIsLeaveApplied(CURRENT_STATUS.IDEAL);
         toast.error("Error in requesting Leave");
       }
 
-      var data = res.data;
-      console.log(data.leave._id);
+     
 
-      // console.log("data", res.data);
     } catch (error) {
       console.log(error);
       if (error.response && error.response.status === 400) {
@@ -422,7 +412,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       // Use a function inside setState to ensure the latest state is used.
       setclassfalse(() => ""); // Reset classfalse
     } else {
-      console.log("classfalse", classfalse);
+     
 
       setclassfalse(() => "false"); // Set it to "false" correctly
       setPopupVisible(false);
@@ -608,7 +598,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                     checked={fromHalf === half}
                     onChange={() => {
                       setFromHalf(half);
-                      console.log("from", half);
+                      
                       if (half == "First Half") {
                         setToDate(fromDate);
                       }
@@ -731,7 +721,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                       checked={toHalf === half}
                       onChange={() => {
                         setToHalf(half);
-                        console.log("TOOO:", toHalf);
+                       
                         if (fromDate == toDate) {
                           if (fromHalf == "") {
                             setFromFirstHalf(true);

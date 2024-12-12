@@ -24,7 +24,7 @@ export default function LineGraph({ department_ , changeInDept , gender , change
   }, [changeInDept , changeInUnit , changeInGender , changeInSubDept]);
 
   const newDate = new Date().getFullYear();
-  // console.log(newDate);
+
 
   const getAllEmployee = async () => {
     try {
@@ -38,7 +38,7 @@ export default function LineGraph({ department_ , changeInDept , gender , change
           },
         }
       );
-      // console.log("in admin home ", allEmp);
+     
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {
@@ -99,7 +99,7 @@ export default function LineGraph({ department_ , changeInDept , gender , change
         leaveCountPerMonth[monthIndex] += log.leaveDays;
       }
     });
-    // console.log(leaveCountPerMonth)
+  
 
     setLeaveCounts(leaveCountPerMonth);
   };
@@ -132,7 +132,7 @@ export default function LineGraph({ department_ , changeInDept , gender , change
         leaveCountPerMonth[monthIndex] += log.leaveDays;
       }
     });
-    // console.log(leaveCountPerMonth)
+   
     setLeaveCounts(leaveCountPerMonth);
   };
 

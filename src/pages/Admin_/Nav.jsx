@@ -5,8 +5,14 @@ import GVR from "../../images/GVRLogo.png";
 import userImg from "../../images/profile.png";
 import { useNavigate } from "react-router-dom";
 import { FaPaperPlane, FaBars, FaTimes } from "react-icons/fa";
+import PropTypes from "prop-types";
 
 function Nav({ setIsManager, setIsEmployees }) {
+  Nav.propTypes = {
+    setIsManager: PropTypes.func.isRequired,
+    setIsEmployees: PropTypes.func.isRequired,
+  };
+
   const navigate = useNavigate();
   const [selected, setSelected] = useState("Employees");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -48,7 +54,6 @@ function Nav({ setIsManager, setIsEmployees }) {
         );
 
         if (res.status === 401) {
-          console.log("yes");
           navigate("/thank-you");
         }
 
@@ -74,7 +79,7 @@ function Nav({ setIsManager, setIsEmployees }) {
 
   const handleLogout = () => {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    console.log("Logged out, cookie removed");
+
     navigate("/");
   };
 
@@ -109,7 +114,7 @@ function Nav({ setIsManager, setIsEmployees }) {
             }`}
           >
             {["Employees", "Managers"].map((section) => (
-              <span
+              <button
                 key={section}
                 onClick={() => {
                   handleClick(section);
@@ -123,9 +128,15 @@ function Nav({ setIsManager, setIsEmployees }) {
                     ? "text-[#015E84] border-[#015E84]"
                     : "text-black border-transparent"
                 }`}
+                aria-current={
+                  activeNav ===
+                  section.charAt(0).toUpperCase() + section.slice(1)
+                    ? "page"
+                    : undefined
+                }
               >
-                {section.charAt(0).toUpperCase() + section.slice(1)}{" "}
-              </span>
+                {section.charAt(0).toUpperCase() + section.slice(1)}
+              </button>
             ))}
           </div>
 
@@ -144,6 +155,11 @@ function Nav({ setIsManager, setIsEmployees }) {
                     {userDetails.empName || "Unknown User"}
                   </h1>
                   <table className="text-gray-700 mt-2 w-full break-words">
+                    <thead>
+                      <tr>
+                         
+                      </tr>
+                    </thead>
                     <tbody>
                       <tr>
                         <td className="font-semibold w-32">Designation:</td>
@@ -221,9 +237,17 @@ function Nav({ setIsManager, setIsEmployees }) {
       {/* Dark background when dropdown is open */}
       {isDropdownOpen && (
         <div
-          className="fixed inset-0 "
-          onClick={() => setIsDropdownOpen(false)}
-        />
+        role="button"
+        tabIndex={0}
+        className="fixed inset-0"
+        onClick={() => setIsDropdownOpen(false)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            setIsDropdownOpen(false);
+          }
+        }}
+      />
+      
       )}
     </>
   );

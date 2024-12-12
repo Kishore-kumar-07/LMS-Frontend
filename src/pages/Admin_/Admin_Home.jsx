@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React , { useState } from 'react'
 import Nav from './Nav'
-import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -18,9 +17,6 @@ const ManagerHome = () => {
   const [isManager, setIsManager] = useState(false);
   const [empAll, setEmpAll] = useState([]);
 
-  // useEffect(()=>{
-  //   getAllEmployee();
-  // },[])
 
   const getAllEmployee = async () => {
     try {
@@ -34,7 +30,7 @@ const ManagerHome = () => {
           },
         }
       );
-      console.log("in admin  home ", allEmp);
+      
       setEmpAll(allEmp.data);
     } catch (error) {
       if (error.response.status === 400) {

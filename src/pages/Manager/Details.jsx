@@ -114,13 +114,11 @@ const Details = () => {
       ) {
         const [day, month_, year] = leave.from.date.split("/");
         if (month == month_) {
-          console.log(leave.from.date);
           date += leave.from.date + " - " + leave.to.date + " , ";
-          console.log(date);
         }
       }
     });
-    console.log(date);
+
     return date === "" ? "00" : date;
   };
 
@@ -134,14 +132,11 @@ const Details = () => {
       ) {
         const [day, month_, year] = leave.from.date.split("/");
         if (month == month_) {
-          console.log(leave.from.date);
           count += 1;
-          // console.log()
         }
       }
     });
 
-    console.log(count);
     return count.toString();
   };
 
@@ -307,7 +302,6 @@ const Details = () => {
   const setExcelData = () => {
     const dummyData = [];
     filteredEmployees.map((employee, index) => {
-      console.log(employee.empId);
       dummyData.push({
         sno: index + 1,
         vendor: employee.vendor,
@@ -360,7 +354,7 @@ const Details = () => {
         }
       );
       const filteredData = response.data.reverse();
-      console.log(filteredData);
+
       setLeaveData(filteredData);
     } catch (error) {
       if (error.response.status === 400) {
@@ -387,7 +381,6 @@ const Details = () => {
       );
       setAllEmployees(allEmp.data); // Store all employees in state
       setFilteredEmployees(allEmp.data);
-      console.log(allEmp.data); // Initialize filteredEmployees with all employees
     } catch (error) {
       if (error.response.status === 400) {
         navigation("/error404");
@@ -408,14 +401,22 @@ const Details = () => {
       const matchesType = selectedType === "" || employee.role === selectedType;
       const matchesDepartment =
         selectedDepartment === "" || employee.department === selectedDepartment;
-      const matchesGender = 
-        selectedGender === "All Gender" || employee.gender === selectedGender;  
-      const matchesUnit = 
+      const matchesGender =
+        selectedGender === "All Gender" || employee.gender === selectedGender;
+      const matchesUnit =
         selectedUnit === "All Units" || employee.unit === selectedUnit;
-      const matchesSubDept = 
-      selectedSubDepartment=== "All Sub Departments" || employee.subDepartment === selectedSubDepartment;
-      
-      return matchesSearchTerm && matchesType && matchesDepartment && matchesGender && matchesUnit && matchesSubDept;
+      const matchesSubDept =
+        selectedSubDepartment === "All Sub Departments" ||
+        employee.subDepartment === selectedSubDepartment;
+
+      return (
+        matchesSearchTerm &&
+        matchesType &&
+        matchesDepartment &&
+        matchesGender &&
+        matchesUnit &&
+        matchesSubDept
+      );
     });
     setFilteredEmployees(filtered);
   };
@@ -423,7 +424,14 @@ const Details = () => {
   // Trigger filtering every time searchTerm or selectedType changes
   useEffect(() => {
     filterEmployees();
-  }, [searchTerm, selectedType, selectedDepartment , selectedGender , selectedUnit , selectedSubDepartment]);
+  }, [
+    searchTerm,
+    selectedType,
+    selectedDepartment,
+    selectedGender,
+    selectedUnit,
+    selectedSubDepartment,
+  ]);
 
   const handleSendCircular = () => {
     setIsModalOpen(true);
@@ -467,7 +475,6 @@ const Details = () => {
     setSelectedEmployees([]);
   };
 
-  console.log(data);
   const handleCheckboxChange = (empId) => {
     setSelectedEmployees((prevSelected) =>
       prevSelected.includes(empId)
@@ -497,7 +504,6 @@ const Details = () => {
   };
 
   const handleChangeInUnit = (event) => {
-    console.log(event.target.value);
     setSelectedUnit(event.target.value);
     setChangeInUnit(!changeInUnit);
   };
@@ -572,14 +578,14 @@ const Details = () => {
             ))}
           </select>
           <select
-                      className="w-full border rounded-md p-2 focus:outline-none focus:ring"
-                      value={selectedUnit} // Bind the state to the select value
-                      onChange={handleChangeInUnit}
-                    >
-                      {units.map((row) => (
-                        <option key={row}>{row}</option>
-                      ))}
-                    </select>
+            className="w-full border rounded-md p-2 focus:outline-none focus:ring"
+            value={selectedUnit} // Bind the state to the select value
+            onChange={handleChangeInUnit}
+          >
+            {units.map((row) => (
+              <option key={row}>{row}</option>
+            ))}
+          </select>
         </div>
         <div className="pr-5 ">
           <div></div>
