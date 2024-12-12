@@ -5,8 +5,14 @@ import GVR from "../../images/GVRLogo.png";
 import userImg from "../../images/profile.png";
 import { useNavigate } from "react-router-dom";
 import { FaPaperPlane, FaBars, FaTimes } from "react-icons/fa";
-
+import PropTypes from 'prop-types';
 function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
+  Nav.propTypes = {
+    setIsRequest: PropTypes.func.isRequired,    
+    setIsPermission: PropTypes.func.isRequired,  
+    setIsEmployees: PropTypes.func.isRequired,
+  };
+
   const [selected, setSelected] = useState("dashboard");
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -104,6 +110,7 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
             {["dashboard", "leaves", "permission", "Employees"].map(
               (section) => (
                 <span
+                role="button"
                   key={section}
                   onClick={() => {
                     handleClick(section);
@@ -138,6 +145,10 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
                   <h1 className="text-xl font-bold">{userDetails.empName}</h1>
                   <table className="text-left text-gray-700 mt-2">
                     <tbody>
+                      <tr>
+                        <th> </th>
+                        <th> </th>
+                      </tr>
                       <tr>
                         <td className="font-semibold">Designation:</td>
                         <td>{userDetails.role}</td>
@@ -191,6 +202,7 @@ function Nav({ setIsRequest, setIsPermission, setIsEmployees }) {
       </div>
       {isDropdownOpen && (
         <div
+        role="button"
           className="fixed inset-0 "
           onClick={() => setIsDropdownOpen(false)}
         />

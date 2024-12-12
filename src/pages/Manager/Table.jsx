@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Pagination from "./Pagination";
+
 import { MdMessage, MdClose, MdEdit } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
 import { BeatLoader } from "react-spinners";
-
 import accept from "../../images/accept.png";
 import decline from "../../images/cancel.png";
-
 import { useNavigate } from "react-router-dom";
-
+import PropTypes from 'prop-types';
 
 const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept ,  unit , changeInUnit , gender , changeInGender , subDept , changeInSubDept}) => {
+
+  Table.propTypes = {
+    leaveCardData: PropTypes.array.isRequired,       
+    permissionCardData: PropTypes.array.isRequired,  
+    department_: PropTypes.string.isRequired,        
+    changeInDept: PropTypes.func.isRequired,         
+    unit: PropTypes.string.isRequired,               
+    changeInUnit: PropTypes.func.isRequired,        
+    gender: PropTypes.string.isRequired,             
+    changeInGender: PropTypes.func.isRequired,       
+    subDept: PropTypes.string.isRequired,            
+    changeInSubDept: PropTypes.func.isRequired,      
+  };
 
   const headers = [
     "S.No",
@@ -359,6 +370,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
                         {status != CURRENT_STATUS.LOADING  ? (
                           <>
                             <div
+                            role="button"
                               onClick={() => handleAccept(row._id, row.status)}
                               className="flex justify-center cursor-pointer items-center"
                             >
@@ -370,6 +382,7 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
                               />
                             </div>
                             <div
+                            role="button"
                               onClick={() => (setCurrentId(row._id),
                                 setCurrentStatus(row.status),
                                 setReasonPopupOpen(true))}
@@ -470,6 +483,12 @@ const Table = ({ leaveCardData , permissionCardData , department_ , changeInDept
 };
 
 const Popup = ({ isOpen, onClose, content }) => {
+
+  Popup.propTypes = {
+    isOpen: PropTypes.bool.isRequired,  
+    onClose: PropTypes.func.isRequired, 
+    content: PropTypes.node.isRequired, 
+  };
   if (!isOpen) return null;
 
   return (

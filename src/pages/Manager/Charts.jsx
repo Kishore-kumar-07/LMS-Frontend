@@ -5,9 +5,21 @@ import LineGraph from './LineGraph';
 import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 const Charts = ({department_ , changeInDept , unit , changeInUnit , gender , changeInGender , subDept , changeInSubDept}) => {
 
+  Charts.propTypes = {
+    department_: PropTypes.string.isRequired,
+    changeInDept: PropTypes.number.isRequired,
+    unit: PropTypes.string.isRequired,
+    changeInUnit: PropTypes.number.isRequired,
+    gender: PropTypes.string.isRequired,
+    changeInGender: PropTypes.number.isRequired,
+    subDept: PropTypes.string.isRequired,
+    changeInSubDept: PropTypes.number.isRequired,
+  };
+  
   const navigation = useNavigate();
 
   const newDate = new Date().getFullYear();

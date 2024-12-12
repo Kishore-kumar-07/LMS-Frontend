@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -6,8 +6,12 @@ import { CURRENT_STATUS } from "../../statusIndicator";
 import LoadingPage from "../LoadingPage";
 import ToastContainer from "rsuite/esm/toaster/ToastContainer";
 import { toast } from "react-toastify";
+import PropTypes from 'prop-types';
 const LoginTextFeild = ({ idRef }) => {
-  const navigation = useNavigate();
+  LoginTextFeild.propTypes = {
+    idRef: PropTypes.object.isRequired, 
+  };
+
   const disableClick = (e) => {
     e.preventDefault();
     e.stopPropagation();

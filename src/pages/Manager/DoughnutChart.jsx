@@ -1,9 +1,14 @@
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend, Title } from "chart.js";
-
+import PropTypes from 'prop-types';
 
 const DoughnutChart = ({ three_p, gvr }) => {
+  DoughnutChart.propTypes = {
+    three_p: PropTypes.number.isRequired,  
+    gvr: PropTypes.number.isRequired,     
+  };
+
   Chart.register(ArcElement, Tooltip, Legend, Title);
   Chart.defaults.plugins.tooltip.backgroundColor = "";
   Chart.defaults.plugins.legend.position = "right";

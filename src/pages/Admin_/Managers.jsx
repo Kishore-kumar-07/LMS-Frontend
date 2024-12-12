@@ -261,6 +261,8 @@ const Managers = () => {
       </div>
       <div className='w-full pl-5 pr-5 pt-2 pb-2 h-full'> 
       <div className='w-full p-1 h-fit'>
+      <div className="w-full h-[570px] overflow-y-auto">
+
       <table className="table-auto w-full border-collapse">
         <thead>
           <tr className="bg-gray-200 text-black">
@@ -318,6 +320,7 @@ const Managers = () => {
           )}
         </tbody>
       </table>
+      </div>
       </div>
       </div>
       {openRegisterModal && (

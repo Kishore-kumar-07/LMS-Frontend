@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-
+import PropTypes from 'prop-types';
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { render } from "@react-email/render";
 import "react-toastify/dist/ReactToastify.css";
-import LeaveNotification from "./LeaveNotification";
 import EmailTemplate from "./EmailTemplate";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
@@ -14,20 +12,26 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { CURRENT_STATUS } from "../../../statusIndicator";
 import { OrbitProgress } from "react-loading-indicators";
-const getMinDate = () => {
-  const today = dayjs();
-  const dayOfWeek = today.day(); // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+// const getMinDate = () => {
+//   const today = dayjs();
+//   const dayOfWeek = today.day(); // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
 
-  if (dayOfWeek === 1) {
-    // If today is Monday, set minDate to last Friday
-    return today.subtract(3, "day");
-  } else {
-    // Otherwise, set minDate to yesterday
-    return today.subtract(1, "day");
-  }
-};
+//   if (dayOfWeek === 1) {
+//     // If today is Monday, set minDate to last Friday
+//     return today.subtract(3, "day");
+//   } else {
+//     // Otherwise, set minDate to yesterday
+//     return today.subtract(1, "day");
+//   }
+// };
 
 const Leaveform = ({ isPaternity, isAdoption }) => {
+
+  Leaveform.propTypes = {
+    isPaternity: PropTypes.bool.isRequired,
+    isAdoption: PropTypes.bool.isRequired,
+  };
+
   const navigate = useNavigate();
 
   const [classfalse, setclassfalse] = useState("");
@@ -166,7 +170,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
       setLopStatus(CURRENT_STATUS.SUCCESS);
 
-      if (res.status == 200) {
+      if (res.status === 200) {
         leaveApply();
       } else if (res.status === 202) {
         toast.warn("Date is Already Applied");
@@ -336,7 +340,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
       ? "FullDay"
       : "Half day";
   var toDay =
-    formatDate(fromDate) == formatDate(toDate)
+    formatDate(fromDate) === formatDate(toDate)
       ? fromDay
       : !isHalfDayTo
       ? "FullDay"
@@ -599,29 +603,29 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                     onChange={() => {
                       setFromHalf(half);
                       
-                      if (half == "First Half") {
+                      if (half === "First Half") {
                         setToDate(fromDate);
                       }
-                      if (fromDate == toDate) {
-                        if (half == "") {
+                      if (fromDate === toDate) {
+                        if (half === "") {
                           setFromFirstHalf(true);
                           setFromSecondHalf(true);
                           setToFirstHalf(true);
                           setToSecondHalf(true);
-                        } else if (half == "First Half") {
+                        } else if (half === "First Half") {
                           setFromFirstHalf(true);
                           setToFirstHalf(true);
-                        } else if (half == "Second Half") {
+                        } else if (half === "Second Half") {
                           setFromSecondHalf(true);
                           setToSecondHalf(true);
                         }
                       } else {
-                        if (half == "") {
+                        if (half === "") {
                           setFromFirstHalf(true);
                           setFromSecondHalf(true);
-                        } else if (half == "First Half") {
+                        } else if (half === "First Half") {
                           setFromFirstHalf(true);
-                        } else if (half == "Second Half") {
+                        } else if (half === "Second Half") {
                           setFromSecondHalf(true);
                         }
                       }
@@ -722,26 +726,26 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
                       onChange={() => {
                         setToHalf(half);
                        
-                        if (fromDate == toDate) {
-                          if (fromHalf == "") {
+                        if (fromDate === toDate) {
+                          if (fromHalf === "") {
                             setFromFirstHalf(true);
                             setFromSecondHalf(true);
                             setToFirstHalf(true);
                             setToSecondHalf(true);
-                          } else if (fromHalf == "First Half") {
+                          } else if (fromHalf === "First Half") {
                             setFromFirstHalf(true);
                             setToFirstHalf(true);
-                          } else if (fromHalf == "Second Half") {
+                          } else if (fromHalf === "Second Half") {
                             setFromSecondHalf(true);
                             setToSecondHalf(true);
                           }
                         } else {
-                          if (half == "") {
+                          if (half === "") {
                             setToFirstHalf(true);
                             setToSecondHalf(true);
-                          } else if (half == "First Half") {
+                          } else if (half === "First Half") {
                             setToFirstHalf(true);
-                          } else if (half == "Second Half") {
+                          } else if (half === "Second Half") {
                             setToSecondHalf(true);
                           }
                         }

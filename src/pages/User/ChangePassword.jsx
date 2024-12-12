@@ -1,4 +1,4 @@
-import { Password } from "@mui/icons-material";
+
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import React, { useState } from "react";
@@ -132,6 +132,7 @@ function ChangePassword() {
               placeholder="Enter Old Password"
             />
             <label
+            role="button"
               onClick={() => {
                 setShowOldPass(!showOldPass);
               }}
@@ -154,6 +155,7 @@ function ChangePassword() {
               placeholder="Re-Enter Old Password"
             />
             <label
+            role="button"
               onClick={() => {
                 setShowReOldPass(!showReOldPass);
               }}

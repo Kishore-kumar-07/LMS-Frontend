@@ -1,21 +1,29 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Pagination from "./Pagination";
 import { MdMessage, MdClose, MdEdit } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
-
 import { BeatLoader } from "react-spinners";
 import "react-toastify/dist/ReactToastify.css";
 import { CURRENT_STATUS } from "../../statusIndicator";
-
 import accept from "../../images/accept.png";
 import decline from "../../images/cancel.png";
-
 import { useNavigate } from "react-router-dom";
-
+import PropTypes from 'prop-types';
 
 const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit , changeInUnit , gender , changeInGender , subDept , changeInSubDept}) => {
+  
+  PermissionTable.propTypes = {
+    permissionCardData: PropTypes.array.isRequired,    
+    changeInDept: PropTypes.bool.isRequired,           
+    department_: PropTypes.string.isRequired,
+    unit: PropTypes.string.isRequired,                 
+    changeInUnit: PropTypes.bool.isRequired,           
+    gender: PropTypes.string.isRequired,                
+    changeInGender: PropTypes.bool.isRequired,          
+    subDept: PropTypes.string.isRequired,               
+    changeInSubDept: PropTypes.bool.isRequired    
+  };
   const headers = [
     "S.No",
     "Name",
@@ -309,6 +317,7 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit
                         {status !== CURRENT_STATUS.LOADING ? (
                           <>
                             <div
+                            role="button"
                               onClick={() => handleAccept(row._id, row.status)}
                               className="flex justify-center cursor-pointer items-center"
                             >
@@ -319,7 +328,7 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit
                                 height={25}
                               />
                             </div>
-                            <div
+                            <div role="button"
                               onClick={() => handleReject(row._id, row.status)}
                               className="flex justify-center cursor-pointer items-center"
                             >
@@ -384,6 +393,12 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit
 };
 
 const Popup = ({ isOpen, onClose, content }) => {
+
+  Popup.propTypes = {
+    isOpen: PropTypes.bool.isRequired,   
+    onClose: PropTypes.func.isRequired,  
+    content: PropTypes.node.isRequired 
+  };
   if (!isOpen) return null;
 
   return (

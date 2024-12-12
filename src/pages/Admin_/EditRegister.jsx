@@ -360,7 +360,7 @@ function EditRegister({
             <div className="flex flex-col gap-3 justify-center items-end ">
               <div className="flex gap-2">
                 <label>
-                  <input type="text" />
+                  
                   Paternity Leave
                 </label>
 
@@ -373,7 +373,7 @@ function EditRegister({
               </div>
               <div className="flex gap-2">
                 <label>
-                  <input type="text" />
+                  
                   Adoption Leave
                 </label>
 

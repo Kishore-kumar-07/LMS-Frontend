@@ -667,8 +667,11 @@ const Details = () => {
           <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
             <h2 className="text-lg font-semibold mb-4">Send Circular</h2>
             <div className="mb-4">
-              <label className="block text-sm font-medium">Subject</label>
+            <label htmlFor="subject" className="block text-sm font-medium">
+  Subject
+</label>
               <input
+                id="subject"
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
@@ -677,8 +680,9 @@ const Details = () => {
               />
             </div>
             <div className="mb-6">
-              <label className="block text-sm font-medium">Content</label>
+              <label htmlFor = 'content' className="block text-sm font-medium">Content</label>
               <textarea
+                id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="w-full p-2 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-gray-600"
