@@ -89,6 +89,17 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
     e.preventDefault();
     const newErrors = {};
 
+     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
+  if (!formData.empMail || !emailPattern.test(formData.empMail)) {
+    newErrors.empMail = "Invalid email format. It should contain '@' and end with '.com'";
+  }
+
+  // Validate phone number
+  const phonePattern = /^\d{10}$/;
+  if (!formData.empPhone || !phonePattern.test(formData.empPhone)) {
+    newErrors.empPhone = "Phone number must be exactly 10 digits";
+  }
+
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
         newErrors[key] = `${key} is required`;
@@ -267,6 +278,7 @@ function Register({ setOpenRegisterModal, getEmployees, filterEmployees }) {
                     name={key}
                     value={formData[key]}
                     onChange={handleChange}
+                      
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent ${
                       errors[key] ? "border-red-500" : ""
                     }`}

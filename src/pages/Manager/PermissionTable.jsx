@@ -143,6 +143,7 @@ const PermissionTable = ({permissionCardData ,  changeInDept , department_ ,unit
 
         setStatus(CURRENT_STATUS.IDEAL);
 
+        console.log(response)
         if (response.status === 200) {
           toast.success("Leave request declined successfully!");
         } else {
