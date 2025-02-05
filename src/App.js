@@ -14,6 +14,7 @@ import Admin_Home from './pages/Admin_/Admin_Home'
 import ManagerHome from "./pages/Manager/ManagerHome";
 import ResetPassword from "./pages/User/ResetPassword";
 import ChangePassword from "./pages/User/ChangePassword";
+import LogOutPopOut from "./pages/Employee/Leave Apply/LogOutPopOut";
 
 
 function App() {
@@ -77,6 +78,10 @@ function App() {
     {
       path:'/ChangePassword',
       element:<ChangePassword/>
+    },
+    {
+      path:"/test",
+      element:<LogOutPopOut/>
     },
     {
       path:"*",

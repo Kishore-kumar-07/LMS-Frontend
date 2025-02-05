@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { CURRENT_STATUS } from "../../../statusIndicator";
 import { OrbitProgress } from "react-loading-indicators";
+import LogOutPopOut from './LogOutPopOut';
 // const getMinDate = () => {
 //   const today = dayjs();
 //   const dayOfWeek = today.day(); // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
@@ -25,7 +26,7 @@ import { OrbitProgress } from "react-loading-indicators";
 //   }
 // };
 
-const Leaveform = ({ isPaternity, isAdoption }) => {
+const Leaveform = ({ isPaternity, isAdoption ,setShowLogout }) => {
 
   Leaveform.propTypes = {
     isPaternity: PropTypes.bool.isRequired,
@@ -384,8 +385,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
 
       if (response.status === 200) {
         toast.success("Mail sent Successfully");
-        // setTimeout(() => {
-        navigate("/thank-you");
+        setShowLogout(true);
         // }, 3000);
       } else {
         toast.error("Error in sending Email");
@@ -937,6 +937,7 @@ const Leaveform = ({ isPaternity, isAdoption }) => {
           status={confirmStatus}
         />
       )} */}
+  
     </div>
   );
 };

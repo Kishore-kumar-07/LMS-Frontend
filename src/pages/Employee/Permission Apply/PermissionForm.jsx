@@ -19,7 +19,7 @@ import { CURRENT_STATUS } from "../../../statusIndicator";
 import { OrbitProgress } from "react-loading-indicators";
 dayjs.extend(duration);
 
-const PermissionForm = () => {
+const PermissionForm = ({setShowLogout}) => {
   // const navigate = useNavigate();
   const navigate = useNavigate();
   // const [toTime, setToTime] = useState(dayjs().add(1, "hour"));
@@ -283,7 +283,7 @@ const PermissionForm = () => {
       if (response.status === 200) {
         toast.success("Mail sent Successfully");
         setTimeout(() => {
-          navigate("/thank-you");
+          setShowLogout(true);
         }, 3000);
       } else {
         toast.error("error in sending mail");

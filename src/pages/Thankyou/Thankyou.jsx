@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 const Thankyou = () => {
   const navigate = useNavigate();
 
-  const token = document.cookie.split("=")[1];
-  const decodedToken = jwtDecode(token);
+  // const token = document.cookie.split("=")[1];
+  // const decodedToken = jwtDecode(token);
 
   useEffect(() => {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
