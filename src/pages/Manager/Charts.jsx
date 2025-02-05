@@ -25,12 +25,13 @@ const Charts = ({department_ , changeInDept , unit , changeInUnit , gender , cha
   const newDate = new Date().getFullYear();
   const currentDate = new Date();
   const month = currentDate.getMonth() + 1; 
+  const currentYear = new Date().getFullYear();
  
 
   const [data, setData] = useState([]);
   const [gvr, setGvr] = useState(0);
   const [three_p, setThree_p] = useState(0);
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(month);
   const [empAll, setEmpAll] = useState([]);
 
@@ -198,7 +199,7 @@ const gvr = filteredData
           <div className="flex flex-1 flex-col p-1 justify-center items-center">
             <div className='w-full flex justify-end items-center pr-3 gap-5'>
               <select 
-                className='border p-1 rounded-lg border-gray border-2 w-[20%]' 
+                className=' p-1 rounded-lg border-gray border-2 w-[20%]' 
                 onChange={handleChangeYear}
                 value={selectedYear}
               >
@@ -207,7 +208,7 @@ const gvr = filteredData
                 <option value={newDate - 2}>{newDate - 2}</option>
               </select>
               <select 
-                className='border p-1 rounded-lg border-gray border-2 w-[20%]' 
+                className=' p-1 rounded-lg border-gray border-2 w-[20%]' 
                 onChange={handleChangeMonth}
                 value={selectedMonth}
               >

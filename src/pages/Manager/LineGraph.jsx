@@ -23,10 +23,10 @@ export default function LineGraph({ department_ , changeInDept , gender , change
   const token = document.cookie.split("=")[1];
   const decodedToken = jwtDecode(token);
   const empId = decodedToken.empId;
-
+  const currentYear = new Date().getFullYear();
   const [leaveCounts, setLeaveCounts] = useState(Array(12).fill(0));
   const [filterType, setFilterType] = useState("All Types");
-  const [filterYear, setFilterYear] = useState("2024");
+  const [filterYear, setFilterYear] = useState(currentYear);
   const [leaveData, setLeaveData] = useState([]);
   const [overAll , setOverAll] = useState(0);
   const [empAll, setEmpAll] = useState([]);
@@ -126,8 +126,9 @@ export default function LineGraph({ department_ , changeInDept , gender , change
 
   const filterLeaveDataByMonth_Year = (logs, selectedYear, department_) => {
     const leaveCountPerMonth = Array(12).fill(0);
-
-    const filteredLogs = selectedYear === "2024"
+    const currentYear = new Date().getFullYear();
+    console.log(currentYear)
+    const filteredLogs = selectedYear === currentYear
       ? logs
       : logs.filter(log => new Date(log.from.date).getFullYear() === parseInt(selectedYear) && log.role === filterType);
 
